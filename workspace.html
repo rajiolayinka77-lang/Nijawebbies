@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Workspace - NijaWebbies</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+        header {
+            background: #0b7a3b;
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .welcome h1 {
+            color: #075b2c;
+            margin-top: 0;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .action {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #222;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .action:hover {
+            transform: translateY(-2px);
+        }
+
+        .action .icon {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .action h3 {
+            color: #075b2c;
+            margin: 5px 0 10px;
+        }
+
+        .posts {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .posts h2 {
+            color: #075b2c;
+        }
+
+        .post {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 18px 0;
+        }
+
+        .post:last-child {
+            border-bottom: none;
+        }
+
+        .post h3 {
+            margin-bottom: 8px;
+        }
+
+        .post h3 a {
+            color: #075b2c;
+            text-decoration: none;
+        }
+
+        .date {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .empty {
+            color: #777;
+            padding: 20px 0;
+        }
+
+        footer {
+            margin-top: 50px;
+            background: #123;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav a {
+                margin: 0 7px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        🇳🇬 NijaWebbies
+    </div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog">Blog</a>
+        <a href="/tools">Tools</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+</header>
+
+
+<div class="container">
+
+    <section class="welcome">
+
+        <h1>Welcome, {{ user_name }} 👋</h1>
+
+        <p>
+            This is your NijaWebbies workspace.
+        </p>
+
+        <p>
+            Create content, publish articles and start building
+            your digital presence for free.
+        </p>
+
+    </section>
+
+
+    <section class="actions">
+
+        <a class="action" href="/create-post">
+
+            <div class="icon">✍️</div>
+
+            <h3>Create a Post</h3>
+
+            <p>
+                Write and publish your first article.
+            </p>
+
+        </a>
+
+
+        <a class="action" href="/blog">
+
+            <div class="icon">📚</div>
+
+            <h3>View Public Blog</h3>
+
+            <p>
+                See articles published on NijaWebbies.
+            </p>
+
+        </a>
+
+
+        <a class="action" href="/tools">
+
+            <div class="icon">🛠️</div>
+
+            <h3>Free Tools</h3>
+
+            <p>
+                Explore useful tools for creators and businesses.
+            </p>
+
+        </a>
+
+    </section>
+
+
+    <section class="posts">
+
+        <h2>📝 My Posts</h2>
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+                <div class="post">
+
+                    <h3>
+                        <a href="/post/{{ post['id'] }}">
+                            {{ post['title'] }}
+                        </a>
+                    </h3>
+
+                    <div class="date">
+                        Published {{ post['created_at'] }}
+                    </div>
+
+                    <p>
+                        {{ post['content'][:180] }}
+                        {% if post['content']|length > 180 %}
+                            ...
+                        {% endif %}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="empty">
+                You haven't published any posts yet.
+            </p>
+
+            <a href="/create-post">
+                ✍️ Create your first post
+            </a>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<footer>
+
+    <h3>NijaWebbies</h3>
+
+    <p>
+        Start free. Create. Publish. Grow.
+    </p>
+
+    <p>
+        © 2026 NijaWebbies
+    </p>
+
+</footer>
+
+</body>
+  </html>
