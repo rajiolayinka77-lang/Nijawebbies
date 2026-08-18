@@ -225,11 +225,13 @@
 <body>
 
 <header>
+
     <div class="logo">
         Nija<span>Webbies</span>
     </div>
 
     <div class="user-area">
+
         <span class="user-name">
             Welcome, {{ user_name or "User" }}
         </span>
@@ -237,10 +239,15 @@
         <a href="{{ url_for('logout') }}" class="logout">
             Logout
         </a>
+
     </div>
+
 </header>
 
+
 <main>
+
+    <!-- WELCOME -->
 
     <section class="welcome">
 
@@ -260,68 +267,129 @@
     </section>
 
 
+    <!-- DIGITAL SPACES -->
+
     <section class="tools">
 
-        <a href="#" class="tool">
+
+        <!-- BLOG -->
+
+        <a href="{{ url_for('create_post') }}" class="tool">
+
             <div class="icon">✍️</div>
-            <h3>Blog & Publishing</h3>
+
+            <h3>
+                Blog & Publishing
+            </h3>
+
             <p>
                 Write and publish articles, stories, news and useful
                 content for your audience.
             </p>
+
         </a>
 
+
+        <!-- CREATOR -->
+
         <a href="#" class="tool">
+
             <div class="icon">🎨</div>
-            <h3>Creator Studio</h3>
+
+            <h3>
+                Creator Studio
+            </h3>
+
             <p>
                 A future home for creators to manage their digital
                 content and creative projects.
             </p>
+
         </a>
 
+
+        <!-- BUSINESS -->
+
         <a href="#" class="tool">
+
             <div class="icon">🏪</div>
-            <h3>Business Space</h3>
+
+            <h3>
+                Business Space
+            </h3>
+
             <p>
                 Build your online business presence and connect with
                 customers.
             </p>
+
         </a>
 
-        <a href="#" class="tool">
+
+        <!-- SEARCH -->
+
+        <a href="{{ url_for('search') }}" class="tool">
+
             <div class="icon">🔎</div>
-            <h3>Web Search</h3>
+
+            <h3>
+                Web Search
+            </h3>
+
             <p>
                 Discover useful information, websites, services and
-                resources across the internet.
+                resources across the NijaWebbies ecosystem.
             </p>
+
         </a>
 
+
+        <!-- COMMUNITIES -->
+
         <a href="#" class="tool">
+
             <div class="icon">👥</div>
-            <h3>Communities</h3>
+
+            <h3>
+                Communities
+            </h3>
+
             <p>
                 Create and grow communities around interests,
                 businesses, locations and ideas.
             </p>
+
         </a>
 
-        <a href="#" class="tool">
+
+        <!-- TOOLS -->
+
+        <a href="{{ url_for('tools') }}" class="tool">
+
             <div class="icon">🛠️</div>
-            <h3>Free Online Tools</h3>
+
+            <h3>
+                Free Online Tools
+            </h3>
+
             <p>
                 Access useful digital tools designed to make everyday
                 internet activities easier.
             </p>
+
         </a>
 
     </section>
 
 
+    <!-- USER POSTS -->
+
     <section class="section">
 
-        <h2>📰 Your Published Posts</h2>
+        <h2>
+            📰 Your Published Posts
+        </h2>
+
 
         {% if posts %}
 
@@ -330,11 +398,11 @@
                 <div class="post">
 
                     <h3>
-                        {{ post.title or "Untitled Post" }}
+                        {{ post["title"] or "Untitled Post" }}
                     </h3>
 
                     <p>
-                        {{ post.content or "" }}
+                        {{ post["content"] or "" }}
                     </p>
 
                 </div>
@@ -345,14 +413,24 @@
 
             <div class="empty">
 
-                <div style="font-size:45px;">📝</div>
+                <div style="font-size:45px;">
+                    📝
+                </div>
 
-                <h3>You haven't published anything yet.</h3>
+                <h3>
+                    You haven't published anything yet.
+                </h3>
 
                 <p>
-                    Your posts will appear here when you start publishing
-                    on NijaWebbies.
+                    Start your first article and it will appear here.
                 </p>
+
+                <a
+                    href="{{ url_for('create_post') }}"
+                    class="button"
+                >
+                    ✍️ Create Your First Post
+                </a>
 
             </div>
 
@@ -361,9 +439,13 @@
     </section>
 
 
+    <!-- CALL TO ACTION -->
+
     <section class="cta">
 
-        <h2>🚀 Your digital journey starts here</h2>
+        <h2>
+            🚀 Your digital journey starts here
+        </h2>
 
         <p>
             NijaWebbies is being built as a free digital ecosystem
@@ -371,7 +453,10 @@
             everyday internet users.
         </p>
 
-        <a href="{{ url_for('home') }}" class="button">
+        <a
+            href="{{ url_for('home') }}"
+            class="button"
+        >
             Back to Home
         </a>
 
@@ -379,8 +464,11 @@
 
 </main>
 
+
 <footer>
+
     © 2026 NijaWebbies — Built for Nigeria & Africa 🇳🇬
+
 </footer>
 
 </body>
