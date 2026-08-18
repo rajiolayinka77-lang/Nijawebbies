@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>NijaWebbies Blog</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+        header {
+            background: #0b7a3b;
+            color: white;
+            padding: 18px 5%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .hero {
+            background: white;
+            text-align: center;
+            padding: 45px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .hero h1 {
+            color: #075b2c;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #666;
+            max-width: 650px;
+            margin: auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .post {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 14px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .post h2 {
+            margin-top: 0;
+        }
+
+        .post h2 a {
+            color: #075b2c;
+            text-decoration: none;
+        }
+
+        .post h2 a:hover {
+            text-decoration: underline;
+        }
+
+        .author {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .excerpt {
+            color: #555;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .read {
+            display: inline-block;
+            margin-top: 15px;
+
+            padding: 10px 18px;
+
+            background: #0b7a3b;
+            color: white;
+
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .empty {
+            background: white;
+            text-align: center;
+            padding: 50px 20px;
+            border-radius: 14px;
+        }
+
+        footer {
+            margin-top: 60px;
+            background: #123;
+            color: white;
+            text-align: center;
+            padding: 30px 15px;
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav a {
+                margin: 0 7px;
+            }
+
+            .post {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🇳🇬 NijaWebbies
+    </div>
+
+    <nav>
+
+        <a href="/">Home</a>
+
+        <a href="/workspace">
+            Workspace
+        </a>
+
+        <a href="/tools">
+            Tools
+        </a>
+
+    </nav>
+
+</header>
+
+
+<section class="hero">
+
+    <h1>📚 NijaWebbies Blog</h1>
+
+    <p>
+        Discover articles, stories, ideas and knowledge
+        published by the NijaWebbies community.
+    </p>
+
+</section>
+
+
+<div class="container">
+
+
+    {% if posts %}
+
+
+        {% for post in posts %}
+
+
+        <article class="post">
+
+            <h2>
+
+                <a href="/post/{{ post['id'] }}">
+
+                    {{ post['title'] }}
+
+                </a>
+
+            </h2>
+
+
+            <div class="author">
+
+                Published by
+                <strong>{{ post['name'] }}</strong>
+
+                ·
+
+                {{ post['created_at'] }}
+
+            </div>
+
+
+            <div class="excerpt">
+
+                {{ post['content'][:350] }}
+
+                {% if post['content']|length > 350 %}
+                    ...
+                {% endif %}
+
+            </div>
+
+
+            <a
+                class="read"
+                href="/post/{{ post['id'] }}"
+            >
+                Read Article →
+            </a>
+
+        </article>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <div class="empty">
+
+            <h2>📝 No articles yet</h2>
+
+            <p>
+                NijaWebbies is just getting started.
+            </p>
+
+            <p>
+                Be one of the first people to publish an article.
+            </p>
+
+            <a
+                class="read"
+                href="/register"
+            >
+                Join NijaWebbies Free
+            </a>
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+
+<footer>
+
+    <h3>NijaWebbies</h3>
+
+    <p>
+        Start free. Create. Publish. Grow.
+    </p>
+
+    <p>
+        © 2026 NijaWebbies
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>
