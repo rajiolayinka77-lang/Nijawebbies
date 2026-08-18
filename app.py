@@ -7,6 +7,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# =========================================================
+# APP CONFIGURATION
+# =========================================================
+
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
     "nijawebbies-development-secret"
@@ -26,6 +30,7 @@ def get_db():
 
 
 def init_db():
+
     conn = get_db()
 
     conn.execute("""
@@ -62,11 +67,17 @@ init_db()
 # =========================================================
 
 def login_required(view):
+
     @wraps(view)
     def wrapped_view(*args, **kwargs):
 
         if "user_id" not in session:
-            flash("Please login to continue.", "warning")
+
+            flash(
+                "Please login to continue.",
+                "warning"
+            )
+
             return redirect(url_for("login"))
 
         return view(*args, **kwargs)
@@ -80,6 +91,7 @@ def login_required(view):
 
 @app.route("/")
 def home():
+
     return render_template("home.html")
 
 
@@ -92,149 +104,110 @@ def register():
 
     if request.method == "POST":
 
-        name = request.form.get("name", "").strip()
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
 
+        email = request.form.get(
+            "email",
+            ""
+        ).strip().lower()
+
+        password = request.form.get(
+            "password",
+            ""
+        )
+
+        # Validate fields
         if not name or not email or not password:
-            flash("Please complete all fields.", "danger")
-            return redirect(url_for("register"))
 
+            flash(
+                "Please complete all fields.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("register")
+            )
+
+        # Validate password
         if len(password) < 6:
-            flash("Password must be at least 6 characters.", "danger")
-            return redirect(url_for("register"))
+
+            flash(
+                "Password must be at least 6 characters.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("register")
+            )
 
         conn = get_db()
 
+        # Check existing account
         existing_user = conn.execute(
-            "SELECT id FROM users WHERE email = ?",
+            """
+            SELECT id
+            FROM users
+            WHERE email = ?
+            """,
             (email,)
         ).fetchone()
 
         if existing_user:
+
             conn.close()
-            flash("An account with this email already exists.", "danger")
-            return redirect(url_for("register"))
 
-        hashed_password = generate_password_hash(password)
+            flash(
+                "An account with this email already exists. Please login.",
+                "danger"
+            )
 
-        conn.execute("""
+            return redirect(
+                url_for("login")
+            )
+
+        # Hash password
+        hashed_password = generate_password_hash(
+            password
+        )
+
+        # Create account
+        conn.execute(
+            """
             INSERT INTO users
-            (name, email, password, created_at)
+            (
+                name,
+                email,
+                password,
+                created_at
+            )
             VALUES (?, ?, ?, ?)
-        """, (
-            name,
-            email,
-            hashed_password,
-            datetime.utcnow().isoformat()
-        ))
+            """,
+            (
+                name,
+                email,
+                hashed_password,
+                datetime.utcnow().isoformat()
+            )
+        )
 
         conn.commit()
         conn.close()
 
-        flash("Account created successfully. You can now login.", "success")
+        flash(
+            "Account created successfully. You can now login.",
+            "success"
+        )
 
-        return redirect(url_for("login"))
+        return redirect(
+            url_for("login")
+        )
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Join NijaWebbies</title>
-        <style>
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 30px;
-            }
-
-            .box {
-                max-width: 450px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 5px 20px rgba(0,0,0,.08);
-            }
-
-            input {
-                width: 100%;
-                padding: 13px;
-                margin: 8px 0 15px;
-                box-sizing: border-box;
-            }
-
-            button {
-                width: 100%;
-                padding: 14px;
-                background: #0b7a3b;
-                color: white;
-                border: 0;
-                border-radius: 6px;
-                font-size: 16px;
-            }
-
-            a {
-                color: #0b7a3b;
-            }
-        </style>
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>🇳🇬 Join NijaWebbies</h1>
-
-        <p>Create your free account.</p>
-
-        <form method="POST">
-
-            <label>Name</label>
-            <input
-                type="text"
-                name="name"
-                placeholder="Your name"
-                required
-            >
-
-            <label>Email</label>
-            <input
-                type="email"
-                name="email"
-                placeholder="you@example.com"
-                required
-            >
-
-            <label>Password</label>
-            <input
-                type="password"
-                name="password"
-                placeholder="At least 6 characters"
-                required
-            >
-
-            <button type="submit">
-                Create Free Account
-            </button>
-
-        </form>
-
-        <p>
-            Already have an account?
-            <a href="/login">Login</a>
-        </p>
-
-        <p>
-            <a href="/">← Back home</a>
-        </p>
-
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template(
+        "register.html"
+    )
 
 
 # =========================================================
@@ -246,119 +219,82 @@ def login():
 
     if request.method == "POST":
 
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
+        email = request.form.get(
+            "email",
+            ""
+        ).strip().lower()
+
+        password = request.form.get(
+            "password",
+            ""
+        )
+
+        # Check empty fields
+        if not email or not password:
+
+            flash(
+                "Please enter your email and password.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("login")
+            )
 
         conn = get_db()
 
         user = conn.execute(
-            "SELECT * FROM users WHERE email = ?",
+            """
+            SELECT *
+            FROM users
+            WHERE email = ?
+            """,
             (email,)
         ).fetchone()
 
         conn.close()
 
-        if user and check_password_hash(user["password"], password):
+        # Account doesn't exist
+        if user is None:
 
-            session.clear()
+            flash(
+                "No account was found with that email.",
+                "danger"
+            )
 
-            session["user_id"] = user["id"]
-            session["user_name"] = user["name"]
+            return redirect(
+                url_for("login")
+            )
 
-            return redirect(url_for("workspace"))
+        # Password is incorrect
+        if not check_password_hash(
+            user["password"],
+            password
+        ):
 
-        flash("Invalid email or password.", "danger")
+            flash(
+                "Incorrect password. Please try again.",
+                "danger"
+            )
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Login - NijaWebbies</title>
+            return redirect(
+                url_for("login")
+            )
 
-        <style>
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 30px;
-            }
+        # Successful login
+        session.clear()
 
-            .box {
-                max-width: 450px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 5px 20px rgba(0,0,0,.08);
-            }
+        session["user_id"] = user["id"]
 
-            input {
-                width: 100%;
-                padding: 13px;
-                margin: 8px 0 15px;
-                box-sizing: border-box;
-            }
+        session["user_name"] = user["name"]
 
-            button {
-                width: 100%;
-                padding: 14px;
-                background: #0b7a3b;
-                color: white;
-                border: 0;
-                border-radius: 6px;
-                font-size: 16px;
-            }
+        return redirect(
+            url_for("workspace")
+        )
 
-            a {
-                color: #0b7a3b;
-            }
-        </style>
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>🔐 Login</h1>
-
-        <form method="POST">
-
-            <label>Email</label>
-
-            <input
-                type="email"
-                name="email"
-                required
-            >
-
-            <label>Password</label>
-
-            <input
-                type="password"
-                name="password"
-                required
-            >
-
-            <button type="submit">
-                Login
-            </button>
-
-        </form>
-
-        <p>
-            Don't have an account?
-            <a href="/register">Join free</a>
-        </p>
-
-        <p>
-            <a href="/">← Back home</a>
-        </p>
-
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template(
+        "login.html"
+    )
 
 
 # =========================================================
@@ -370,11 +306,18 @@ def logout():
 
     session.clear()
 
-    return redirect(url_for("home"))
+    flash(
+        "You have been logged out.",
+        "success"
+    )
+
+    return redirect(
+        url_for("home")
+    )
 
 
 # =========================================================
-# BLOGGER WORKSPACE
+# WORKSPACE
 # =========================================================
 
 @app.route("/workspace")
@@ -383,12 +326,15 @@ def workspace():
 
     conn = get_db()
 
-    posts = conn.execute("""
+    posts = conn.execute(
+        """
         SELECT *
         FROM posts
         WHERE user_id = ?
         ORDER BY id DESC
-    """, (session["user_id"],)).fetchall()
+        """,
+        (session["user_id"],)
+    ).fetchall()
 
     conn.close()
 
@@ -409,125 +355,64 @@ def create_post():
 
     if request.method == "POST":
 
-        title = request.form.get("title", "").strip()
-        content = request.form.get("content", "").strip()
+        title = request.form.get(
+            "title",
+            ""
+        ).strip()
 
+        content = request.form.get(
+            "content",
+            ""
+        ).strip()
+
+        # Validate post
         if not title or not content:
-            flash("Title and content are required.", "danger")
-            return redirect(url_for("create_post"))
+
+            flash(
+                "Title and content are required.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("create_post")
+            )
 
         conn = get_db()
 
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO posts
-            (user_id, title, content, created_at)
+            (
+                user_id,
+                title,
+                content,
+                created_at
+            )
             VALUES (?, ?, ?, ?)
-        """, (
-            session["user_id"],
-            title,
-            content,
-            datetime.utcnow().isoformat()
-        ))
+            """,
+            (
+                session["user_id"],
+                title,
+                content,
+                datetime.utcnow().isoformat()
+            )
+        )
 
         conn.commit()
         conn.close()
 
-        flash("Your post has been published!", "success")
+        flash(
+            "Your post has been published!",
+            "success"
+        )
 
-        return redirect(url_for("workspace"))
+        return redirect(
+            url_for("workspace")
+        )
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Create Post - NijaWebbies</title>
-
-        <style>
-
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 20px;
-            }
-
-            .box {
-                max-width: 800px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-            }
-
-            input,
-            textarea {
-                width: 100%;
-                padding: 14px;
-                margin: 8px 0 20px;
-                box-sizing: border-box;
-            }
-
-            textarea {
-                min-height: 300px;
-            }
-
-            button {
-                padding: 14px 25px;
-                background: #0b7a3b;
-                color: white;
-                border: 0;
-                border-radius: 6px;
-            }
-
-            a {
-                color: #0b7a3b;
-            }
-
-        </style>
-
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>✍️ Create a Post</h1>
-
-        <form method="POST">
-
-            <label>Title</label>
-
-            <input
-                type="text"
-                name="title"
-                placeholder="Your post title"
-                required
-            >
-
-            <label>Content</label>
-
-            <textarea
-                name="content"
-                placeholder="Write your article here..."
-                required
-            ></textarea>
-
-            <button type="submit">
-                Publish Post
-            </button>
-
-        </form>
-
-        <p>
-            <a href="/workspace">← Back to Workspace</a>
-        </p>
-
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template(
+        "create_post.html"
+    )
 
 
 # =========================================================
@@ -539,16 +424,24 @@ def blog():
 
     conn = get_db()
 
-    posts = conn.execute("""
-        SELECT posts.*, users.name
+    posts = conn.execute(
+        """
+        SELECT
+            posts.*,
+            users.name
         FROM posts
-        JOIN users ON posts.user_id = users.id
+        JOIN users
+            ON posts.user_id = users.id
         ORDER BY posts.id DESC
-    """).fetchall()
+        """
+    ).fetchall()
 
     conn.close()
 
-    return render_template("blog.html", posts=posts)
+    return render_template(
+        "blog.html",
+        posts=posts
+    )
 
 
 # =========================================================
@@ -560,78 +453,29 @@ def view_post(post_id):
 
     conn = get_db()
 
-    post = conn.execute("""
-        SELECT posts.*, users.name
+    post = conn.execute(
+        """
+        SELECT
+            posts.*,
+            users.name
         FROM posts
-        JOIN users ON posts.user_id = users.id
+        JOIN users
+            ON posts.user_id = users.id
         WHERE posts.id = ?
-    """, (post_id,)).fetchone()
+        """,
+        (post_id,)
+    ).fetchone()
 
     conn.close()
 
     if not post:
+
         return "Post not found", 404
 
-    return f"""
-    <!DOCTYPE html>
-    <html>
-
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{post["title"]} - NijaWebbies</title>
-
-        <style>
-            body {{
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 20px;
-            }}
-
-            article {{
-                max-width: 800px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-            }}
-
-            .content {{
-                margin-top: 25px;
-                line-height: 1.8;
-                white-space: pre-wrap;
-            }}
-
-            a {{
-                color: #0b7a3b;
-            }}
-        </style>
-
-    </head>
-
-    <body>
-
-    <article>
-
-        <h1>{post["title"]}</h1>
-
-        <p>
-            By <strong>{post["name"]}</strong>
-        </p>
-
-        <div class="content">
-            {post["content"]}
-        </div>
-
-        <br>
-
-        <a href="/blog">← Back to Blog</a>
-
-    </article>
-
-    </body>
-
-    </html>
-    """
+    return render_template(
+        "post.html",
+        post=post
+    )
 
 
 # =========================================================
@@ -641,23 +485,32 @@ def view_post(post_id):
 @app.route("/search")
 def search():
 
-    query = request.args.get("q", "").strip()
+    query = request.args.get(
+        "q",
+        ""
+    ).strip()
 
     conn = get_db()
 
     if query:
 
-        posts = conn.execute("""
-            SELECT posts.*, users.name
+        posts = conn.execute(
+            """
+            SELECT
+                posts.*,
+                users.name
             FROM posts
-            JOIN users ON posts.user_id = users.id
+            JOIN users
+                ON posts.user_id = users.id
             WHERE posts.title LIKE ?
                OR posts.content LIKE ?
             ORDER BY posts.id DESC
-        """, (
-            f"%{query}%",
-            f"%{query}%"
-        )).fetchall()
+            """,
+            (
+                f"%{query}%",
+                f"%{query}%"
+            )
+        ).fetchall()
 
     else:
 
@@ -679,84 +532,9 @@ def search():
 @app.route("/tools")
 def tools():
 
-    return """
-    <!DOCTYPE html>
-
-    <html>
-
-    <head>
-
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1">
-
-        <title>NijaWebbies Free Tools</title>
-
-        <style>
-
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 25px;
-            }
-
-            .box {
-                max-width: 900px;
-                margin: auto;
-            }
-
-            .tool {
-                background: white;
-                padding: 25px;
-                margin: 15px 0;
-                border-radius: 12px;
-            }
-
-            a {
-                color: #0b7a3b;
-            }
-
-        </style>
-
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>🛠️ NijaWebbies Free Tools</h1>
-
-        <p>
-            Useful tools will be added here as NijaWebbies grows.
-        </p>
-
-        <div class="tool">
-            <h3>✍️ Writing Tools</h3>
-            <p>Writing and text tools coming soon.</p>
-        </div>
-
-        <div class="tool">
-            <h3>📊 Business Tools</h3>
-            <p>Business productivity tools coming soon.</p>
-        </div>
-
-        <div class="tool">
-            <h3>🎨 Creator Tools</h3>
-            <p>Creator tools coming soon.</p>
-        </div>
-
-        <div class="tool">
-            <h3>🔧 Productivity Tools</h3>
-            <p>Productivity tools coming soon.</p>
-        </div>
-
-        <a href="/">← Back home</a>
-
-    </div>
-
-    </body>
-
-    </html>
-    """
+    return render_template(
+        "tools.html"
+    )
 
 
 # =========================================================
@@ -767,6 +545,11 @@ if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=int(
+            os.environ.get(
+                "PORT",
+                5000
+            )
+        ),
+        debug=False
     )
