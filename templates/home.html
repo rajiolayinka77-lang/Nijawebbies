@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NijaWebbies - Nigeria's Free Digital Ecosystem</title>
+
+    <title>NijaWebbies — Nigeria's Free Digital Ecosystem</title>
+
+    <meta name="description"
+          content="NijaWebbies is a free digital ecosystem for bloggers, creators, businesses, communities and everyday internet users.">
 
     <style>
         * {
@@ -12,175 +16,483 @@
             padding: 0;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-            color: #222;
+        html {
+            scroll-behavior: smooth;
         }
 
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fa;
+            color: #17201b;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
         header {
-            background: #0b7a3b;
+            background: #087a3d;
             color: white;
-            padding: 18px 5%;
+            padding: 16px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
         }
 
         .logo {
-            font-size: 25px;
-            font-weight: bold;
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 18px;
         }
 
         nav a {
             color: white;
-            text-decoration: none;
-            margin-left: 18px;
             font-size: 14px;
+            font-weight: 600;
         }
 
+        .nav-button {
+            background: white;
+            color: #087a3d !important;
+            padding: 9px 16px;
+            border-radius: 7px;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
         .hero {
-            background: linear-gradient(135deg, #0b7a3b, #075b2c);
+            background:
+                radial-gradient(circle at top right, rgba(255,255,255,0.14), transparent 30%),
+                linear-gradient(135deg, #087a3d, #045526);
             color: white;
             text-align: center;
-            padding: 70px 20px;
+            padding: 90px 20px 85px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 7px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            margin-bottom: 20px;
         }
 
         .hero h1 {
-            font-size: 42px;
-            margin-bottom: 15px;
+            font-size: 52px;
+            line-height: 1.12;
+            max-width: 850px;
+            margin: auto;
+            letter-spacing: -1.5px;
+        }
+
+        .hero h1 span {
+            color: #ffd04a;
         }
 
         .hero p {
             font-size: 18px;
-            max-width: 700px;
-            margin: auto;
-            line-height: 1.6;
+            max-width: 720px;
+            margin: 20px auto 0;
+            color: rgba(255,255,255,0.9);
         }
 
-        .search-box {
-            margin: 30px auto 0;
-            max-width: 650px;
+        .hero-buttons {
             display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+
+        .primary-button,
+        .secondary-button {
+            display: inline-block;
+            padding: 13px 23px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .primary-button {
+            background: #f6bd18;
+            color: #17201b;
+        }
+
+        .secondary-button {
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .search-box {
+            display: flex;
+            max-width: 700px;
+            margin: 35px auto 0;
+            background: white;
+            padding: 6px;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
 
         .search-box input {
             flex: 1;
-            padding: 16px;
+            min-width: 0;
             border: none;
-            border-radius: 8px 0 0 8px;
+            outline: none;
+            padding: 14px;
             font-size: 16px;
+            border-radius: 7px;
         }
 
         .search-box button {
-            padding: 16px 25px;
             border: none;
-            background: #f5b400;
-            color: #111;
-            font-weight: bold;
-            border-radius: 0 8px 8px 0;
+            background: #f6bd18;
+            color: #17201b;
+            font-weight: 800;
+            padding: 0 24px;
+            border-radius: 7px;
             cursor: pointer;
+            font-size: 15px;
         }
+
+        /* =========================
+           GENERAL SECTIONS
+        ========================= */
 
         .section {
-            padding: 45px 5%;
-            text-align: center;
+            padding: 70px 5%;
         }
 
-        .section h2 {
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .section-header h2 {
             color: #075b2c;
+            font-size: 32px;
             margin-bottom: 10px;
         }
 
-        .section-intro {
-            color: #666;
-            margin-bottom: 30px;
+        .section-header p {
+            color: #69736d;
         }
+
+        /* =========================
+           FEATURE CARDS
+        ========================= */
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            max-width: 1100px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            max-width: 1150px;
             margin: auto;
         }
 
         .card {
             background: white;
-            padding: 28px 20px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            padding: 30px 24px;
+            border-radius: 15px;
+            border: 1px solid #e6ebe8;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .card .icon {
-            font-size: 40px;
-            margin-bottom: 15px;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+        }
+
+        .icon {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eaf7ef;
+            border-radius: 14px;
+            font-size: 30px;
+            margin-bottom: 18px;
         }
 
         .card h3 {
-            margin-bottom: 10px;
             color: #075b2c;
+            font-size: 20px;
+            margin-bottom: 9px;
         }
 
         .card p {
-            color: #666;
-            line-height: 1.5;
+            color: #66716b;
             font-size: 14px;
+            min-height: 66px;
         }
 
         .card a {
             display: inline-block;
             margin-top: 18px;
-            padding: 10px 18px;
-            background: #0b7a3b;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
+            color: #087a3d;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        /* =========================
+           FREE PROMISE
+        ========================= */
+
+        .free-section {
+            background: #eaf7ef;
         }
 
         .free-box {
-            background: #fff;
-            padding: 40px 20px;
-            margin: 20px auto;
-            max-width: 900px;
-            border-radius: 15px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            max-width: 950px;
+            margin: auto;
+            background: white;
+            padding: 45px 30px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+
+        .free-box h2 {
+            color: #075b2c;
+            font-size: 32px;
+        }
+
+        .free-box p {
+            max-width: 700px;
+            margin: 15px auto 0;
+            color: #66716b;
         }
 
         .free-box strong {
-            color: #0b7a3b;
+            color: #087a3d;
         }
 
-        footer {
-            background: #123;
+        .free-button {
+            display: inline-block;
+            margin-top: 25px;
+            background: #087a3d;
+            color: white;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           HOW IT WORKS
+        ========================= */
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            max-width: 950px;
+            margin: auto;
+        }
+
+        .step {
+            text-align: center;
+            padding: 25px;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #087a3d;
+            color: white;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .step h3 {
+            color: #075b2c;
+            margin-bottom: 7px;
+        }
+
+        .step p {
+            color: #69736d;
+            font-size: 14px;
+        }
+
+        /* =========================
+           CTA
+        ========================= */
+
+        .cta {
+            background: linear-gradient(135deg, #075b2c, #087a3d);
             color: white;
             text-align: center;
-            padding: 30px 15px;
-            margin-top: 30px;
+            padding: 70px 20px;
+        }
+
+        .cta h2 {
+            font-size: 34px;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            max-width: 650px;
+            margin: auto;
+            color: rgba(255,255,255,0.88);
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 25px;
+            background: #f6bd18;
+            color: #17201b;
+            padding: 14px 27px;
+            border-radius: 8px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #101b15;
+            color: white;
+            padding: 45px 5% 25px;
+        }
+
+        .footer-content {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        footer h3 {
+            margin-bottom: 10px;
+        }
+
+        footer p,
+        footer a {
+            color: #b9c4bd;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .copyright {
+            max-width: 1100px;
+            margin: 35px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #87938c;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 850px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (max-width: 600px) {
-            .hero h1 {
-                font-size: 30px;
-            }
-
             header {
                 flex-direction: column;
                 gap: 12px;
+                padding: 15px;
             }
 
-            nav a {
-                margin: 0 6px;
+            nav {
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 65px 18px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
             }
 
             .search-box {
                 flex-direction: column;
+                padding: 6px;
             }
 
-            .search-box input,
+            .search-box input {
+                width: 100%;
+            }
+
             .search-box button {
-                border-radius: 7px;
-                margin-bottom: 8px;
+                width: 100%;
+                padding: 14px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 55px 18px;
+            }
+
+            .section-header h2,
+            .free-box h2 {
+                font-size: 27px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -188,26 +500,60 @@
 
 <body>
 
+<!-- =========================
+     HEADER
+========================= -->
+
 <header>
-    <div class="logo">🇳🇬 NijaWebbies</div>
+
+    <a href="/" class="logo">🇳🇬 NijaWebbies</a>
 
     <nav>
         <a href="/">Home</a>
-        <a href="/register">Join Free</a>
+        <a href="/search">Explore</a>
+        <a href="/tools">Tools</a>
         <a href="/login">Login</a>
+        <a href="/register" class="nav-button">Join Free</a>
     </nav>
+
 </header>
+
+
+<!-- =========================
+     HERO
+========================= -->
 
 <section class="hero">
 
-    <h1>Welcome to NijaWebbies</h1>
+    <div class="badge">
+        🇳🇬 Built for Nigeria & Africa
+    </div>
+
+    <h1>
+        Everything you need online,
+        <span>in one place.</span>
+    </h1>
 
     <p>
-        Nigeria's growing free digital ecosystem for bloggers,
-        creators, businesses, communities and everyday internet users.
+        NijaWebbies is a growing free digital ecosystem where
+        bloggers, creators, businesses, communities and everyday
+        users can create, publish, discover and grow.
     </p>
 
+    <div class="hero-buttons">
+
+        <a href="/register" class="primary-button">
+            🚀 Start Free
+        </a>
+
+        <a href="#features" class="secondary-button">
+            Explore NijaWebbies
+        </a>
+
+    </div>
+
     <form class="search-box" action="/search" method="GET">
+
         <input
             type="text"
             name="q"
@@ -215,109 +561,176 @@
             required
         >
 
-        <button type="submit">Search</button>
+        <button type="submit">
+            🔎 Search
+        </button>
+
     </form>
 
 </section>
 
-<section class="section">
 
-    <h2>Everything You Need Online</h2>
+<!-- =========================
+     FEATURES
+========================= -->
 
-    <p class="section-intro">
-        Start free. Create, publish, discover and grow.
-    </p>
+<section class="section" id="features">
+
+    <div class="section-header">
+
+        <h2>One Platform. Many Possibilities.</h2>
+
+        <p>
+            Start with what you need today and grow with
+            NijaWebbies as the ecosystem expands.
+        </p>
+
+    </div>
+
 
     <div class="cards">
 
         <div class="card">
+
             <div class="icon">✍️</div>
+
             <h3>Free Blogging</h3>
+
             <p>
-                Start your own publishing journey without paying
-                for a website at the beginning.
+                Start publishing articles, stories, opinions
+                and useful information without paying for a
+                website from day one.
             </p>
-            <a href="/register">Start Blogging</a>
+
+            <a href="/register">
+                Start Blogging →
+            </a>
+
         </div>
 
+
         <div class="card">
+
             <div class="icon">🎨</div>
+
             <h3>Creators</h3>
+
             <p>
-                Give Nigerian creators a place to showcase their
-                work, ideas, videos and services.
+                Showcase your videos, music, artwork, skills,
+                ideas and services to people discovering
+                creators on NijaWebbies.
             </p>
-            <a href="/register">Join Free</a>
+
+            <a href="/register">
+                Join as Creator →
+            </a>
+
         </div>
 
+
         <div class="card">
+
             <div class="icon">🏪</div>
+
             <h3>Businesses</h3>
+
             <p>
-                Create a presence for your business and make it
-                easier for people to discover you.
+                Give your business a digital presence and make
+                it easier for customers to discover what you
+                offer.
             </p>
-            <a href="/register">List Business</a>
+
+            <a href="/register">
+                List Business →
+            </a>
+
         </div>
 
+
         <div class="card">
+
             <div class="icon">👥</div>
+
             <h3>Communities</h3>
+
             <p>
-                Build communities around interests, businesses,
-                locations and ideas.
+                Build communities around interests, locations,
+                professions, businesses, schools and ideas.
             </p>
-            <a href="/register">Create Community</a>
+
+            <a href="/register">
+                Create Community →
+            </a>
+
         </div>
 
+
         <div class="card">
+
             <div class="icon">🛠️</div>
-            <h3>Free Tools</h3>
+
+            <h3>Free Digital Tools</h3>
+
             <p>
                 Access useful online tools from one simple
-                Nigerian digital platform.
+                platform instead of searching for different
+                services everywhere.
             </p>
-            <a href="/tools">Explore Tools</a>
+
+            <a href="/tools">
+                Explore Tools →
+            </a>
+
         </div>
 
+
         <div class="card">
+
             <div class="icon">🔎</div>
-            <h3>Search</h3>
+
+            <h3>Search & Discover</h3>
+
             <p>
                 Discover articles, creators, businesses,
-                communities and resources.
+                communities and resources across the
+                NijaWebbies ecosystem.
             </p>
-            <a href="/search">Search Now</a>
+
+            <a href="/search">
+                Search Now →
+            </a>
+
         </div>
 
     </div>
 
 </section>
 
-<section class="section">
+
+<!-- =========================
+     FREE START
+========================= -->
+
+<section class="section free-section">
 
     <div class="free-box">
 
-        <h2>🚀 Start Free</h2>
+        <h2>🚀 Start Online Without Paying From Day One</h2>
 
-        <p style="margin-top:15px; line-height:1.7;">
-            NijaWebbies is being built to give beginners,
-            bloggers, creators and small businesses a place
-            to start online <strong>without paying from day one.</strong>
+        <p>
+            NijaWebbies is being built for beginners,
+            bloggers, creators, entrepreneurs and small
+            businesses that need a place to start.
         </p>
 
-        <p style="margin-top:15px;">
-            Create your account and start building your digital presence.
+        <p>
+            <strong>
+                Create your account for free and begin building
+                your digital presence.
+            </strong>
         </p>
 
-        <a href="/register"
-           style="display:inline-block;
-                  margin-top:25px;
-                  padding:14px 25px;
-                  background:#0b7a3b;
-                  color:white;
-                  text-decoration:none;
-                  border-radius:7px;">
+        <a href="/register" class="free-button">
             Create Free Account
         </a>
 
@@ -325,17 +738,148 @@
 
 </section>
 
+
+<!-- =========================
+     HOW IT WORKS
+========================= -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <h2>How NijaWebbies Works</h2>
+
+        <p>
+            Getting started is simple.
+        </p>
+
+    </div>
+
+
+    <div class="steps">
+
+        <div class="step">
+
+            <div class="step-number">1</div>
+
+            <h3>Create Your Account</h3>
+
+            <p>
+                Join NijaWebbies and create your free digital
+                profile.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">2</div>
+
+            <h3>Choose Your Space</h3>
+
+            <p>
+                Start blogging, create a business presence,
+                showcase your work or build a community.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">3</div>
+
+            <h3>Grow</h3>
+
+            <p>
+                Publish, connect with people and build your
+                digital presence over time.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CTA
+========================= -->
+
+<section class="cta">
+
+    <h2>Ready to Start?</h2>
+
+    <p>
+        Join the growing NijaWebbies ecosystem and start
+        building your presence online.
+    </p>
+
+    <a href="/register" class="cta-button">
+        🇳🇬 Join NijaWebbies Free
+    </a>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
 <footer>
 
-    <h3>NijaWebbies</h3>
+    <div class="footer-content">
 
-    <p style="margin-top:10px;">
-        A free digital ecosystem for Nigerians and the world.
-    </p>
+        <div>
 
-    <p style="margin-top:15px; font-size:13px;">
+            <h3>🇳🇬 NijaWebbies</h3>
+
+            <p>
+                A free digital ecosystem for Nigeria,
+                Africa and the world.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h3>Explore</h3>
+
+            <div class="footer-links">
+
+                <a href="/">Home</a>
+                <a href="/search">Search</a>
+                <a href="/tools">Free Tools</a>
+
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <h3>Account</h3>
+
+            <div class="footer-links">
+
+                <a href="/register">Join Free</a>
+                <a href="/login">Login</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="copyright">
+
         © 2026 NijaWebbies. All rights reserved.
-    </p>
+
+    </div>
 
 </footer>
 
