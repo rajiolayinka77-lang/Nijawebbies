@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NijaWebbies</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: #ffffff;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #172033;
+            margin-left: 15px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #5b6475;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        .search-box {
+            margin: 30px auto;
+            max-width: 650px;
+            display: flex;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px 0 0 10px;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            padding: 16px 25px;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            background: #111827;
+            color: white;
+            font-size: 16px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 20px auto 70px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #111827;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🌍 NijaWebbies</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+        <a href="/register">Join</a>
+    </nav>
+</header>
+
+<section class="hero">
+
+    <h1>Welcome to NijaWebbies</h1>
+
+    <p>
+        A new digital ecosystem where people can search,
+        create, publish, connect, build and grow online.
+    </p>
+
+    <form class="search-box" action="/search" method="get">
+        <input
+            type="text"
+            name="q"
+            placeholder="Search NijaWebbies..."
+        >
+
+        <button type="submit">Search</button>
+    </form>
+
+</section>
+
+<section class="features">
+
+    <div class="card">
+        <h3>🔎 Search</h3>
+        <p>
+            Discover websites, creators, businesses,
+            articles and communities.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>✍️ Create</h3>
+        <p>
+            Create your own content and publish it
+            on NijaWebbies.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>💼 Workspace</h3>
+        <p>
+            Your personal space for building and
+            managing your online activities.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>🌍 Community</h3>
+        <p>
+            Connect with people, businesses,
+            creators and communities.
+        </p>
+    </div>
+
+</section>
+
+<footer>
+    © 2026 NijaWebbies — Building our own digital ecosystem.
+</footer>
+
+</body>
+                                      </html>
