@@ -164,7 +164,349 @@
             managing your online activities.
         </p>
     </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NijaWebbies - Nigeria's Free Digital Ecosystem</title>
 
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+        header {
+            background: #0b7a3b;
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+            font-size: 14px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0b7a3b, #075b2c);
+            color: white;
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: auto;
+            line-height: 1.6;
+        }
+
+        .search-box {
+            margin: 30px auto 0;
+            max-width: 650px;
+            display: flex;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            padding: 16px 25px;
+            border: none;
+            background: #f5b400;
+            color: #111;
+            font-weight: bold;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+        }
+
+        .section {
+            padding: 45px 5%;
+            text-align: center;
+        }
+
+        .section h2 {
+            color: #075b2c;
+            margin-bottom: 10px;
+        }
+
+        .section-intro {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 28px 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card .icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            color: #075b2c;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .card a {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 18px;
+            background: #0b7a3b;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .free-box {
+            background: #fff;
+            padding: 40px 20px;
+            margin: 20px auto;
+            max-width: 900px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        .free-box strong {
+            color: #0b7a3b;
+        }
+
+        footer {
+            background: #123;
+            color: white;
+            text-align: center;
+            padding: 30px 15px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav a {
+                margin: 0 6px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box input,
+            .search-box button {
+                border-radius: 7px;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🇳🇬 NijaWebbies</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/register">Join Free</a>
+        <a href="/login">Login</a>
+    </nav>
+</header>
+
+<section class="hero">
+
+    <h1>Welcome to NijaWebbies</h1>
+
+    <p>
+        Nigeria's growing free digital ecosystem for bloggers,
+        creators, businesses, communities and everyday internet users.
+    </p>
+
+    <form class="search-box" action="/search" method="GET">
+        <input
+            type="text"
+            name="q"
+            placeholder="Search NijaWebbies..."
+            required
+        >
+
+        <button type="submit">Search</button>
+    </form>
+
+</section>
+
+<section class="section">
+
+    <h2>Everything You Need Online</h2>
+
+    <p class="section-intro">
+        Start free. Create, publish, discover and grow.
+    </p>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="icon">✍️</div>
+            <h3>Free Blogging</h3>
+            <p>
+                Start your own publishing journey without paying
+                for a website at the beginning.
+            </p>
+            <a href="/register">Start Blogging</a>
+        </div>
+
+        <div class="card">
+            <div class="icon">🎨</div>
+            <h3>Creators</h3>
+            <p>
+                Give Nigerian creators a place to showcase their
+                work, ideas, videos and services.
+            </p>
+            <a href="/register">Join Free</a>
+        </div>
+
+        <div class="card">
+            <div class="icon">🏪</div>
+            <h3>Businesses</h3>
+            <p>
+                Create a presence for your business and make it
+                easier for people to discover you.
+            </p>
+            <a href="/register">List Business</a>
+        </div>
+
+        <div class="card">
+            <div class="icon">👥</div>
+            <h3>Communities</h3>
+            <p>
+                Build communities around interests, businesses,
+                locations and ideas.
+            </p>
+            <a href="/register">Create Community</a>
+        </div>
+
+        <div class="card">
+            <div class="icon">🛠️</div>
+            <h3>Free Tools</h3>
+            <p>
+                Access useful online tools from one simple
+                Nigerian digital platform.
+            </p>
+            <a href="/tools">Explore Tools</a>
+        </div>
+
+        <div class="card">
+            <div class="icon">🔎</div>
+            <h3>Search</h3>
+            <p>
+                Discover articles, creators, businesses,
+                communities and resources.
+            </p>
+            <a href="/search">Search Now</a>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="section">
+
+    <div class="free-box">
+
+        <h2>🚀 Start Free</h2>
+
+        <p style="margin-top:15px; line-height:1.7;">
+            NijaWebbies is being built to give beginners,
+            bloggers, creators and small businesses a place
+            to start online <strong>without paying from day one.</strong>
+        </p>
+
+        <p style="margin-top:15px;">
+            Create your account and start building your digital presence.
+        </p>
+
+        <a href="/register"
+           style="display:inline-block;
+                  margin-top:25px;
+                  padding:14px 25px;
+                  background:#0b7a3b;
+                  color:white;
+                  text-decoration:none;
+                  border-radius:7px;">
+            Create Free Account
+        </a>
+
+    </div>
+
+</section>
+
+<footer>
+
+    <h3>NijaWebbies</h3>
+
+    <p style="margin-top:10px;">
+        A free digital ecosystem for Nigerians and the world.
+    </p>
+
+    <p style="margin-top:15px; font-size:13px;">
+        © 2026 NijaWebbies. All rights reserved.
+    </p>
+
+</footer>
+
+</body>
+            </html>
     <div class="card">
         <h3>🌍 Community</h3>
         <p>
@@ -178,6 +520,3 @@
 <footer>
     © 2026 NijaWebbies — Building our own digital ecosystem.
 </footer>
-
-</body>
-                                      </html>
