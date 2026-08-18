@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Search NijaWebbies</title>
+
+    <meta name="description"
+          content="Search articles and content across the NijaWebbies digital ecosystem.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #22c55e;
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #22c55e;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 30px 18px 60px;
+        }
+
+        .hero {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            margin-top: 0;
+            font-size: 30px;
+        }
+
+        .hero p {
+            color: #64748b;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            padding: 14px 22px;
+            background: #0b7a3b;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background: #096832;
+        }
+
+        .results {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .results h2 {
+            margin-top: 0;
+        }
+
+        .post {
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .post h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .post h3 a {
+            color: #166534;
+            text-decoration: none;
+        }
+
+        .post h3 a:hover {
+            text-decoration: underline;
+        }
+
+        .author {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .content {
+            color: #475569;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 10px;
+            color: #0b7a3b;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px 15px;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav {
+                gap: 12px;
+            }
+
+            .hero h1 {
+                font-size: 25px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box button {
+                width: 100%;
+            }
+
+            main {
+                padding: 20px 12px 45px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        🇳🇬 Nija<span>Webbies</span>
+    </div>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('search') }}">Explore</a>
+        <a href="{{ url_for('tools') }}">Tools</a>
+
+        {% if session.get("user_id") %}
+            <a href="{{ url_for('workspace') }}">Workspace</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Join Free</a>
+        {% endif %}
+    </nav>
+
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <h1>🔎 Search NijaWebbies</h1>
+
+        <p>
+            Discover articles, stories and useful content
+            published on NijaWebbies.
+        </p>
+
+        <form method="GET"
+              action="{{ url_for('search') }}"
+              class="search-box">
+
+            <input
+                type="search"
+                name="q"
+                value="{{ query or '' }}"
+                placeholder="Search NijaWebbies..."
+                autocomplete="off"
+            >
+
+            <button type="submit">
+                🔎 Search
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <section class="results">
+
+        {% if query %}
+
+            <h2>
+                Search results for "{{ query }}"
+            </h2>
+
+            {% if posts %}
+
+                {% for post in posts %}
+
+                    <article class="post">
+
+                        <h3>
+                            <a href="{{ url_for('view_post', post_id=post.id) }}">
+                                {{ post.title }}
+                            </a>
+                        </h3>
+
+                        <div class="author">
+                            ✍️ Published by {{ post.name }}
+                        </div>
+
+                        <div class="content">
+                            {{ post.content[:250] }}
+
+                            {% if post.content|length > 250 %}
+                                ...
+                            {% endif %}
+                        </div>
+
+                        <a
+                            class="read-more"
+                            href="{{ url_for('view_post', post_id=post.id) }}"
+                        >
+                            Read Article →
+                        </a>
+
+                    </article>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+
+                    <div class="empty-icon">🔍</div>
+
+                    <h3>No results found</h3>
+
+                    <p>
+                        We couldn't find anything matching
+                        "{{ query }}".
+                    </p>
+
+                    <p>
+                        Try another search.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="empty">
+
+                <div class="empty-icon">🔎</div>
+
+                <h3>Search NijaWebbies</h3>
+
+                <p>
+                    Enter a word or topic above to discover
+                    articles and content.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+</main>
+
+
+<footer>
+
+    🇳🇬 NijaWebbies — Built for Nigeria & Africa
+
+    <br><br>
+
+    © 2026 NijaWebbies. All rights reserved.
+
+</footer>
+
+</body>
+</html>
