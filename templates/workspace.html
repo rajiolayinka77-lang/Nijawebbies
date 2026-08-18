@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NijaWebbies Workspace</title>
+
+    <meta name="description"
+          content="NijaWebbies free digital workspace for creators, bloggers, businesses and communities.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #22c55e;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-name {
+            font-size: 14px;
+        }
+
+        .logout {
+            background: #ef4444;
+            color: white;
+            padding: 9px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px 18px 50px;
+        }
+
+        .welcome {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .welcome h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #64748b;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .tool {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .tool:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.10);
+        }
+
+        .icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .tool h3 {
+            margin: 5px 0 8px;
+        }
+
+        .tool p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px 10px;
+            color: #64748b;
+        }
+
+        .post {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .post h3 {
+            margin-top: 0;
+        }
+
+        .post p {
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .cta {
+            margin-top: 25px;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white;
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .cta h2 {
+            margin-top: 0;
+        }
+
+        .cta p {
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+            background: white;
+            color: #166534;
+            padding: 11px 17px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 13px 15px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .welcome h1 {
+                font-size: 23px;
+            }
+
+            main {
+                padding: 18px 12px 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        Nija<span>Webbies</span>
+    </div>
+
+    <div class="user-area">
+        <span class="user-name">
+            Welcome, {{ user_name or "User" }}
+        </span>
+
+        <a href="{{ url_for('logout') }}" class="logout">
+            Logout
+        </a>
+    </div>
+</header>
+
+<main>
+
+    <section class="welcome">
+
+        <div class="badge">
+            🇳🇬 NijaWebbies Workspace
+        </div>
+
+        <h1>
+            Welcome, {{ user_name or "User" }} 👋
+        </h1>
+
+        <p>
+            This is your free digital workspace. Create, publish,
+            discover and grow your online presence with NijaWebbies.
+        </p>
+
+    </section>
+
+
+    <section class="tools">
+
+        <a href="#" class="tool">
+            <div class="icon">✍️</div>
+            <h3>Blog & Publishing</h3>
+            <p>
+                Write and publish articles, stories, news and useful
+                content for your audience.
+            </p>
+        </a>
+
+        <a href="#" class="tool">
+            <div class="icon">🎨</div>
+            <h3>Creator Studio</h3>
+            <p>
+                A future home for creators to manage their digital
+                content and creative projects.
+            </p>
+        </a>
+
+        <a href="#" class="tool">
+            <div class="icon">🏪</div>
+            <h3>Business Space</h3>
+            <p>
+                Build your online business presence and connect with
+                customers.
+            </p>
+        </a>
+
+        <a href="#" class="tool">
+            <div class="icon">🔎</div>
+            <h3>Web Search</h3>
+            <p>
+                Discover useful information, websites, services and
+                resources across the internet.
+            </p>
+        </a>
+
+        <a href="#" class="tool">
+            <div class="icon">👥</div>
+            <h3>Communities</h3>
+            <p>
+                Create and grow communities around interests,
+                businesses, locations and ideas.
+            </p>
+        </a>
+
+        <a href="#" class="tool">
+            <div class="icon">🛠️</div>
+            <h3>Free Online Tools</h3>
+            <p>
+                Access useful digital tools designed to make everyday
+                internet activities easier.
+            </p>
+        </a>
+
+    </section>
+
+
+    <section class="section">
+
+        <h2>📰 Your Published Posts</h2>
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+                <div class="post">
+
+                    <h3>
+                        {{ post.title or "Untitled Post" }}
+                    </h3>
+
+                    <p>
+                        {{ post.content or "" }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+
+                <div style="font-size:45px;">📝</div>
+
+                <h3>You haven't published anything yet.</h3>
+
+                <p>
+                    Your posts will appear here when you start publishing
+                    on NijaWebbies.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <section class="cta">
+
+        <h2>🚀 Your digital journey starts here</h2>
+
+        <p>
+            NijaWebbies is being built as a free digital ecosystem
+            for bloggers, creators, businesses, communities and
+            everyday internet users.
+        </p>
+
+        <a href="{{ url_for('home') }}" class="button">
+            Back to Home
+        </a>
+
+    </section>
+
+</main>
+
+<footer>
+    © 2026 NijaWebbies — Built for Nigeria & Africa 🇳🇬
+</footer>
+
+</body>
+</html>
