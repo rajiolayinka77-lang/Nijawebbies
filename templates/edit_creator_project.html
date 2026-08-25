@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Creator Project — NijaWebbies</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #17202a;
+        }
+
+        header {
+            background: #0b7a3b;
+            color: white;
+            padding: 16px 20px;
+        }
+
+        .nav {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .intro {
+            color: #667085;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .buttons {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button,
+        .back {
+            padding: 13px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            font-size: 15px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            background: #0b7a3b;
+            color: white;
+        }
+
+        .back {
+            background: #e9eef2;
+            color: #17202a;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 30px 20px;
+            background: #17202a;
+            color: white;
+            text-align: center;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="nav">
+
+        <div class="logo">
+            🇳🇬 NijaWebbies
+        </div>
+
+        <div>
+            <a href="/workspace">Workspace</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div class="card">
+
+        <h1>✏️ Edit Creator Project</h1>
+
+        <p class="intro">
+            Update your project title, type, description or status.
+        </p>
+
+
+        <form method="POST">
+
+            <label for="title">
+                Project Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="{{ project['title'] }}"
+                required
+            >
+
+
+            <label for="project_type">
+                Project Type
+            </label>
+
+            <select
+                id="project_type"
+                name="project_type"
+            >
+
+                <option value="General"
+                    {% if project['project_type'] == 'General' %}selected{% endif %}>
+                    General
+                </option>
+
+                <option value="Video"
+                    {% if project['project_type'] == 'Video' %}selected{% endif %}>
+                    🎥 Video
+                </option>
+
+                <option value="Blog"
+                    {% if project['project_type'] == 'Blog' %}selected{% endif %}>
+                    ✍️ Blog
+                </option>
+
+                <option value="Social Media"
+                    {% if project['project_type'] == 'Social Media' %}selected{% endif %}>
+                    📱 Social Media
+                </option>
+
+                <option value="Artwork"
+                    {% if project['project_type'] == 'Artwork' %}selected{% endif %}>
+                    🎨 Artwork
+                </option>
+
+                <option value="Music"
+                    {% if project['project_type'] == 'Music' %}selected{% endif %}>
+                    🎵 Music
+                </option>
+
+                <option value="Podcast"
+                    {% if project['project_type'] == 'Podcast' %}selected{% endif %}>
+                    🎙️ Podcast
+                </option>
+
+                <option value="Business Content"
+                    {% if project['project_type'] == 'Business Content' %}selected{% endif %}>
+                    🏪 Business Content
+                </option>
+
+            </select>
+
+
+            <label for="status">
+                Project Status
+            </label>
+
+            <select
+                id="status"
+                name="status"
+            >
+
+                <option value="Idea"
+                    {% if project['status'] == 'Idea' %}selected{% endif %}>
+                    💡 Idea
+                </option>
+
+                <option value="Draft"
+                    {% if project['status'] == 'Draft' %}selected{% endif %}>
+                    📝 Draft
+                </option>
+
+                <option value="In Production"
+                    {% if project['status'] == 'In Production' %}selected{% endif %}>
+                    🎬 In Production
+                </option>
+
+                <option value="Published"
+                    {% if project['status'] == 'Published' %}selected{% endif %}>
+                    ✅ Published
+                </option>
+
+            </select>
+
+
+            <label for="description">
+                Project Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+            >{{ project['description'] or '' }}</textarea>
+
+
+            <div class="buttons">
+
+                <button type="submit">
+                    💾 Save Changes
+                </button>
+
+                <a
+                    class="back"
+                    href="/creator-studio"
+                >
+                    ← Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <strong>🇳🇬 NijaWebbies</strong>
+
+    <p>
+        A free digital ecosystem for Nigeria, Africa and the world.
+    </p>
+
+    <p>
+        <a href="/workspace">
+            Back to Workspace
+        </a>
+    </p>
+
+    <p>
+        © 2026 NijaWebbies. All rights reserved.
+    </p>
+
+</footer>
+
+</body>
+
+</html>
