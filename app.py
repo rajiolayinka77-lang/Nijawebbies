@@ -28,6 +28,7 @@ def get_db():
 def init_db():
     conn = get_db()
 
+    # USERS
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,6 +39,7 @@ def init_db():
         )
     """)
 
+    # BLOG POSTS
     conn.execute("""
         CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +47,61 @@ def init_db():
             title TEXT NOT NULL,
             content TEXT NOT NULL,
             created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+
+    # CREATOR PROJECTS
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS creator_projects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            project_type TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+
+    # BUSINESS PROFILES
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS business_profiles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            business_name TEXT NOT NULL,
+            description TEXT,
+            category TEXT,
+            phone TEXT,
+            location TEXT,
+            website TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+
+    # COMMUNITIES
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS communities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            owner_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            description TEXT,
+            category TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (owner_id) REFERENCES users(id)
+        )
+    """)
+
+    # COMMUNITY MEMBERS
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS community_members (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            community_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            joined_at TEXT NOT NULL,
+            UNIQUE(community_id, user_id),
+            FOREIGN KEY (community_id) REFERENCES communities(id),
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     """)
@@ -101,7 +158,10 @@ def register():
             return redirect(url_for("register"))
 
         if len(password) < 6:
-            flash("Password must be at least 6 characters.", "danger")
+            flash(
+                "Password must be at least 6 characters.",
+                "danger"
+            )
             return redirect(url_for("register"))
 
         conn = get_db()
@@ -113,7 +173,10 @@ def register():
 
         if existing_user:
             conn.close()
-            flash("An account with this email already exists.", "danger")
+            flash(
+                "An account with this email already exists.",
+                "danger"
+            )
             return redirect(url_for("register"))
 
         hashed_password = generate_password_hash(password)
@@ -139,115 +202,7 @@ def register():
 
         return redirect(url_for("login"))
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1">
-
-        <title>Join NijaWebbies</title>
-
-        <style>
-
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 30px;
-            }
-
-            .box {
-                max-width: 450px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 5px 20px rgba(0,0,0,.08);
-            }
-
-            input {
-                width: 100%;
-                padding: 13px;
-                margin: 8px 0 15px;
-                box-sizing: border-box;
-            }
-
-            button {
-                width: 100%;
-                padding: 14px;
-                background: #0b7a3b;
-                color: white;
-                border: 0;
-                border-radius: 6px;
-                font-size: 16px;
-            }
-
-            a {
-                color: #0b7a3b;
-            }
-
-        </style>
-
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>🇳🇬 Join NijaWebbies</h1>
-
-        <p>Create your free account.</p>
-
-        <form method="POST">
-
-            <label>Name</label>
-
-            <input
-                type="text"
-                name="name"
-                placeholder="Your name"
-                required
-            >
-
-            <label>Email</label>
-
-            <input
-                type="email"
-                name="email"
-                placeholder="you@example.com"
-                required
-            >
-
-            <label>Password</label>
-
-            <input
-                type="password"
-                name="password"
-                placeholder="At least 6 characters"
-                required
-            >
-
-            <button type="submit">
-                Create Free Account
-            </button>
-
-        </form>
-
-        <p>
-            Already have an account?
-            <a href="/login">Login</a>
-        </p>
-
-        <p>
-            <a href="/">← Back home</a>
-        </p>
-
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template("register.html")
 
 
 # =========================================================
@@ -283,104 +238,12 @@ def login():
 
             return redirect(url_for("workspace"))
 
-        flash("Invalid email or password.", "danger")
+        flash(
+            "Invalid email or password.",
+            "danger"
+        )
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1">
-
-        <title>Login - NijaWebbies</title>
-
-        <style>
-
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 30px;
-            }
-
-            .box {
-                max-width: 450px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 5px 20px rgba(0,0,0,.08);
-            }
-
-            input {
-                width: 100%;
-                padding: 13px;
-                margin: 8px 0 15px;
-                box-sizing: border-box;
-            }
-
-            button {
-                width: 100%;
-                padding: 14px;
-                background: #0b7a3b;
-                color: white;
-                border: 0;
-                border-radius: 6px;
-                font-size: 16px;
-            }
-
-            a {
-                color: #0b7a3b;
-            }
-
-        </style>
-
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>🔐 Login</h1>
-
-        <form method="POST">
-
-            <label>Email</label>
-
-            <input
-                type="email"
-                name="email"
-                required
-            >
-
-            <label>Password</label>
-
-            <input
-                type="password"
-                name="password"
-                required
-            >
-
-            <button type="submit">
-                Login
-            </button>
-
-        </form>
-
-        <p>
-            Don't have an account?
-            <a href="/register">Join free</a>
-        </p>
-
-        <p>
-            <a href="/">← Back home</a>
-        </p>
-
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template("login.html")
 
 
 # =========================================================
@@ -414,11 +277,44 @@ def workspace():
         session["user_id"],
     )).fetchall()
 
+    creator_projects = conn.execute("""
+        SELECT *
+        FROM creator_projects
+        WHERE user_id = ?
+        ORDER BY id DESC
+    """, (
+        session["user_id"],
+    )).fetchall()
+
+    business = conn.execute("""
+        SELECT *
+        FROM business_profiles
+        WHERE user_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+    """, (
+        session["user_id"],
+    )).fetchone()
+
+    communities = conn.execute("""
+        SELECT communities.*
+        FROM communities
+        JOIN community_members
+        ON communities.id = community_members.community_id
+        WHERE community_members.user_id = ?
+        ORDER BY communities.id DESC
+    """, (
+        session["user_id"],
+    )).fetchall()
+
     conn.close()
 
     return render_template(
         "workspace.html",
         posts=posts,
+        creator_projects=creator_projects,
+        business=business,
+        communities=communities,
         user_name=session.get("user_name")
     )
 
@@ -437,12 +333,10 @@ def create_post():
         content = request.form.get("content", "").strip()
 
         if not title or not content:
-
             flash(
                 "Title and content are required.",
                 "danger"
             )
-
             return redirect(url_for("create_post"))
 
         conn = get_db()
@@ -468,102 +362,7 @@ def create_post():
 
         return redirect(url_for("workspace"))
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1">
-
-        <title>Create Post - NijaWebbies</title>
-
-        <style>
-
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 20px;
-            }
-
-            .box {
-                max-width: 800px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-            }
-
-            input,
-            textarea {
-                width: 100%;
-                padding: 14px;
-                margin: 8px 0 20px;
-                box-sizing: border-box;
-            }
-
-            textarea {
-                min-height: 300px;
-            }
-
-            button {
-                padding: 14px 25px;
-                background: #0b7a3b;
-                color: white;
-                border: 0;
-                border-radius: 6px;
-            }
-
-            a {
-                color: #0b7a3b;
-            }
-
-        </style>
-
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>✍️ Create a Post</h1>
-
-        <form method="POST">
-
-            <label>Title</label>
-
-            <input
-                type="text"
-                name="title"
-                placeholder="Your post title"
-                required
-            >
-
-            <label>Content</label>
-
-            <textarea
-                name="content"
-                placeholder="Write your article here..."
-                required
-            ></textarea>
-
-            <button type="submit">
-                Publish Post
-            </button>
-
-        </form>
-
-        <p>
-            <a href="/workspace">
-                ← Back to Workspace
-            </a>
-        </p>
-
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template("create_post.html")
 
 
 # =========================================================
@@ -580,7 +379,7 @@ def edit_post(post_id):
         SELECT *
         FROM posts
         WHERE id = ?
-          AND user_id = ?
+        AND user_id = ?
     """, (
         post_id,
         session["user_id"]
@@ -596,7 +395,6 @@ def edit_post(post_id):
         content = request.form.get("content", "").strip()
 
         if not title or not content:
-
             conn.close()
 
             flash(
@@ -615,7 +413,7 @@ def edit_post(post_id):
             UPDATE posts
             SET title = ?, content = ?
             WHERE id = ?
-              AND user_id = ?
+            AND user_id = ?
         """, (
             title,
             content,
@@ -635,101 +433,10 @@ def edit_post(post_id):
 
     conn.close()
 
-    return f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1">
-
-        <title>Edit Post - NijaWebbies</title>
-
-        <style>
-
-            body {{
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 20px;
-            }}
-
-            .box {{
-                max-width: 800px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-            }}
-
-            input,
-            textarea {{
-                width: 100%;
-                padding: 14px;
-                margin: 8px 0 20px;
-                box-sizing: border-box;
-            }}
-
-            textarea {{
-                min-height: 300px;
-            }}
-
-            button {{
-                padding: 14px 25px;
-                background: #0b7a3b;
-                color: white;
-                border: 0;
-                border-radius: 6px;
-            }}
-
-            a {{
-                color: #0b7a3b;
-            }}
-
-        </style>
-
-    </head>
-
-    <body>
-
-    <div class="box">
-
-        <h1>✏️ Edit Post</h1>
-
-        <form method="POST">
-
-            <label>Title</label>
-
-            <input
-                type="text"
-                name="title"
-                value="{post["title"]}"
-                required
-            >
-
-            <label>Content</label>
-
-            <textarea
-                name="content"
-                required
-            >{post["content"]}</textarea>
-
-            <button type="submit">
-                Save Changes
-            </button>
-
-        </form>
-
-        <p>
-            <a href="/workspace">
-                ← Back to Workspace
-            </a>
-        </p>
-
-    </div>
-
-    </body>
-    </html>
-    """
+    return render_template(
+        "edit_post.html",
+        post=post
+    )
 
 
 # =========================================================
@@ -746,7 +453,7 @@ def delete_post(post_id):
         SELECT id
         FROM posts
         WHERE id = ?
-          AND user_id = ?
+        AND user_id = ?
     """, (
         post_id,
         session["user_id"]
@@ -766,7 +473,7 @@ def delete_post(post_id):
     conn.execute("""
         DELETE FROM posts
         WHERE id = ?
-          AND user_id = ?
+        AND user_id = ?
     """, (
         post_id,
         session["user_id"]
@@ -832,73 +539,10 @@ def view_post(post_id):
     if not post:
         return "Post not found", 404
 
-    return f"""
-    <!DOCTYPE html>
-    <html>
-
-    <head>
-
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1">
-
-        <title>{post["title"]} - NijaWebbies</title>
-
-        <style>
-
-            body {{
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 20px;
-            }}
-
-            article {{
-                max-width: 800px;
-                margin: auto;
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-            }}
-
-            .content {{
-                margin-top: 25px;
-                line-height: 1.8;
-                white-space: pre-wrap;
-            }}
-
-            a {{
-                color: #0b7a3b;
-            }}
-
-        </style>
-
-    </head>
-
-    <body>
-
-    <article>
-
-        <h1>{post["title"]}</h1>
-
-        <p>
-            By <strong>{post["name"]}</strong>
-        </p>
-
-        <div class="content">
-            {post["content"]}
-        </div>
-
-        <br>
-
-        <a href="/blog">
-            ← Back to Blog
-        </a>
-
-    </article>
-
-    </body>
-
-    </html>
-    """
+    return render_template(
+        "view_post.html",
+        post=post
+    )
 
 
 # =========================================================
@@ -923,7 +567,7 @@ def search():
             JOIN users
             ON posts.user_id = users.id
             WHERE posts.title LIKE ?
-               OR posts.content LIKE ?
+            OR posts.content LIKE ?
             ORDER BY posts.id DESC
         """, (
             f"%{query}%",
@@ -944,112 +588,508 @@ def search():
 
 
 # =========================================================
-# FREE TOOLS
+# CREATOR STUDIO
+# =========================================================
+
+@app.route("/creator-studio", methods=["GET", "POST"])
+@login_required
+def creator_studio():
+
+    conn = get_db()
+
+    if request.method == "POST":
+
+        title = request.form.get(
+            "title",
+            ""
+        ).strip()
+
+        description = request.form.get(
+            "description",
+            ""
+        ).strip()
+
+        project_type = request.form.get(
+            "project_type",
+            "General"
+        ).strip()
+
+        if not title:
+
+            conn.close()
+
+            flash(
+                "Please enter a project title.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("creator_studio")
+            )
+
+        conn.execute("""
+            INSERT INTO creator_projects
+            (
+                user_id,
+                title,
+                description,
+                project_type,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            session["user_id"],
+            title,
+            description,
+            project_type,
+            datetime.utcnow().isoformat()
+        ))
+
+        conn.commit()
+
+        flash(
+            "Creator project added successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for("creator_studio")
+        )
+
+    projects = conn.execute("""
+        SELECT *
+        FROM creator_projects
+        WHERE user_id = ?
+        ORDER BY id DESC
+    """, (
+        session["user_id"],
+    )).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "creator_studio.html",
+        projects=projects,
+        user_name=session.get("user_name")
+    )
+
+
+# =========================================================
+# DELETE CREATOR PROJECT
+# =========================================================
+
+@app.route(
+    "/delete-creator-project/<int:project_id>",
+    methods=["POST"]
+)
+@login_required
+def delete_creator_project(project_id):
+
+    conn = get_db()
+
+    conn.execute("""
+        DELETE FROM creator_projects
+        WHERE id = ?
+        AND user_id = ?
+    """, (
+        project_id,
+        session["user_id"]
+    ))
+
+    conn.commit()
+    conn.close()
+
+    flash(
+        "Creator project deleted.",
+        "success"
+    )
+
+    return redirect(
+        url_for("creator_studio")
+    )
+
+
+# =========================================================
+# BUSINESS SPACE
+# =========================================================
+
+@app.route("/business-space", methods=["GET", "POST"])
+@login_required
+def business_space():
+
+    conn = get_db()
+
+    if request.method == "POST":
+
+        business_name = request.form.get(
+            "business_name",
+            ""
+        ).strip()
+
+        description = request.form.get(
+            "description",
+            ""
+        ).strip()
+
+        category = request.form.get(
+            "category",
+            ""
+        ).strip()
+
+        phone = request.form.get(
+            "phone",
+            ""
+        ).strip()
+
+        location = request.form.get(
+            "location",
+            ""
+        ).strip()
+
+        website = request.form.get(
+            "website",
+            ""
+        ).strip()
+
+        if not business_name:
+
+            conn.close()
+
+            flash(
+                "Business name is required.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("business_space")
+            )
+
+        existing = conn.execute("""
+            SELECT id
+            FROM business_profiles
+            WHERE user_id = ?
+            LIMIT 1
+        """, (
+            session["user_id"],
+        )).fetchone()
+
+        if existing:
+
+            conn.execute("""
+                UPDATE business_profiles
+                SET
+                    business_name = ?,
+                    description = ?,
+                    category = ?,
+                    phone = ?,
+                    location = ?,
+                    website = ?
+                WHERE id = ?
+                AND user_id = ?
+            """, (
+                business_name,
+                description,
+                category,
+                phone,
+                location,
+                website,
+                existing["id"],
+                session["user_id"]
+            ))
+
+        else:
+
+            conn.execute("""
+                INSERT INTO business_profiles
+                (
+                    user_id,
+                    business_name,
+                    description,
+                    category,
+                    phone,
+                    location,
+                    website,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                session["user_id"],
+                business_name,
+                description,
+                category,
+                phone,
+                location,
+                website,
+                datetime.utcnow().isoformat()
+            ))
+
+        conn.commit()
+        conn.close()
+
+        flash(
+            "Business profile saved successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for("business_space")
+        )
+
+    business = conn.execute("""
+        SELECT *
+        FROM business_profiles
+        WHERE user_id = ?
+        LIMIT 1
+    """, (
+        session["user_id"],
+    )).fetchone()
+
+    conn.close()
+
+    return render_template(
+        "business_space.html",
+        business=business,
+        user_name=session.get("user_name")
+    )
+
+
+# =========================================================
+# COMMUNITIES
+# =========================================================
+
+@app.route("/communities", methods=["GET", "POST"])
+@login_required
+def communities():
+
+    conn = get_db()
+
+    if request.method == "POST":
+
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
+
+        description = request.form.get(
+            "description",
+            ""
+        ).strip()
+
+        category = request.form.get(
+            "category",
+            ""
+        ).strip()
+
+        if not name:
+
+            conn.close()
+
+            flash(
+                "Community name is required.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("communities")
+            )
+
+        cursor = conn.execute("""
+            INSERT INTO communities
+            (
+                owner_id,
+                name,
+                description,
+                category,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            session["user_id"],
+            name,
+            description,
+            category,
+            datetime.utcnow().isoformat()
+        ))
+
+        community_id = cursor.lastrowid
+
+        conn.execute("""
+            INSERT INTO community_members
+            (
+                community_id,
+                user_id,
+                joined_at
+            )
+            VALUES (?, ?, ?)
+        """, (
+            community_id,
+            session["user_id"],
+            datetime.utcnow().isoformat()
+        ))
+
+        conn.commit()
+
+        flash(
+            "Community created successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for("communities")
+        )
+
+    all_communities = conn.execute("""
+        SELECT
+            communities.*,
+            users.name AS owner_name
+        FROM communities
+        JOIN users
+        ON communities.owner_id = users.id
+        ORDER BY communities.id DESC
+    """).fetchall()
+
+    my_communities = conn.execute("""
+        SELECT communities.*
+        FROM communities
+        JOIN community_members
+        ON communities.id = community_members.community_id
+        WHERE community_members.user_id = ?
+        ORDER BY communities.id DESC
+    """, (
+        session["user_id"],
+    )).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "communities.html",
+        communities=all_communities,
+        my_communities=my_communities,
+        user_name=session.get("user_name")
+    )
+
+
+# =========================================================
+# JOIN COMMUNITY
+# =========================================================
+
+@app.route(
+    "/join-community/<int:community_id>",
+    methods=["POST"]
+)
+@login_required
+def join_community(community_id):
+
+    conn = get_db()
+
+    community = conn.execute("""
+        SELECT id
+        FROM communities
+        WHERE id = ?
+    """, (
+        community_id,
+    )).fetchone()
+
+    if not community:
+
+        conn.close()
+
+        flash(
+            "Community not found.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("communities")
+        )
+
+    try:
+
+        conn.execute("""
+            INSERT INTO community_members
+            (
+                community_id,
+                user_id,
+                joined_at
+            )
+            VALUES (?, ?, ?)
+        """, (
+            community_id,
+            session["user_id"],
+            datetime.utcnow().isoformat()
+        ))
+
+        conn.commit()
+
+        flash(
+            "You joined the community.",
+            "success"
+        )
+
+    except sqlite3.IntegrityError:
+
+        flash(
+            "You are already a member of this community.",
+            "warning"
+        )
+
+    conn.close()
+
+    return redirect(
+        url_for("communities")
+    )
+
+
+# =========================================================
+# FREE ONLINE TOOLS
 # =========================================================
 
 @app.route("/tools")
 def tools():
 
+    return render_template(
+        "tools.html"
+    )
+
+
+# =========================================================
+# ERROR HANDLERS
+# =========================================================
+
+@app.errorhandler(404)
+def page_not_found(error):
+
     return """
     <!DOCTYPE html>
-
     <html>
-
     <head>
-
         <meta name="viewport"
               content="width=device-width, initial-scale=1">
-
-        <title>NijaWebbies Free Tools</title>
-
-        <style>
-
-            body {
-                font-family: Arial;
-                background: #f5f7fa;
-                padding: 25px;
-            }
-
-            .box {
-                max-width: 900px;
-                margin: auto;
-            }
-
-            .tool {
-                background: white;
-                padding: 25px;
-                margin: 15px 0;
-                border-radius: 12px;
-            }
-
-            a {
-                color: #0b7a3b;
-            }
-
-        </style>
-
+        <title>Page Not Found - NijaWebbies</title>
     </head>
 
-    <body>
+    <body style="
+        font-family:Arial;
+        text-align:center;
+        padding:50px;
+        background:#f5f7fb;
+    ">
 
-    <div class="box">
+        <h1>404</h1>
 
-        <h1>🛠️ NijaWebbies Free Tools</h1>
+        <h2>Page not found</h2>
 
         <p>
-            Useful tools will be added here as NijaWebbies grows.
+            The page you are looking for does not exist.
         </p>
 
-        <div class="tool">
-
-            <h3>✍️ Writing Tools</h3>
-
-            <p>
-                Writing and text tools coming soon.
-            </p>
-
-        </div>
-
-        <div class="tool">
-
-            <h3>📊 Business Tools</h3>
-
-            <p>
-                Business productivity tools coming soon.
-            </p>
-
-        </div>
-
-        <div class="tool">
-
-            <h3>🎨 Creator Tools</h3>
-
-            <p>
-                Creator tools coming soon.
-            </p>
-
-        </div>
-
-        <div class="tool">
-
-            <h3>🔧 Productivity Tools</h3>
-
-            <p>
-                Productivity tools coming soon.
-            </p>
-
-        </div>
-
         <a href="/">
-            ← Back home
+            ← Back to NijaWebbies
         </a>
 
-    </div>
-
     </body>
-
     </html>
-    """
+    """, 404
 
 
 # =========================================================
