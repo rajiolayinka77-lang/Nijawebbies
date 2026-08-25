@@ -5,10 +5,8 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Login — NijaWebbies</title>
 
@@ -21,9 +19,7 @@
         body {
             margin: 0;
             min-height: 100vh;
-
             font-family: Arial, sans-serif;
-
             background: linear-gradient(
                 135deg,
                 #071a2b,
@@ -38,6 +34,7 @@
         }
 
         .login-box {
+
             width: 100%;
             max-width: 430px;
 
@@ -48,10 +45,12 @@
             border-radius: 18px;
 
             box-shadow:
-                0 15px 40px rgba(0,0,0,0.25);
+                0 15px 40px
+                rgba(0,0,0,0.25);
         }
 
         .logo {
+
             text-align: center;
 
             font-size: 30px;
@@ -64,6 +63,7 @@
         }
 
         .subtitle {
+
             text-align: center;
 
             color: #666;
@@ -72,6 +72,7 @@
         }
 
         label {
+
             display: block;
 
             margin-bottom: 7px;
@@ -90,15 +91,15 @@
 
             margin-bottom: 18px;
 
-            border: 1px solid #ccc;
+            border:
+                1px solid #ccc;
 
             border-radius: 10px;
 
             font-size: 16px;
         }
 
-        input[type="email"]:focus,
-        input[type="password"]:focus {
+        input:focus {
 
             outline: none;
 
@@ -111,22 +112,21 @@
 
             align-items: center;
 
-            gap: 9px;
+            gap: 8px;
 
             margin-bottom: 18px;
 
             color: #555;
+
+            font-size: 14px;
         }
 
-        .remember input[type="checkbox"] {
+        .remember input {
 
             width: 18px;
-
             height: 18px;
 
             margin: 0;
-
-            cursor: pointer;
         }
 
         .remember label {
@@ -136,8 +136,6 @@
             font-weight: normal;
 
             cursor: pointer;
-
-            color: #555;
         }
 
         button {
@@ -186,10 +184,6 @@
 
         .flash {
 
-            background: #ffe8e8;
-
-            color: #a00000;
-
             padding: 12px;
 
             border-radius: 8px;
@@ -197,6 +191,17 @@
             margin-bottom: 18px;
 
             text-align: center;
+
+            background: #ffe8e8;
+
+            color: #a00000;
+        }
+
+        .flash.success {
+
+            background: #e7f8ed;
+
+            color: #08752d;
         }
 
         .home {
@@ -217,12 +222,13 @@
 
 </head>
 
+
 <body>
 
 <div class="login-box">
 
     <div class="logo">
-        NijaWebbies
+        🇳🇬 NijaWebbies
     </div>
 
     <div class="subtitle">
@@ -230,13 +236,13 @@
     </div>
 
 
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
 
         {% if messages %}
 
-            {% for message in messages %}
+            {% for category, message in messages %}
 
-                <div class="flash">
+                <div class="flash {{ category }}">
                     {{ message }}
                 </div>
 
@@ -247,10 +253,9 @@
     {% endwith %}
 
 
-    <form
-        method="POST"
-        action="{{ url_for('login') }}"
-    >
+    <form method="POST"
+          action="{{ url_for('login', next=request.args.get('next', '')) }}">
+
 
         <label for="email">
             Email
@@ -260,8 +265,9 @@
             type="email"
             id="email"
             name="email"
+            value="{{ email|default('') }}"
             placeholder="Enter your email"
-            autocomplete="username"
+            autocomplete="email"
             required
         >
 
@@ -286,10 +292,11 @@
                 type="checkbox"
                 id="remember"
                 name="remember"
+                value="1"
             >
 
             <label for="remember">
-                Remember me for 30 days
+                Keep me logged in for 30 days
             </label>
 
         </div>
