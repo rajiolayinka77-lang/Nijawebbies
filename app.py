@@ -3,14 +3,31 @@ import sqlite3
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
+
+# =========================================================
+# SECURITY / SESSION SETTINGS
+# =========================================================
 
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
     "nijawebbies-development-secret"
 )
+
+# Session settings
+app.config["SESSION_PERMANENT"] = False
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
+
+# Secure session cookie settings
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+# Render runs through HTTPS
+if os.environ.get("RENDER"):
+    app.config["SESSION_COOKIE_SECURE"] = True
+
 
 DATABASE = "nijawebbies.db"
 
@@ -65,11 +82,7 @@ def init_db():
         )
     """)
 
-    # -----------------------------------------------------
     # SAFE DATABASE UPGRADE
-    # Adds status to older databases that don't have it.
-    # -----------------------------------------------------
-
     creator_columns = conn.execute(
         "PRAGMA table_info(creator_projects)"
     ).fetchall()
@@ -148,7 +161,10 @@ def login_required(view):
                 "Please login to continue.",
                 "warning"
             )
-            return redirect(url_for("login"))
+
+            return redirect(
+                url_for("login")
+            )
 
         return view(*args, **kwargs)
 
@@ -161,7 +177,10 @@ def login_required(view):
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+
+    return render_template(
+        "home.html"
+    )
 
 
 # =========================================================
@@ -281,6 +300,22 @@ def login():
             ""
         )
 
+        # Remember Me checkbox
+        remember = request.form.get(
+            "remember"
+        ) == "on"
+
+        if not email or not password:
+
+            flash(
+                "Please enter your email and password.",
+                "danger"
+            )
+
+            return render_template(
+                "login.html"
+            )
+
         conn = get_db()
 
         user = conn.execute(
@@ -290,15 +325,26 @@ def login():
 
         conn.close()
 
+        # Check password
         if user and check_password_hash(
             user["password"],
             password
         ):
 
+            # Remove old session information
             session.clear()
 
+            # Keep the login for 30 days if selected
+            session.permanent = remember
+
+            # Store safe account information only
             session["user_id"] = user["id"]
             session["user_name"] = user["name"]
+
+            flash(
+                "Welcome back, " + user["name"] + "!",
+                "success"
+            )
 
             return redirect(
                 url_for("workspace")
@@ -1353,9 +1399,11 @@ def page_not_found(error):
     return """
     <!DOCTYPE html>
     <html>
+
     <head>
         <meta name="viewport"
               content="width=device-width, initial-scale=1">
+
         <title>Page Not Found - NijaWebbies</title>
     </head>
 
@@ -1389,9 +1437,11 @@ def internal_server_error(error):
     return """
     <!DOCTYPE html>
     <html>
+
     <head>
         <meta name="viewport"
               content="width=device-width, initial-scale=1">
+
         <title>NijaWebbies - Error</title>
     </head>
 
