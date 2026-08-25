@@ -8,26 +8,24 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 # =========================================================
-# SECURITY / SESSION SETTINGS
+# APP CONFIGURATION
 # =========================================================
 
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
-    "nijawebbies-development-secret"
+    "nijawebbies-development-secret-change-this"
 )
 
-# Session settings
-app.config["SESSION_PERMANENT"] = False
+# Keep login sessions for 30 days when "Remember me" is used
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
-# Secure session cookie settings
+# Safer cookie settings for production
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-# Render runs through HTTPS
+# Render uses HTTPS
 if os.environ.get("RENDER"):
     app.config["SESSION_COOKIE_SECURE"] = True
-
 
 DATABASE = "nijawebbies.db"
 
@@ -37,15 +35,24 @@ DATABASE = "nijawebbies.db"
 # =========================================================
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE, timeout=30)
     conn.row_factory = sqlite3.Row
+
+    # Helps SQLite handle concurrent requests better
+    conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA busy_timeout = 30000")
+
     return conn
 
 
 def init_db():
+
     conn = get_db()
 
+    # =====================================================
     # USERS
+    # =====================================================
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,7 +63,10 @@ def init_db():
         )
     """)
 
+    # =====================================================
     # BLOG POSTS
+    # =====================================================
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -68,7 +78,10 @@ def init_db():
         )
     """)
 
+    # =====================================================
     # CREATOR PROJECTS
+    # =====================================================
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS creator_projects (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -82,7 +95,10 @@ def init_db():
         )
     """)
 
+    # =====================================================
     # SAFE DATABASE UPGRADE
+    # =====================================================
+
     creator_columns = conn.execute(
         "PRAGMA table_info(creator_projects)"
     ).fetchall()
@@ -98,7 +114,10 @@ def init_db():
             ADD COLUMN status TEXT DEFAULT 'Idea'
         """)
 
+    # =====================================================
     # BUSINESS PROFILES
+    # =====================================================
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS business_profiles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -114,7 +133,10 @@ def init_db():
         )
     """)
 
+    # =====================================================
     # COMMUNITIES
+    # =====================================================
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS communities (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -127,7 +149,10 @@ def init_db():
         )
     """)
 
+    # =====================================================
     # COMMUNITY MEMBERS
+    # =====================================================
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS community_members (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -144,6 +169,7 @@ def init_db():
     conn.close()
 
 
+# Initialize database
 init_db()
 
 
@@ -157,13 +183,17 @@ def login_required(view):
     def wrapped_view(*args, **kwargs):
 
         if "user_id" not in session:
+
             flash(
                 "Please login to continue.",
                 "warning"
             )
 
             return redirect(
-                url_for("login")
+                url_for(
+                    "login",
+                    next=request.path
+                )
             )
 
         return view(*args, **kwargs)
@@ -207,6 +237,10 @@ def register():
             ""
         )
 
+        # ---------------------------------------------
+        # VALIDATION
+        # ---------------------------------------------
+
         if not name or not email or not password:
 
             flash(
@@ -231,8 +265,16 @@ def register():
 
         conn = get_db()
 
+        # ---------------------------------------------
+        # CHECK EXISTING ACCOUNT
+        # ---------------------------------------------
+
         existing_user = conn.execute(
-            "SELECT id FROM users WHERE email = ?",
+            """
+            SELECT id
+            FROM users
+            WHERE email = ?
+            """,
             (email,)
         ).fetchone()
 
@@ -241,34 +283,60 @@ def register():
             conn.close()
 
             flash(
-                "An account with this email already exists.",
+                "An account with this email already exists. Please login.",
                 "danger"
             )
 
             return redirect(
-                url_for("register")
+                url_for("login")
             )
+
+        # ---------------------------------------------
+        # HASH PASSWORD
+        # ---------------------------------------------
 
         hashed_password = generate_password_hash(
             password
         )
 
-        conn.execute("""
-            INSERT INTO users
-            (name, email, password, created_at)
-            VALUES (?, ?, ?, ?)
-        """, (
-            name,
-            email,
-            hashed_password,
-            datetime.utcnow().isoformat()
-        ))
+        try:
 
-        conn.commit()
+            conn.execute("""
+                INSERT INTO users
+                (
+                    name,
+                    email,
+                    password,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?)
+            """, (
+                name,
+                email,
+                hashed_password,
+                datetime.utcnow().isoformat()
+            ))
+
+            conn.commit()
+
+        except sqlite3.IntegrityError:
+
+            conn.rollback()
+            conn.close()
+
+            flash(
+                "An account with this email already exists.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("login")
+            )
+
         conn.close()
 
         flash(
-            "Account created successfully. You can now login.",
+            "Account created successfully. Please login.",
             "success"
         )
 
@@ -288,6 +356,15 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
+    # If already logged in, go straight to workspace
+    if request.method == "GET":
+
+        if "user_id" in session:
+
+            return redirect(
+                url_for("workspace")
+            )
+
     if request.method == "POST":
 
         email = request.form.get(
@@ -300,10 +377,13 @@ def login():
             ""
         )
 
-        # Remember Me checkbox
         remember = request.form.get(
             "remember"
-        ) == "on"
+        )
+
+        # ---------------------------------------------
+        # BASIC VALIDATION
+        # ---------------------------------------------
 
         if not email or not password:
 
@@ -313,46 +393,92 @@ def login():
             )
 
             return render_template(
-                "login.html"
+                "login.html",
+                email=email
             )
 
         conn = get_db()
 
         user = conn.execute(
-            "SELECT * FROM users WHERE email = ?",
+            """
+            SELECT *
+            FROM users
+            WHERE email = ?
+            """,
             (email,)
         ).fetchone()
 
         conn.close()
 
-        # Check password
-        if user and check_password_hash(
-            user["password"],
-            password
-        ):
+        # ---------------------------------------------
+        # CHECK PASSWORD
+        # ---------------------------------------------
+
+        password_valid = False
+
+        if user:
+
+            try:
+
+                password_valid = check_password_hash(
+                    user["password"],
+                    password
+                )
+
+            except Exception:
+
+                password_valid = False
+
+        if user and password_valid:
 
             # Remove old session information
             session.clear()
 
-            # Keep the login for 30 days if selected
-            session.permanent = remember
-
-            # Store safe account information only
+            # Save user information
             session["user_id"] = user["id"]
             session["user_name"] = user["name"]
+            session["user_email"] = user["email"]
 
-            flash(
-                "Welcome back, " + user["name"] + "!",
-                "success"
+            # -----------------------------------------
+            # REMEMBER LOGIN
+            # -----------------------------------------
+
+            if remember:
+
+                session.permanent = True
+
+            else:
+
+                session.permanent = False
+
+            # -----------------------------------------
+            # OPTIONAL REDIRECT
+            # -----------------------------------------
+
+            next_page = request.args.get(
+                "next"
             )
+
+            if next_page and next_page.startswith("/"):
+
+                return redirect(next_page)
 
             return redirect(
                 url_for("workspace")
             )
 
+        # ---------------------------------------------
+        # INVALID LOGIN
+        # ---------------------------------------------
+
         flash(
-            "Invalid email or password.",
+            "Invalid email or password. Please check your details and try again.",
             "danger"
+        )
+
+        return render_template(
+            "login.html",
+            email=email
         )
 
     return render_template(
@@ -368,6 +494,11 @@ def login():
 def logout():
 
     session.clear()
+
+    flash(
+        "You have been logged out.",
+        "success"
+    )
 
     return redirect(
         url_for("home")
@@ -431,7 +562,8 @@ def workspace():
         creator_projects=creator_projects,
         business=business,
         communities=communities,
-        user_name=session.get("user_name")
+        user_name=session.get("user_name"),
+        user_email=session.get("user_email")
     )
 
 
@@ -473,7 +605,12 @@ def create_post():
 
         conn.execute("""
             INSERT INTO posts
-            (user_id, title, content, created_at)
+            (
+                user_id,
+                title,
+                content,
+                created_at
+            )
             VALUES (?, ?, ?, ?)
         """, (
             session["user_id"],
@@ -561,7 +698,9 @@ def edit_post(post_id):
 
         conn.execute("""
             UPDATE posts
-            SET title = ?, content = ?
+            SET
+                title = ?,
+                content = ?
             WHERE id = ?
             AND user_id = ?
         """, (
@@ -659,7 +798,9 @@ def blog():
     conn = get_db()
 
     posts = conn.execute("""
-        SELECT posts.*, users.name
+        SELECT
+            posts.*,
+            users.name
         FROM posts
         JOIN users
         ON posts.user_id = users.id
@@ -684,7 +825,9 @@ def view_post(post_id):
     conn = get_db()
 
     post = conn.execute("""
-        SELECT posts.*, users.name
+        SELECT
+            posts.*,
+            users.name
         FROM posts
         JOIN users
         ON posts.user_id = users.id
@@ -725,7 +868,9 @@ def search():
     if query:
 
         posts = conn.execute("""
-            SELECT posts.*, users.name
+            SELECT
+                posts.*,
+                users.name
             FROM posts
             JOIN users
             ON posts.user_id = users.id
@@ -793,6 +938,7 @@ def creator_studio():
         ]
 
         if status not in allowed_statuses:
+
             status = "Idea"
 
         if not title:
@@ -924,6 +1070,7 @@ def edit_creator_project(project_id):
         ]
 
         if status not in allowed_statuses:
+
             status = "Idea"
 
         if not title:
@@ -1365,12 +1512,16 @@ def join_community(community_id):
 
     except sqlite3.IntegrityError:
 
+        conn.rollback()
+
         flash(
             "You are already a member of this community.",
             "warning"
         )
 
-    conn.close()
+    finally:
+
+        conn.close()
 
     return redirect(
         url_for("communities")
@@ -1399,11 +1550,9 @@ def page_not_found(error):
     return """
     <!DOCTYPE html>
     <html>
-
     <head>
         <meta name="viewport"
               content="width=device-width, initial-scale=1">
-
         <title>Page Not Found - NijaWebbies</title>
     </head>
 
@@ -1437,11 +1586,9 @@ def internal_server_error(error):
     return """
     <!DOCTYPE html>
     <html>
-
     <head>
         <meta name="viewport"
               content="width=device-width, initial-scale=1">
-
         <title>NijaWebbies - Error</title>
     </head>
 
@@ -1479,6 +1626,6 @@ if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
     )
