@@ -13,34 +13,38 @@ app = Flask(__name__)
 
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
-    "nijawebbies-development-secret-change-this"
+    "nijawebbies-development-secret"
 )
 
-# Keep login sessions for 30 days when "Remember me" is used
+# Keep users logged in for 30 days when Remember Me is used.
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
-# Safer cookie settings for production
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-# Render uses HTTPS
+# Render uses HTTPS, so cookies should be secure there.
 if os.environ.get("RENDER"):
     app.config["SESSION_COOKIE_SECURE"] = True
-
-DATABASE = "nijawebbies.db"
 
 
 # =========================================================
 # DATABASE
 # =========================================================
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE = os.path.join(BASE_DIR, "nijawebbies.db")
+
+
 def get_db():
-    conn = sqlite3.connect(DATABASE, timeout=30)
+    conn = sqlite3.connect(
+        DATABASE,
+        timeout=30
+    )
+
     conn.row_factory = sqlite3.Row
 
-    # Helps SQLite handle concurrent requests better
+    # Helps SQLite behave better with multiple requests.
     conn.execute("PRAGMA foreign_keys = ON")
-    conn.execute("PRAGMA busy_timeout = 30000")
 
     return conn
 
@@ -95,20 +99,17 @@ def init_db():
         )
     """)
 
-    # =====================================================
-    # SAFE DATABASE UPGRADE
-    # =====================================================
-
+    # Upgrade older Creator Studio databases.
     creator_columns = conn.execute(
         "PRAGMA table_info(creator_projects)"
     ).fetchall()
 
-    column_names = [
+    creator_column_names = [
         column["name"]
         for column in creator_columns
     ]
 
-    if "status" not in column_names:
+    if "status" not in creator_column_names:
         conn.execute("""
             ALTER TABLE creator_projects
             ADD COLUMN status TEXT DEFAULT 'Idea'
@@ -159,9 +160,14 @@ def init_db():
             community_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             joined_at TEXT NOT NULL,
+
             UNIQUE(community_id, user_id),
-            FOREIGN KEY (community_id) REFERENCES communities(id),
-            FOREIGN KEY (user_id) REFERENCES users(id)
+
+            FOREIGN KEY (community_id)
+                REFERENCES communities(id),
+
+            FOREIGN KEY (user_id)
+                REFERENCES users(id)
         )
     """)
 
@@ -169,7 +175,7 @@ def init_db():
     conn.close()
 
 
-# Initialize database
+# Initialize database when application starts.
 init_db()
 
 
@@ -217,7 +223,10 @@ def home():
 # REGISTER
 # =========================================================
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route(
+    "/register",
+    methods=["GET", "POST"]
+)
 def register():
 
     if request.method == "POST":
@@ -237,9 +246,9 @@ def register():
             ""
         )
 
-        # ---------------------------------------------
+        # -----------------------------------------------
         # VALIDATION
-        # ---------------------------------------------
+        # -----------------------------------------------
 
         if not name or not email or not password:
 
@@ -248,8 +257,8 @@ def register():
                 "danger"
             )
 
-            return redirect(
-                url_for("register")
+            return render_template(
+                "register.html"
             )
 
         if len(password) < 6:
@@ -259,15 +268,15 @@ def register():
                 "danger"
             )
 
-            return redirect(
-                url_for("register")
+            return render_template(
+                "register.html"
             )
 
         conn = get_db()
 
-        # ---------------------------------------------
+        # -----------------------------------------------
         # CHECK EXISTING ACCOUNT
-        # ---------------------------------------------
+        # -----------------------------------------------
 
         existing_user = conn.execute(
             """
@@ -291,9 +300,9 @@ def register():
                 url_for("login")
             )
 
-        # ---------------------------------------------
+        # -----------------------------------------------
         # HASH PASSWORD
-        # ---------------------------------------------
+        # -----------------------------------------------
 
         hashed_password = generate_password_hash(
             password
@@ -301,7 +310,8 @@ def register():
 
         try:
 
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO users
                 (
                     name,
@@ -310,18 +320,19 @@ def register():
                     created_at
                 )
                 VALUES (?, ?, ?, ?)
-            """, (
-                name,
-                email,
-                hashed_password,
-                datetime.utcnow().isoformat()
-            ))
+                """,
+                (
+                    name,
+                    email,
+                    hashed_password,
+                    datetime.utcnow().isoformat()
+                )
+            )
 
             conn.commit()
 
         except sqlite3.IntegrityError:
 
-            conn.rollback()
             conn.close()
 
             flash(
@@ -353,17 +364,18 @@ def register():
 # LOGIN
 # =========================================================
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route(
+    "/login",
+    methods=["GET", "POST"]
+)
 def login():
 
-    # If already logged in, go straight to workspace
-    if request.method == "GET":
+    # If already logged in, don't show login again.
+    if "user_id" in session:
 
-        if "user_id" in session:
-
-            return redirect(
-                url_for("workspace")
-            )
+        return redirect(
+            url_for("workspace")
+        )
 
     if request.method == "POST":
 
@@ -381,9 +393,9 @@ def login():
             "remember"
         )
 
-        # ---------------------------------------------
-        # BASIC VALIDATION
-        # ---------------------------------------------
+        # -----------------------------------------------
+        # VALIDATION
+        # -----------------------------------------------
 
         if not email or not password:
 
@@ -393,8 +405,7 @@ def login():
             )
 
             return render_template(
-                "login.html",
-                email=email
+                "login.html"
             )
 
         conn = get_db()
@@ -410,9 +421,9 @@ def login():
 
         conn.close()
 
-        # ---------------------------------------------
-        # CHECK PASSWORD
-        # ---------------------------------------------
+        # -----------------------------------------------
+        # PASSWORD CHECK
+        # -----------------------------------------------
 
         password_valid = False
 
@@ -429,61 +440,55 @@ def login():
 
                 password_valid = False
 
-        if user and password_valid:
+        if not user or not password_valid:
 
-            # Remove old session information
-            session.clear()
-
-            # Save user information
-            session["user_id"] = user["id"]
-            session["user_name"] = user["name"]
-            session["user_email"] = user["email"]
-
-            # -----------------------------------------
-            # REMEMBER LOGIN
-            # -----------------------------------------
-
-            if remember:
-
-                session.permanent = True
-
-            else:
-
-                session.permanent = False
-
-            # -----------------------------------------
-            # OPTIONAL REDIRECT
-            # -----------------------------------------
-
-            next_page = request.args.get(
-                "next"
+            flash(
+                "Invalid email or password.",
+                "danger"
             )
 
-            if next_page and next_page.startswith("/"):
-
-                return redirect(next_page)
-
-            return redirect(
-                url_for("workspace")
+            return render_template(
+                "login.html",
+                email=email
             )
 
-        # ---------------------------------------------
-        # INVALID LOGIN
-        # ---------------------------------------------
+        # -----------------------------------------------
+        # CREATE SESSION
+        # -----------------------------------------------
 
-        flash(
-            "Invalid email or password. Please check your details and try again.",
-            "danger"
+        session.clear()
+
+        session["user_id"] = user["id"]
+        session["user_name"] = user["name"]
+        session["user_email"] = user["email"]
+
+        # -----------------------------------------------
+        # REMEMBER ME
+        # -----------------------------------------------
+
+        if remember:
+
+            session.permanent = True
+
+        else:
+
+            session.permanent = False
+
+        # -----------------------------------------------
+        # REDIRECT TO ORIGINAL PAGE
+        # -----------------------------------------------
+
+        next_page = request.args.get(
+            "next"
         )
 
-        return render_template(
-            "login.html",
-            email=email
-        )
+        if next_page and next_page.startswith("/"):
 
-    return render_template(
-        "login.html"
-    )
+            return redirect(next_page)
+
+        return redirect(
+            url_for("workspace")
+        )
 
 
 # =========================================================
@@ -515,44 +520,51 @@ def workspace():
 
     conn = get_db()
 
-    posts = conn.execute("""
+    user_id = session["user_id"]
+
+    posts = conn.execute(
+        """
         SELECT *
         FROM posts
         WHERE user_id = ?
         ORDER BY id DESC
-    """, (
-        session["user_id"],
-    )).fetchall()
+        """,
+        (user_id,)
+    ).fetchall()
 
-    creator_projects = conn.execute("""
+    creator_projects = conn.execute(
+        """
         SELECT *
         FROM creator_projects
         WHERE user_id = ?
         ORDER BY id DESC
-    """, (
-        session["user_id"],
-    )).fetchall()
+        """,
+        (user_id,)
+    ).fetchall()
 
-    business = conn.execute("""
+    business = conn.execute(
+        """
         SELECT *
         FROM business_profiles
         WHERE user_id = ?
         ORDER BY id DESC
         LIMIT 1
-    """, (
-        session["user_id"],
-    )).fetchone()
+        """,
+        (user_id,)
+    ).fetchone()
 
-    communities = conn.execute("""
+    communities = conn.execute(
+        """
         SELECT communities.*
         FROM communities
         JOIN community_members
-        ON communities.id = community_members.community_id
+            ON communities.id =
+               community_members.community_id
         WHERE community_members.user_id = ?
         ORDER BY communities.id DESC
-    """, (
-        session["user_id"],
-    )).fetchall()
+        """,
+        (user_id,)
+    ).fetchall()
 
     conn.close()
 
@@ -562,8 +574,7 @@ def workspace():
         creator_projects=creator_projects,
         business=business,
         communities=communities,
-        user_name=session.get("user_name"),
-        user_email=session.get("user_email")
+        user_name=session.get("user_name")
     )
 
 
@@ -603,7 +614,8 @@ def create_post():
 
         conn = get_db()
 
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO posts
             (
                 user_id,
@@ -612,12 +624,14 @@ def create_post():
                 created_at
             )
             VALUES (?, ?, ?, ?)
-        """, (
-            session["user_id"],
-            title,
-            content,
-            datetime.utcnow().isoformat()
-        ))
+            """,
+            (
+                session["user_id"],
+                title,
+                content,
+                datetime.utcnow().isoformat()
+            )
+        )
 
         conn.commit()
         conn.close()
@@ -649,23 +663,30 @@ def edit_post(post_id):
 
     conn = get_db()
 
-    post = conn.execute("""
+    post = conn.execute(
+        """
         SELECT *
         FROM posts
         WHERE id = ?
         AND user_id = ?
-    """, (
-        post_id,
-        session["user_id"]
-    )).fetchone()
+        """,
+        (
+            post_id,
+            session["user_id"]
+        )
+    ).fetchone()
 
     if not post:
 
         conn.close()
 
-        return (
+        flash(
             "Post not found or you do not have permission.",
-            404
+            "danger"
+        )
+
+        return redirect(
+            url_for("workspace")
         )
 
     if request.method == "POST":
@@ -696,19 +717,22 @@ def edit_post(post_id):
                 )
             )
 
-        conn.execute("""
+        conn.execute(
+            """
             UPDATE posts
             SET
                 title = ?,
                 content = ?
             WHERE id = ?
             AND user_id = ?
-        """, (
-            title,
-            content,
-            post_id,
-            session["user_id"]
-        ))
+            """,
+            (
+                title,
+                content,
+                post_id,
+                session["user_id"]
+            )
+        )
 
         conn.commit()
         conn.close()
@@ -743,15 +767,18 @@ def delete_post(post_id):
 
     conn = get_db()
 
-    post = conn.execute("""
+    post = conn.execute(
+        """
         SELECT id
         FROM posts
         WHERE id = ?
         AND user_id = ?
-    """, (
-        post_id,
-        session["user_id"]
-    )).fetchone()
+        """,
+        (
+            post_id,
+            session["user_id"]
+        )
+    ).fetchone()
 
     if not post:
 
@@ -766,14 +793,17 @@ def delete_post(post_id):
             url_for("workspace")
         )
 
-    conn.execute("""
+    conn.execute(
+        """
         DELETE FROM posts
         WHERE id = ?
         AND user_id = ?
-    """, (
-        post_id,
-        session["user_id"]
-    ))
+        """,
+        (
+            post_id,
+            session["user_id"]
+        )
+    )
 
     conn.commit()
     conn.close()
@@ -797,15 +827,17 @@ def blog():
 
     conn = get_db()
 
-    posts = conn.execute("""
+    posts = conn.execute(
+        """
         SELECT
             posts.*,
             users.name
         FROM posts
         JOIN users
-        ON posts.user_id = users.id
+            ON posts.user_id = users.id
         ORDER BY posts.id DESC
-    """).fetchall()
+        """
+    ).fetchall()
 
     conn.close()
 
@@ -824,17 +856,18 @@ def view_post(post_id):
 
     conn = get_db()
 
-    post = conn.execute("""
+    post = conn.execute(
+        """
         SELECT
             posts.*,
             users.name
         FROM posts
         JOIN users
-        ON posts.user_id = users.id
+            ON posts.user_id = users.id
         WHERE posts.id = ?
-    """, (
-        post_id,
-    )).fetchone()
+        """,
+        (post_id,)
+    ).fetchone()
 
     conn.close()
 
@@ -867,20 +900,23 @@ def search():
 
     if query:
 
-        posts = conn.execute("""
+        posts = conn.execute(
+            """
             SELECT
                 posts.*,
                 users.name
             FROM posts
             JOIN users
-            ON posts.user_id = users.id
+                ON posts.user_id = users.id
             WHERE posts.title LIKE ?
-            OR posts.content LIKE ?
+               OR posts.content LIKE ?
             ORDER BY posts.id DESC
-        """, (
-            f"%{query}%",
-            f"%{query}%"
-        )).fetchall()
+            """,
+            (
+                f"%{query}%",
+                f"%{query}%"
+            )
+        ).fetchall()
 
     else:
 
@@ -954,7 +990,8 @@ def creator_studio():
                 url_for("creator_studio")
             )
 
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO creator_projects
             (
                 user_id,
@@ -965,14 +1002,16 @@ def creator_studio():
                 created_at
             )
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            session["user_id"],
-            title,
-            description,
-            project_type,
-            status,
-            datetime.utcnow().isoformat()
-        ))
+            """,
+            (
+                session["user_id"],
+                title,
+                description,
+                project_type,
+                status,
+                datetime.utcnow().isoformat()
+            )
+        )
 
         conn.commit()
         conn.close()
@@ -986,14 +1025,15 @@ def creator_studio():
             url_for("creator_studio")
         )
 
-    projects = conn.execute("""
+    projects = conn.execute(
+        """
         SELECT *
         FROM creator_projects
         WHERE user_id = ?
         ORDER BY id DESC
-    """, (
-        session["user_id"],
-    )).fetchall()
+        """,
+        (session["user_id"],)
+    ).fetchall()
 
     conn.close()
 
@@ -1017,15 +1057,18 @@ def edit_creator_project(project_id):
 
     conn = get_db()
 
-    project = conn.execute("""
+    project = conn.execute(
+        """
         SELECT *
         FROM creator_projects
         WHERE id = ?
         AND user_id = ?
-    """, (
-        project_id,
-        session["user_id"]
-    )).fetchone()
+        """,
+        (
+            project_id,
+            session["user_id"]
+        )
+    ).fetchone()
 
     if not project:
 
@@ -1089,7 +1132,8 @@ def edit_creator_project(project_id):
                 )
             )
 
-        conn.execute("""
+        conn.execute(
+            """
             UPDATE creator_projects
             SET
                 title = ?,
@@ -1098,14 +1142,16 @@ def edit_creator_project(project_id):
                 status = ?
             WHERE id = ?
             AND user_id = ?
-        """, (
-            title,
-            description,
-            project_type,
-            status,
-            project_id,
-            session["user_id"]
-        ))
+            """,
+            (
+                title,
+                description,
+                project_type,
+                status,
+                project_id,
+                session["user_id"]
+            )
+        )
 
         conn.commit()
         conn.close()
@@ -1141,15 +1187,18 @@ def delete_creator_project(project_id):
 
     conn = get_db()
 
-    project = conn.execute("""
+    project = conn.execute(
+        """
         SELECT id
         FROM creator_projects
         WHERE id = ?
         AND user_id = ?
-    """, (
-        project_id,
-        session["user_id"]
-    )).fetchone()
+        """,
+        (
+            project_id,
+            session["user_id"]
+        )
+    ).fetchone()
 
     if not project:
 
@@ -1164,14 +1213,17 @@ def delete_creator_project(project_id):
             url_for("creator_studio")
         )
 
-    conn.execute("""
+    conn.execute(
+        """
         DELETE FROM creator_projects
         WHERE id = ?
         AND user_id = ?
-    """, (
-        project_id,
-        session["user_id"]
-    ))
+        """,
+        (
+            project_id,
+            session["user_id"]
+        )
+    )
 
     conn.commit()
     conn.close()
@@ -1244,18 +1296,20 @@ def business_space():
                 url_for("business_space")
             )
 
-        existing = conn.execute("""
+        existing = conn.execute(
+            """
             SELECT id
             FROM business_profiles
             WHERE user_id = ?
             LIMIT 1
-        """, (
-            session["user_id"],
-        )).fetchone()
+            """,
+            (session["user_id"],)
+        ).fetchone()
 
         if existing:
 
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE business_profiles
                 SET
                     business_name = ?,
@@ -1266,20 +1320,23 @@ def business_space():
                     website = ?
                 WHERE id = ?
                 AND user_id = ?
-            """, (
-                business_name,
-                description,
-                category,
-                phone,
-                location,
-                website,
-                existing["id"],
-                session["user_id"]
-            ))
+                """,
+                (
+                    business_name,
+                    description,
+                    category,
+                    phone,
+                    location,
+                    website,
+                    existing["id"],
+                    session["user_id"]
+                )
+            )
 
         else:
 
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO business_profiles
                 (
                     user_id,
@@ -1292,16 +1349,18 @@ def business_space():
                     created_at
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                session["user_id"],
-                business_name,
-                description,
-                category,
-                phone,
-                location,
-                website,
-                datetime.utcnow().isoformat()
-            ))
+                """,
+                (
+                    session["user_id"],
+                    business_name,
+                    description,
+                    category,
+                    phone,
+                    location,
+                    website,
+                    datetime.utcnow().isoformat()
+                )
+            )
 
         conn.commit()
         conn.close()
@@ -1315,14 +1374,15 @@ def business_space():
             url_for("business_space")
         )
 
-    business = conn.execute("""
+    business = conn.execute(
+        """
         SELECT *
         FROM business_profiles
         WHERE user_id = ?
         LIMIT 1
-    """, (
-        session["user_id"],
-    )).fetchone()
+        """,
+        (session["user_id"],)
+    ).fetchone()
 
     conn.close()
 
@@ -1376,7 +1436,8 @@ def communities():
                 url_for("communities")
             )
 
-        cursor = conn.execute("""
+        cursor = conn.execute(
+            """
             INSERT INTO communities
             (
                 owner_id,
@@ -1386,17 +1447,21 @@ def communities():
                 created_at
             )
             VALUES (?, ?, ?, ?, ?)
-        """, (
-            session["user_id"],
-            name,
-            description,
-            category,
-            datetime.utcnow().isoformat()
-        ))
+            """,
+            (
+                session["user_id"],
+                name,
+                description,
+                category,
+                datetime.utcnow().isoformat()
+            )
+        )
 
         community_id = cursor.lastrowid
 
-        conn.execute("""
+        # Automatically make creator a member.
+        conn.execute(
+            """
             INSERT INTO community_members
             (
                 community_id,
@@ -1404,11 +1469,13 @@ def communities():
                 joined_at
             )
             VALUES (?, ?, ?)
-        """, (
-            community_id,
-            session["user_id"],
-            datetime.utcnow().isoformat()
-        ))
+            """,
+            (
+                community_id,
+                session["user_id"],
+                datetime.utcnow().isoformat()
+            )
+        )
 
         conn.commit()
         conn.close()
@@ -1422,26 +1489,30 @@ def communities():
             url_for("communities")
         )
 
-    all_communities = conn.execute("""
+    all_communities = conn.execute(
+        """
         SELECT
             communities.*,
             users.name AS owner_name
         FROM communities
         JOIN users
-        ON communities.owner_id = users.id
+            ON communities.owner_id = users.id
         ORDER BY communities.id DESC
-    """).fetchall()
+        """
+    ).fetchall()
 
-    my_communities = conn.execute("""
+    my_communities = conn.execute(
+        """
         SELECT communities.*
         FROM communities
         JOIN community_members
-        ON communities.id = community_members.community_id
+            ON communities.id =
+               community_members.community_id
         WHERE community_members.user_id = ?
         ORDER BY communities.id DESC
-    """, (
-        session["user_id"],
-    )).fetchall()
+        """,
+        (session["user_id"],)
+    ).fetchall()
 
     conn.close()
 
@@ -1466,13 +1537,14 @@ def join_community(community_id):
 
     conn = get_db()
 
-    community = conn.execute("""
+    community = conn.execute(
+        """
         SELECT id
         FROM communities
         WHERE id = ?
-    """, (
-        community_id,
-    )).fetchone()
+        """,
+        (community_id,)
+    ).fetchone()
 
     if not community:
 
@@ -1489,7 +1561,8 @@ def join_community(community_id):
 
     try:
 
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO community_members
             (
                 community_id,
@@ -1497,11 +1570,13 @@ def join_community(community_id):
                 joined_at
             )
             VALUES (?, ?, ?)
-        """, (
-            community_id,
-            session["user_id"],
-            datetime.utcnow().isoformat()
-        ))
+            """,
+            (
+                community_id,
+                session["user_id"],
+                datetime.utcnow().isoformat()
+            )
+        )
 
         conn.commit()
 
@@ -1511,8 +1586,6 @@ def join_community(community_id):
         )
 
     except sqlite3.IntegrityError:
-
-        conn.rollback()
 
         flash(
             "You are already a member of this community.",
@@ -1583,6 +1656,12 @@ def page_not_found(error):
 @app.errorhandler(500)
 def internal_server_error(error):
 
+    # Important: print the real error to Render logs.
+    # This makes future problems much easier to diagnose.
+    app.logger.exception(
+        "NijaWebbies Internal Server Error"
+    )
+
     return """
     <!DOCTYPE html>
     <html>
@@ -1626,6 +1705,11 @@ if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
+        port=int(
+            os.environ.get(
+                "PORT",
+                5000
+            )
+        ),
         debug=False
     )
