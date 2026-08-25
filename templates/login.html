@@ -1,335 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Login — NijaWebbies</title>
+    <meta name="theme-color" content="#0f172a">
+
+    <title>Login | NijaWebbies</title>
 
     <style>
-
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                linear-gradient(135deg, #0f172a, #172554, #1e3a8a);
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(
-                135deg,
-                #071a2b,
-                #0b3d5c
-            );
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             padding: 20px;
+            color: #111827;
         }
 
-        .login-box {
-
+        .login-container {
             width: 100%;
             max-width: 430px;
+        }
 
-            background: white;
+        .brand {
+            text-align: center;
+            color: white;
+            margin-bottom: 22px;
+        }
 
-            padding: 35px 28px;
-
+        .brand-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 12px;
             border-radius: 18px;
-
-            box-shadow:
-                0 15px 40px
-                rgba(0,0,0,0.25);
-        }
-
-        .logo {
-
-            text-align: center;
-
-            font-size: 30px;
-
-            font-weight: bold;
-
-            color: #0b3d5c;
-
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-
-            text-align: center;
-
-            color: #666;
-
-            margin-bottom: 28px;
-        }
-
-        label {
-
-            display: block;
-
-            margin-bottom: 7px;
-
-            font-weight: bold;
-
-            color: #333;
-        }
-
-        input[type="email"],
-        input[type="password"] {
-
-            width: 100%;
-
-            padding: 14px;
-
-            margin-bottom: 18px;
-
-            border:
-                1px solid #ccc;
-
-            border-radius: 10px;
-
-            font-size: 16px;
-        }
-
-        input:focus {
-
-            outline: none;
-
-            border-color: #0b3d5c;
-        }
-
-        .remember {
-
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
             display: flex;
-
             align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
 
-            gap: 8px;
+        .brand h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
 
-            margin-bottom: 18px;
-
-            color: #555;
-
+        .brand p {
+            color: #cbd5e1;
             font-size: 14px;
         }
 
-        .remember input {
-
-            width: 18px;
-            height: 18px;
-
-            margin: 0;
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
         }
 
-        .remember label {
-
-            margin: 0;
-
-            font-weight: normal;
-
-            cursor: pointer;
-        }
-
-        button {
-
-            width: 100%;
-
-            padding: 14px;
-
-            border: none;
-
-            border-radius: 10px;
-
-            background: #0b3d5c;
-
-            color: white;
-
-            font-size: 17px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-        }
-
-        button:hover {
-
-            opacity: 0.9;
-        }
-
-        .register {
-
+        .card h2 {
             text-align: center;
-
-            margin-top: 22px;
-
-            color: #666;
+            color: #111827;
+            margin-bottom: 8px;
+            font-size: 25px;
         }
 
-        .register a {
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
 
-            color: #0b3d5c;
-
-            font-weight: bold;
-
-            text-decoration: none;
+        .flash-messages {
+            margin-bottom: 18px;
         }
 
         .flash {
-
-            padding: 12px;
-
-            border-radius: 8px;
-
-            margin-bottom: 18px;
-
-            text-align: center;
-
-            background: #ffe8e8;
-
-            color: #a00000;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
         }
 
         .flash.success {
-
-            background: #e7f8ed;
-
-            color: #08752d;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
         }
 
-        .home {
+        .flash.error,
+        .flash.danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
 
+        .flash.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .flash.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+            background: #f9fafb;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+        }
+
+        .password-input {
+            padding-right: 85px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #2563eb;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 7px;
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 4px 0 20px;
+            gap: 10px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        .remember input {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .login-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(37,99,235,0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 24px 0;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .register-link {
             text-align: center;
-
-            margin-top: 18px;
+            font-size: 14px;
+            color: #6b7280;
         }
 
-        .home a {
-
-            color: #555;
-
+        .register-link a {
+            color: #2563eb;
+            font-weight: bold;
             text-decoration: none;
         }
 
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .back-home a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-home a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .security-note {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+
+            .brand h1 {
+                font-size: 25px;
+            }
+        }
     </style>
-
 </head>
-
 
 <body>
 
-<div class="login-box">
+<div class="login-container">
 
-    <div class="logo">
-        🇳🇬 NijaWebbies
+    <div class="brand">
+        <div class="brand-icon">🇳🇬</div>
+
+        <h1>NijaWebbies</h1>
+
+        <p>Your Nigerian digital ecosystem</p>
     </div>
 
-    <div class="subtitle">
-        Welcome back. Login to your workspace.
-    </div>
+    <div class="card">
 
+        <h2>Welcome Back 👋</h2>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
+        <p class="subtitle">
+            Sign in to continue to your workspace
+        </p>
 
-        {% if messages %}
-
-            {% for category, message in messages %}
-
-                <div class="flash {{ category }}">
-                    {{ message }}
-                </div>
-
-            {% endfor %}
-
-        {% endif %}
-
-    {% endwith %}
-
-
-    <form method="POST"
-          action="{{ url_for('login', next=request.args.get('next', '')) }}">
-
-
-        <label for="email">
-            Email
-        </label>
-
-        <input
-            type="email"
-            id="email"
-            name="email"
-            value="{{ email|default('') }}"
-            placeholder="Enter your email"
-            autocomplete="email"
-            required
-        >
-
-
-        <label for="password">
-            Password
-        </label>
-
-        <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-            required
-        >
-
-
-        <div class="remember">
-
-            <input
-                type="checkbox"
-                id="remember"
-                name="remember"
-                value="1"
-            >
-
-            <label for="remember">
-                Keep me logged in for 30 days
-            </label>
-
-        </div>
-
-
-        <button type="submit">
-            Login
-        </button>
-
-    </form>
-
-
-    <div class="register">
-
-        Don't have an account?
-
-        <a href="{{ url_for('register') }}">
-            Create an account
-        </a>
-
-    </div>
-
-
-    <div class="home">
-
-        <a href="{{ url_for('home') }}">
-            ← Back to NijaWebbies
-        </a>
-
-    </div>
-
-</div>
-
-</body>
-
-</html>
+        {% with messages = get_flashed_messages(with_categories
