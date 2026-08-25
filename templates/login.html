@@ -308,4 +308,123 @@
             Sign in to continue to your workspace
         </p>
 
-        {% with messages = get_flashed_messages(with_categories
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login', next=request.args.get('next', '')) }}">
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="password-input"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        onclick="togglePassword()"
+                    >
+                        Show
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="remember-row">
+
+                <label class="remember">
+                    <input
+                        type="checkbox"
+                        id="remember"
+                        name="remember"
+                        value="1"
+                    >
+
+                    <span>Remember me</span>
+                </label>
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Login to NijaWebbies
+            </button>
+
+        </form>
+
+        <div class="divider">
+            OR
+        </div>
+
+        <div class="register-link">
+            Don't have an account?
+            <a href="{{ url_for('register') }}">
+                Create an account
+            </a>
+        </div>
+
+        <div class="security-note">
+            🔒 Your password is securely protected.
+        </div>
+
+    </div>
+
+    <div class="back-home">
+        <a href="{{ url_for('home') }}">
+            ← Back to NijaWebbies
+        </a>
+    </div>
+
+</div>
+
+<script>
+function togglePassword() {
+    const password = document.getElementById("password");
+    const button = document.querySelector(".toggle-password");
+
+    if (password.type === "password") {
+        password.type = "text";
+        button.textContent = "Hide";
+    } else {
+        password.type = "password";
+        button.textContent = "Show";
+    }
+}
+</script>
+
+</body>
+</html>
