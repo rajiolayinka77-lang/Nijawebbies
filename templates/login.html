@@ -1,162 +1,328 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login — NijaWebbies</title>
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #071a2b, #0b3d5c);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .login-box {
-        width: 100%;
-        max-width: 430px;
-        background: white;
-        padding: 35px 28px;
-        border-radius: 18px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    }
-
-    .logo {
-        text-align: center;
-        font-size: 30px;
-        font-weight: bold;
-        color: #0b3d5c;
-        margin-bottom: 8px;
-    }
-
-    .subtitle {
-        text-align: center;
-        color: #666;
-        margin-bottom: 28px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 7px;
-        font-weight: bold;
-        color: #333;
-    }
-
-    input {
-        width: 100%;
-        padding: 14px;
-        margin-bottom: 18px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        font-size: 16px;
-    }
-
-    input:focus {
-        outline: none;
-        border-color: #0b3d5c;
-    }
-
-    button {
-        width: 100%;
-        padding: 14px;
-        border: none;
-        border-radius: 10px;
-        background: #0b3d5c;
-        color: white;
-        font-size: 17px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    button:hover {
-        opacity: 0.9;
-    }
-
-    .register {
-        text-align: center;
-        margin-top: 22px;
-        color: #666;
-    }
-
-    .register a {
-        color: #0b3d5c;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .flash {
-        background: #ffe8e8;
-        color: #a00000;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 18px;
-        text-align: center;
-    }
-
-    .home {
-        text-align: center;
-        margin-top: 18px;
-    }
-
-    .home a {
-        color: #555;
-        text-decoration: none;
-    }
-</style>
-
-</head><body><div class="login-box"><div class="logo">NijaWebbies</div>
-
-<div class="subtitle">
-    Welcome back. Login to your workspace.
-</div>
-
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="flash">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-
-<form method="POST" action="{{ url_for('login') }}">
-
-    <label for="email">Email</label>
-    <input
-        type="email"
-        id="email"
-        name="email"
-        placeholder="Enter your email"
-        required
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <label for="password">Password</label>
-    <input
-        type="password"
-        id="password"
-        name="password"
-        placeholder="Enter your password"
-        required
+    <title>Login — NijaWebbies</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(
+                135deg,
+                #071a2b,
+                #0b3d5c
+            );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 430px;
+
+            background: white;
+
+            padding: 35px 28px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .logo {
+            text-align: center;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            color: #0b3d5c;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #666;
+
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            color: #333;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+
+            width: 100%;
+
+            padding: 14px;
+
+            margin-bottom: 18px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+
+            outline: none;
+
+            border-color: #0b3d5c;
+        }
+
+        .remember {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 18px;
+
+            color: #555;
+        }
+
+        .remember input[type="checkbox"] {
+
+            width: 18px;
+
+            height: 18px;
+
+            margin: 0;
+
+            cursor: pointer;
+        }
+
+        .remember label {
+
+            margin: 0;
+
+            font-weight: normal;
+
+            cursor: pointer;
+
+            color: #555;
+        }
+
+        button {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #0b3d5c;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+
+            opacity: 0.9;
+        }
+
+        .register {
+
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: #666;
+        }
+
+        .register a {
+
+            color: #0b3d5c;
+
+            font-weight: bold;
+
+            text-decoration: none;
+        }
+
+        .flash {
+
+            background: #ffe8e8;
+
+            color: #a00000;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 18px;
+
+            text-align: center;
+        }
+
+        .home {
+
+            text-align: center;
+
+            margin-top: 18px;
+        }
+
+        .home a {
+
+            color: #555;
+
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <div class="logo">
+        NijaWebbies
+    </div>
+
+    <div class="subtitle">
+        Welcome back. Login to your workspace.
+    </div>
+
+
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="flash">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <form
+        method="POST"
+        action="{{ url_for('login') }}"
     >
 
-    <button type="submit">Login</button>
+        <label for="email">
+            Email
+        </label>
 
-</form>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            autocomplete="username"
+            required
+        >
 
-<div class="register">
-    Don't have an account?
-    <a href="{{ url_for('register') }}">Create an account</a>
+
+        <label for="password">
+            Password
+        </label>
+
+        <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+        >
+
+
+        <div class="remember">
+
+            <input
+                type="checkbox"
+                id="remember"
+                name="remember"
+            >
+
+            <label for="remember">
+                Remember me for 30 days
+            </label>
+
+        </div>
+
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+
+    <div class="register">
+
+        Don't have an account?
+
+        <a href="{{ url_for('register') }}">
+            Create an account
+        </a>
+
+    </div>
+
+
+    <div class="home">
+
+        <a href="{{ url_for('home') }}">
+            ← Back to NijaWebbies
+        </a>
+
+    </div>
+
 </div>
 
-<div class="home">
-    <a href="{{ url_for('home') }}">← Back to NijaWebbies</a>
-</div>
+</body>
 
-</div></body>
 </html>
