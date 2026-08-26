@@ -4,27 +4,33 @@ import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
+
+
+# =========================================================
+# APP
+# =========================================================
 
 app = Flask(__name__)
 
-# =========================================================
-# APP CONFIGURATION
-# =========================================================
-
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
-    "nijawebbies-development-secret"
+    "nijawebbies-development-secret-change-this"
 )
 
-# Keep users logged in for 30 days when Remember Me is used.
+# Remember Me = 30 days
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
+# Session security
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-# Render uses HTTPS, so cookies should be secure there.
-if os.environ.get("RENDER"):
-    app.config["SESSION_COOKIE_SECURE"] = True
+# Render runs over HTTPS.
+# Do not depend only on the RENDER environment variable.
+app.config["SESSION_COOKIE_SECURE"] = bool(
+    os.environ.get("RENDER_EXTERNAL_URL")
+    or os.environ.get("RENDER")
+)
 
 
 # =========================================================
@@ -32,151 +38,237 @@ if os.environ.get("RENDER"):
 # =========================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Keep the database in the application directory.
 DATABASE = os.path.join(BASE_DIR, "nijawebbies.db")
 
 
 def get_db():
+    """
+    Create a SQLite database connection.
+    """
+
     conn = sqlite3.connect(
         DATABASE,
-        timeout=30
+        timeout=30,
+        check_same_thread=False
     )
 
     conn.row_factory = sqlite3.Row
 
-    # Helps SQLite behave better with multiple requests.
+    # Better SQLite behavior.
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA busy_timeout = 30000")
 
     return conn
 
 
+def close_db(conn):
+    """
+    Safely close a database connection.
+    """
+
+    if conn:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+
 def init_db():
+    """
+    Create all required database tables.
+    """
 
-    conn = get_db()
+    conn = None
 
-    # =====================================================
-    # USERS
-    # =====================================================
+    try:
 
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        )
-    """)
+        conn = get_db()
 
-    # =====================================================
-    # BLOG POSTS
-    # =====================================================
+        # =================================================
+        # USERS
+        # =================================================
 
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS posts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            title TEXT NOT NULL,
-            content TEXT NOT NULL,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    """)
-
-    # =====================================================
-    # CREATOR PROJECTS
-    # =====================================================
-
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS creator_projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            title TEXT NOT NULL,
-            description TEXT,
-            project_type TEXT,
-            status TEXT DEFAULT 'Idea',
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    """)
-
-    # Upgrade older Creator Studio databases.
-    creator_columns = conn.execute(
-        "PRAGMA table_info(creator_projects)"
-    ).fetchall()
-
-    creator_column_names = [
-        column["name"]
-        for column in creator_columns
-    ]
-
-    if "status" not in creator_column_names:
         conn.execute("""
-            ALTER TABLE creator_projects
-            ADD COLUMN status TEXT DEFAULT 'Idea'
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
         """)
 
-    # =====================================================
-    # BUSINESS PROFILES
-    # =====================================================
+        # =================================================
+        # POSTS
+        # =================================================
 
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS business_profiles (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            business_name TEXT NOT NULL,
-            description TEXT,
-            category TEXT,
-            phone TEXT,
-            location TEXT,
-            website TEXT,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS posts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+            )
+        """)
+
+        # =================================================
+        # CREATOR PROJECTS
+        # =================================================
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS creator_projects (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT,
+                project_type TEXT,
+                status TEXT DEFAULT 'Idea',
+                created_at TEXT NOT NULL,
+
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+            )
+        """)
+
+        # Upgrade older Creator Studio databases.
+        creator_columns = conn.execute(
+            "PRAGMA table_info(creator_projects)"
+        ).fetchall()
+
+        creator_column_names = [
+            column["name"]
+            for column in creator_columns
+        ]
+
+        if "status" not in creator_column_names:
+
+            conn.execute("""
+                ALTER TABLE creator_projects
+                ADD COLUMN status TEXT DEFAULT 'Idea'
+            """)
+
+        # =================================================
+        # BUSINESS PROFILES
+        # =================================================
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS business_profiles (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                business_name TEXT NOT NULL,
+                description TEXT,
+                category TEXT,
+                phone TEXT,
+                location TEXT,
+                website TEXT,
+                created_at TEXT NOT NULL,
+
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+            )
+        """)
+
+        # =================================================
+        # COMMUNITIES
+        # =================================================
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS communities (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                owner_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                description TEXT,
+                category TEXT,
+                created_at TEXT NOT NULL,
+
+                FOREIGN KEY (owner_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+            )
+        """)
+
+        # =================================================
+        # COMMUNITY MEMBERS
+        # =================================================
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS community_members (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                community_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                joined_at TEXT NOT NULL,
+
+                UNIQUE(community_id, user_id),
+
+                FOREIGN KEY (community_id)
+                    REFERENCES communities(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+            )
+        """)
+
+        conn.commit()
+
+        app.logger.info("Database initialized successfully.")
+
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Database initialization failed."
         )
-    """)
 
-    # =====================================================
-    # COMMUNITIES
-    # =====================================================
+        raise
 
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS communities (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            owner_id INTEGER NOT NULL,
-            name TEXT NOT NULL,
-            description TEXT,
-            category TEXT,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (owner_id) REFERENCES users(id)
-        )
-    """)
+    finally:
 
-    # =====================================================
-    # COMMUNITY MEMBERS
-    # =====================================================
-
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS community_members (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            community_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            joined_at TEXT NOT NULL,
-
-            UNIQUE(community_id, user_id),
-
-            FOREIGN KEY (community_id)
-                REFERENCES communities(id),
-
-            FOREIGN KEY (user_id)
-                REFERENCES users(id)
-        )
-    """)
-
-    conn.commit()
-    conn.close()
+        close_db(conn)
 
 
-# Initialize database when application starts.
+# Initialize database.
 init_db()
+
+
+# =========================================================
+# HELPER FUNCTIONS
+# =========================================================
+
+def is_safe_url(target):
+    """
+    Prevent unsafe external redirects.
+    """
+
+    if not target:
+        return False
+
+    try:
+
+        parsed = urlparse(target)
+
+        return (
+            parsed.scheme == ""
+            and parsed.netloc == ""
+            and target.startswith("/")
+            and not target.startswith("//")
+        )
+
+    except Exception:
+
+        return False
 
 
 # =========================================================
@@ -188,17 +280,22 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(*args, **kwargs):
 
-        if "user_id" not in session:
+        if not session.get("user_id"):
 
             flash(
                 "Please login to continue.",
                 "warning"
             )
 
+            next_page = request.full_path
+
+            if next_page.endswith("?"):
+                next_page = next_page[:-1]
+
             return redirect(
                 url_for(
                     "login",
-                    next=request.path
+                    next=next_page
                 )
             )
 
@@ -229,6 +326,12 @@ def home():
 )
 def register():
 
+    if session.get("user_id"):
+
+        return redirect(
+            url_for("workspace")
+        )
+
     if request.method == "POST":
 
         name = request.form.get(
@@ -258,7 +361,9 @@ def register():
             )
 
             return render_template(
-                "register.html"
+                "register.html",
+                name=name,
+                email=email
             )
 
         if len(password) < 6:
@@ -269,46 +374,55 @@ def register():
             )
 
             return render_template(
-                "register.html"
+                "register.html",
+                name=name,
+                email=email
             )
 
-        conn = get_db()
-
-        # -----------------------------------------------
-        # CHECK EXISTING ACCOUNT
-        # -----------------------------------------------
-
-        existing_user = conn.execute(
-            """
-            SELECT id
-            FROM users
-            WHERE email = ?
-            """,
-            (email,)
-        ).fetchone()
-
-        if existing_user:
-
-            conn.close()
+        if "@" not in email or "." not in email:
 
             flash(
-                "An account with this email already exists. Please login.",
+                "Please enter a valid email address.",
                 "danger"
             )
 
-            return redirect(
-                url_for("login")
+            return render_template(
+                "register.html",
+                name=name,
+                email=email
             )
 
-        # -----------------------------------------------
-        # HASH PASSWORD
-        # -----------------------------------------------
-
-        hashed_password = generate_password_hash(
-            password
-        )
+        conn = None
 
         try:
+
+            conn = get_db()
+
+            # Check existing account.
+            existing_user = conn.execute(
+                """
+                SELECT id
+                FROM users
+                WHERE LOWER(email) = ?
+                """,
+                (email,)
+            ).fetchone()
+
+            if existing_user:
+
+                flash(
+                    "An account with this email already exists. Please login.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for("login")
+                )
+
+            # Hash password.
+            hashed_password = generate_password_hash(
+                password
+            )
 
             conn.execute(
                 """
@@ -331,29 +445,52 @@ def register():
 
             conn.commit()
 
-        except sqlite3.IntegrityError:
-
-            conn.close()
-
             flash(
-                "An account with this email already exists.",
-                "danger"
+                "Account created successfully. Please login.",
+                "success"
             )
 
             return redirect(
                 url_for("login")
             )
 
-        conn.close()
+        except sqlite3.IntegrityError:
 
-        flash(
-            "Account created successfully. Please login.",
-            "success"
-        )
+            if conn:
+                conn.rollback()
 
-        return redirect(
-            url_for("login")
-        )
+            flash(
+                "An account with this email already exists. Please login.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("login")
+            )
+
+        except Exception:
+
+            if conn:
+                conn.rollback()
+
+            app.logger.exception(
+                "Registration error."
+            )
+
+            flash(
+                "We could not create your account right now. Please try again.",
+                "danger"
+            )
+
+            return render_template(
+                "register.html",
+                name=name,
+                email=email
+            )
+
+        finally:
+
+            close_db(conn)
 
     return render_template(
         "register.html"
@@ -370,12 +507,18 @@ def register():
 )
 def login():
 
-    # If already logged in, don't show login again.
-    if "user_id" in session:
+    # Already logged in.
+    if session.get("user_id"):
 
         return redirect(
             url_for("workspace")
         )
+
+    # Keep the destination from the query string.
+    next_page = request.args.get(
+        "next",
+        ""
+    )
 
     if request.method == "POST":
 
@@ -393,6 +536,14 @@ def login():
             "remember"
         )
 
+        # If next wasn't in request.args, get it from form.
+        if not next_page:
+
+            next_page = request.form.get(
+                "next",
+                ""
+            )
+
         # -----------------------------------------------
         # VALIDATION
         # -----------------------------------------------
@@ -405,21 +556,52 @@ def login():
             )
 
             return render_template(
-                "login.html"
+                "login.html",
+                email=email,
+                next=next_page
             )
 
-        conn = get_db()
+        conn = None
+        user = None
 
-        user = conn.execute(
-            """
-            SELECT *
-            FROM users
-            WHERE email = ?
-            """,
-            (email,)
-        ).fetchone()
+        try:
 
-        conn.close()
+            conn = get_db()
+
+            user = conn.execute(
+                """
+                SELECT
+                    id,
+                    name,
+                    email,
+                    password
+                FROM users
+                WHERE LOWER(email) = ?
+                LIMIT 1
+                """,
+                (email,)
+            ).fetchone()
+
+        except Exception:
+
+            app.logger.exception(
+                "Login database error."
+            )
+
+            flash(
+                "Unable to access your account right now. Please try again.",
+                "danger"
+            )
+
+            return render_template(
+                "login.html",
+                email=email,
+                next=next_page
+            )
+
+        finally:
+
+            close_db(conn)
 
         # -----------------------------------------------
         # PASSWORD CHECK
@@ -438,6 +620,10 @@ def login():
 
             except Exception:
 
+                app.logger.exception(
+                    "Password verification error."
+                )
+
                 password_valid = False
 
         if not user or not password_valid:
@@ -449,7 +635,8 @@ def login():
 
             return render_template(
                 "login.html",
-                email=email
+                email=email,
+                next=next_page
             )
 
         # -----------------------------------------------
@@ -475,20 +662,22 @@ def login():
             session.permanent = False
 
         # -----------------------------------------------
-        # REDIRECT TO ORIGINAL PAGE
+        # REDIRECT
         # -----------------------------------------------
 
-        next_page = request.args.get(
-            "next"
-        )
-
-        if next_page and next_page.startswith("/"):
+        if is_safe_url(next_page):
 
             return redirect(next_page)
 
         return redirect(
             url_for("workspace")
         )
+
+    return render_template(
+        "login.html",
+        email="",
+        next=next_page
+    )
 
 
 # =========================================================
@@ -518,64 +707,85 @@ def logout():
 @login_required
 def workspace():
 
-    conn = get_db()
+    conn = None
 
-    user_id = session["user_id"]
+    try:
 
-    posts = conn.execute(
-        """
-        SELECT *
-        FROM posts
-        WHERE user_id = ?
-        ORDER BY id DESC
-        """,
-        (user_id,)
-    ).fetchall()
+        conn = get_db()
 
-    creator_projects = conn.execute(
-        """
-        SELECT *
-        FROM creator_projects
-        WHERE user_id = ?
-        ORDER BY id DESC
-        """,
-        (user_id,)
-    ).fetchall()
+        user_id = session["user_id"]
 
-    business = conn.execute(
-        """
-        SELECT *
-        FROM business_profiles
-        WHERE user_id = ?
-        ORDER BY id DESC
-        LIMIT 1
-        """,
-        (user_id,)
-    ).fetchone()
+        posts = conn.execute(
+            """
+            SELECT *
+            FROM posts
+            WHERE user_id = ?
+            ORDER BY id DESC
+            """,
+            (user_id,)
+        ).fetchall()
 
-    communities = conn.execute(
-        """
-        SELECT communities.*
-        FROM communities
-        JOIN community_members
-            ON communities.id =
-               community_members.community_id
-        WHERE community_members.user_id = ?
-        ORDER BY communities.id DESC
-        """,
-        (user_id,)
-    ).fetchall()
+        creator_projects = conn.execute(
+            """
+            SELECT *
+            FROM creator_projects
+            WHERE user_id = ?
+            ORDER BY id DESC
+            """,
+            (user_id,)
+        ).fetchall()
 
-    conn.close()
+        business = conn.execute(
+            """
+            SELECT *
+            FROM business_profiles
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (user_id,)
+        ).fetchone()
 
-    return render_template(
-        "workspace.html",
-        posts=posts,
-        creator_projects=creator_projects,
-        business=business,
-        communities=communities,
-        user_name=session.get("user_name")
-    )
+        communities = conn.execute(
+            """
+            SELECT communities.*
+            FROM communities
+            JOIN community_members
+                ON communities.id =
+                   community_members.community_id
+            WHERE community_members.user_id = ?
+            ORDER BY communities.id DESC
+            """,
+            (user_id,)
+        ).fetchall()
+
+        return render_template(
+            "workspace.html",
+            posts=posts,
+            creator_projects=creator_projects,
+            business=business,
+            communities=communities,
+            user_name=session.get("user_name")
+        )
+
+    except Exception:
+
+        app.logger.exception(
+            "Workspace error."
+        )
+
+        flash(
+            "Unable to load your workspace right now.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("home")
+        )
+
+    finally:
+
+        close_db(conn)
 
 
 # =========================================================
@@ -612,38 +822,63 @@ def create_post():
                 url_for("create_post")
             )
 
-        conn = get_db()
+        conn = None
 
-        conn.execute(
-            """
-            INSERT INTO posts
-            (
-                user_id,
-                title,
-                content,
-                created_at
+        try:
+
+            conn = get_db()
+
+            conn.execute(
+                """
+                INSERT INTO posts
+                (
+                    user_id,
+                    title,
+                    content,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    session["user_id"],
+                    title,
+                    content,
+                    datetime.utcnow().isoformat()
+                )
             )
-            VALUES (?, ?, ?, ?)
-            """,
-            (
-                session["user_id"],
-                title,
-                content,
-                datetime.utcnow().isoformat()
+
+            conn.commit()
+
+            flash(
+                "Your post has been published!",
+                "success"
             )
-        )
 
-        conn.commit()
-        conn.close()
+            return redirect(
+                url_for("workspace")
+            )
 
-        flash(
-            "Your post has been published!",
-            "success"
-        )
+        except Exception:
 
-        return redirect(
-            url_for("workspace")
-        )
+            if conn:
+                conn.rollback()
+
+            app.logger.exception(
+                "Create post error."
+            )
+
+            flash(
+                "Unable to publish your post.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("create_post")
+            )
+
+        finally:
+
+            close_db(conn)
 
     return render_template(
         "create_post.html"
@@ -661,27 +896,104 @@ def create_post():
 @login_required
 def edit_post(post_id):
 
-    conn = get_db()
+    conn = None
 
-    post = conn.execute(
-        """
-        SELECT *
-        FROM posts
-        WHERE id = ?
-        AND user_id = ?
-        """,
-        (
-            post_id,
-            session["user_id"]
+    try:
+
+        conn = get_db()
+
+        post = conn.execute(
+            """
+            SELECT *
+            FROM posts
+            WHERE id = ?
+            AND user_id = ?
+            """,
+            (
+                post_id,
+                session["user_id"]
+            )
+        ).fetchone()
+
+        if not post:
+
+            flash(
+                "Post not found or you do not have permission.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("workspace")
+            )
+
+        if request.method == "POST":
+
+            title = request.form.get(
+                "title",
+                ""
+            ).strip()
+
+            content = request.form.get(
+                "content",
+                ""
+            ).strip()
+
+            if not title or not content:
+
+                flash(
+                    "Title and content are required.",
+                    "danger"
+                )
+
+                return render_template(
+                    "edit_post.html",
+                    post=post
+                )
+
+            conn.execute(
+                """
+                UPDATE posts
+                SET
+                    title = ?,
+                    content = ?
+                WHERE id = ?
+                AND user_id = ?
+                """,
+                (
+                    title,
+                    content,
+                    post_id,
+                    session["user_id"]
+                )
+            )
+
+            conn.commit()
+
+            flash(
+                "Your post has been updated.",
+                "success"
+            )
+
+            return redirect(
+                url_for("workspace")
+            )
+
+        return render_template(
+            "edit_post.html",
+            post=post
         )
-    ).fetchone()
 
-    if not post:
+    except Exception:
 
-        conn.close()
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Edit post error."
+        )
 
         flash(
-            "Post not found or you do not have permission.",
+            "Unable to edit the post.",
             "danger"
         )
 
@@ -689,69 +1001,9 @@ def edit_post(post_id):
             url_for("workspace")
         )
 
-    if request.method == "POST":
+    finally:
 
-        title = request.form.get(
-            "title",
-            ""
-        ).strip()
-
-        content = request.form.get(
-            "content",
-            ""
-        ).strip()
-
-        if not title or not content:
-
-            conn.close()
-
-            flash(
-                "Title and content are required.",
-                "danger"
-            )
-
-            return redirect(
-                url_for(
-                    "edit_post",
-                    post_id=post_id
-                )
-            )
-
-        conn.execute(
-            """
-            UPDATE posts
-            SET
-                title = ?,
-                content = ?
-            WHERE id = ?
-            AND user_id = ?
-            """,
-            (
-                title,
-                content,
-                post_id,
-                session["user_id"]
-            )
-        )
-
-        conn.commit()
-        conn.close()
-
-        flash(
-            "Your post has been updated.",
-            "success"
-        )
-
-        return redirect(
-            url_for("workspace")
-        )
-
-    conn.close()
-
-    return render_template(
-        "edit_post.html",
-        post=post
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -765,27 +1017,70 @@ def edit_post(post_id):
 @login_required
 def delete_post(post_id):
 
-    conn = get_db()
+    conn = None
 
-    post = conn.execute(
-        """
-        SELECT id
-        FROM posts
-        WHERE id = ?
-        AND user_id = ?
-        """,
-        (
-            post_id,
-            session["user_id"]
+    try:
+
+        conn = get_db()
+
+        post = conn.execute(
+            """
+            SELECT id
+            FROM posts
+            WHERE id = ?
+            AND user_id = ?
+            """,
+            (
+                post_id,
+                session["user_id"]
+            )
+        ).fetchone()
+
+        if not post:
+
+            flash(
+                "Post not found or you do not have permission.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("workspace")
+            )
+
+        conn.execute(
+            """
+            DELETE FROM posts
+            WHERE id = ?
+            AND user_id = ?
+            """,
+            (
+                post_id,
+                session["user_id"]
+            )
         )
-    ).fetchone()
 
-    if not post:
-
-        conn.close()
+        conn.commit()
 
         flash(
-            "Post not found or you do not have permission.",
+            "Post deleted successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for("workspace")
+        )
+
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Delete post error."
+        )
+
+        flash(
+            "Unable to delete the post.",
             "danger"
         )
 
@@ -793,29 +1088,9 @@ def delete_post(post_id):
             url_for("workspace")
         )
 
-    conn.execute(
-        """
-        DELETE FROM posts
-        WHERE id = ?
-        AND user_id = ?
-        """,
-        (
-            post_id,
-            session["user_id"]
-        )
-    )
+    finally:
 
-    conn.commit()
-    conn.close()
-
-    flash(
-        "Post deleted successfully.",
-        "success"
-    )
-
-    return redirect(
-        url_for("workspace")
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -825,26 +1100,43 @@ def delete_post(post_id):
 @app.route("/blog")
 def blog():
 
-    conn = get_db()
+    conn = None
 
-    posts = conn.execute(
-        """
-        SELECT
-            posts.*,
-            users.name
-        FROM posts
-        JOIN users
-            ON posts.user_id = users.id
-        ORDER BY posts.id DESC
-        """
-    ).fetchall()
+    try:
 
-    conn.close()
+        conn = get_db()
 
-    return render_template(
-        "blog.html",
-        posts=posts
-    )
+        posts = conn.execute(
+            """
+            SELECT
+                posts.*,
+                users.name
+            FROM posts
+            JOIN users
+                ON posts.user_id = users.id
+            ORDER BY posts.id DESC
+            """
+        ).fetchall()
+
+        return render_template(
+            "blog.html",
+            posts=posts
+        )
+
+    except Exception:
+
+        app.logger.exception(
+            "Blog error."
+        )
+
+        return render_template(
+            "blog.html",
+            posts=[]
+        )
+
+    finally:
+
+        close_db(conn)
 
 
 # =========================================================
@@ -854,34 +1146,45 @@ def blog():
 @app.route("/post/<int:post_id>")
 def view_post(post_id):
 
-    conn = get_db()
+    conn = None
 
-    post = conn.execute(
-        """
-        SELECT
-            posts.*,
-            users.name
-        FROM posts
-        JOIN users
-            ON posts.user_id = users.id
-        WHERE posts.id = ?
-        """,
-        (post_id,)
-    ).fetchone()
+    try:
 
-    conn.close()
+        conn = get_db()
 
-    if not post:
+        post = conn.execute(
+            """
+            SELECT
+                posts.*,
+                users.name
+            FROM posts
+            JOIN users
+                ON posts.user_id = users.id
+            WHERE posts.id = ?
+            """,
+            (post_id,)
+        ).fetchone()
 
-        return (
-            "Post not found",
-            404
+        if not post:
+
+            return "Post not found", 404
+
+        return render_template(
+            "view_post.html",
+            post=post
         )
 
-    return render_template(
-        "view_post.html",
-        post=post
-    )
+    except Exception:
+
+        app.logger.exception(
+            "View post error."
+        )
+
+        return "Unable to load post.", 500
+
+    finally:
+
+        close_db(conn)
 
 
 # =========================================================
@@ -896,39 +1199,57 @@ def search():
         ""
     ).strip()
 
-    conn = get_db()
+    conn = None
 
-    if query:
+    try:
 
-        posts = conn.execute(
-            """
-            SELECT
-                posts.*,
-                users.name
-            FROM posts
-            JOIN users
-                ON posts.user_id = users.id
-            WHERE posts.title LIKE ?
-               OR posts.content LIKE ?
-            ORDER BY posts.id DESC
-            """,
-            (
-                f"%{query}%",
-                f"%{query}%"
-            )
-        ).fetchall()
+        conn = get_db()
 
-    else:
+        if query:
 
-        posts = []
+            posts = conn.execute(
+                """
+                SELECT
+                    posts.*,
+                    users.name
+                FROM posts
+                JOIN users
+                    ON posts.user_id = users.id
+                WHERE posts.title LIKE ?
+                   OR posts.content LIKE ?
+                ORDER BY posts.id DESC
+                """,
+                (
+                    f"%{query}%",
+                    f"%{query}%"
+                )
+            ).fetchall()
 
-    conn.close()
+        else:
 
-    return render_template(
-        "search.html",
-        posts=posts,
-        query=query
-    )
+            posts = []
+
+        return render_template(
+            "search.html",
+            posts=posts,
+            query=query
+        )
+
+    except Exception:
+
+        app.logger.exception(
+            "Search error."
+        )
+
+        return render_template(
+            "search.html",
+            posts=[],
+            query=query
+        )
+
+    finally:
+
+        close_db(conn)
 
 
 # =========================================================
@@ -942,106 +1263,126 @@ def search():
 @login_required
 def creator_studio():
 
-    conn = get_db()
+    conn = None
 
-    if request.method == "POST":
+    try:
 
-        title = request.form.get(
-            "title",
-            ""
-        ).strip()
+        conn = get_db()
 
-        description = request.form.get(
-            "description",
-            ""
-        ).strip()
+        if request.method == "POST":
 
-        project_type = request.form.get(
-            "project_type",
-            "General"
-        ).strip()
+            title = request.form.get(
+                "title",
+                ""
+            ).strip()
 
-        status = request.form.get(
-            "status",
-            "Idea"
-        ).strip()
+            description = request.form.get(
+                "description",
+                ""
+            ).strip()
 
-        allowed_statuses = [
-            "Idea",
-            "Draft",
-            "In Production",
-            "Published"
-        ]
+            project_type = request.form.get(
+                "project_type",
+                "General"
+            ).strip()
 
-        if status not in allowed_statuses:
+            status = request.form.get(
+                "status",
+                "Idea"
+            ).strip()
 
-            status = "Idea"
+            allowed_statuses = [
+                "Idea",
+                "Draft",
+                "In Production",
+                "Published"
+            ]
 
-        if not title:
+            if status not in allowed_statuses:
+                status = "Idea"
 
-            conn.close()
+            if not title:
+
+                flash(
+                    "Please enter a project title.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("creator_studio")
+                )
+
+            conn.execute(
+                """
+                INSERT INTO creator_projects
+                (
+                    user_id,
+                    title,
+                    description,
+                    project_type,
+                    status,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    session["user_id"],
+                    title,
+                    description,
+                    project_type,
+                    status,
+                    datetime.utcnow().isoformat()
+                )
+            )
+
+            conn.commit()
 
             flash(
-                "Please enter a project title.",
-                "danger"
+                "Creator project added successfully.",
+                "success"
             )
 
             return redirect(
                 url_for("creator_studio")
             )
 
-        conn.execute(
+        projects = conn.execute(
             """
-            INSERT INTO creator_projects
-            (
-                user_id,
-                title,
-                description,
-                project_type,
-                status,
-                created_at
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
+            SELECT *
+            FROM creator_projects
+            WHERE user_id = ?
+            ORDER BY id DESC
             """,
-            (
-                session["user_id"],
-                title,
-                description,
-                project_type,
-                status,
-                datetime.utcnow().isoformat()
-            )
+            (session["user_id"],)
+        ).fetchall()
+
+        return render_template(
+            "creator_studio.html",
+            projects=projects,
+            user_name=session.get("user_name")
         )
 
-        conn.commit()
-        conn.close()
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Creator Studio error."
+        )
 
         flash(
-            "Creator project added successfully.",
-            "success"
+            "Unable to load Creator Studio.",
+            "danger"
         )
 
         return redirect(
-            url_for("creator_studio")
+            url_for("workspace")
         )
 
-    projects = conn.execute(
-        """
-        SELECT *
-        FROM creator_projects
-        WHERE user_id = ?
-        ORDER BY id DESC
-        """,
-        (session["user_id"],)
-    ).fetchall()
+    finally:
 
-    conn.close()
-
-    return render_template(
-        "creator_studio.html",
-        projects=projects,
-        user_name=session.get("user_name")
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -1055,27 +1396,130 @@ def creator_studio():
 @login_required
 def edit_creator_project(project_id):
 
-    conn = get_db()
+    conn = None
 
-    project = conn.execute(
-        """
-        SELECT *
-        FROM creator_projects
-        WHERE id = ?
-        AND user_id = ?
-        """,
-        (
-            project_id,
-            session["user_id"]
+    try:
+
+        conn = get_db()
+
+        project = conn.execute(
+            """
+            SELECT *
+            FROM creator_projects
+            WHERE id = ?
+            AND user_id = ?
+            """,
+            (
+                project_id,
+                session["user_id"]
+            )
+        ).fetchone()
+
+        if not project:
+
+            flash(
+                "Creator project not found.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("creator_studio")
+            )
+
+        if request.method == "POST":
+
+            title = request.form.get(
+                "title",
+                ""
+            ).strip()
+
+            description = request.form.get(
+                "description",
+                ""
+            ).strip()
+
+            project_type = request.form.get(
+                "project_type",
+                "General"
+            ).strip()
+
+            status = request.form.get(
+                "status",
+                "Idea"
+            ).strip()
+
+            allowed_statuses = [
+                "Idea",
+                "Draft",
+                "In Production",
+                "Published"
+            ]
+
+            if status not in allowed_statuses:
+                status = "Idea"
+
+            if not title:
+
+                flash(
+                    "Project title is required.",
+                    "danger"
+                )
+
+                return render_template(
+                    "edit_creator_project.html",
+                    project=project,
+                    user_name=session.get("user_name")
+                )
+
+            conn.execute(
+                """
+                UPDATE creator_projects
+                SET
+                    title = ?,
+                    description = ?,
+                    project_type = ?,
+                    status = ?
+                WHERE id = ?
+                AND user_id = ?
+                """,
+                (
+                    title,
+                    description,
+                    project_type,
+                    status,
+                    project_id,
+                    session["user_id"]
+                )
+            )
+
+            conn.commit()
+
+            flash(
+                "Creator project updated successfully.",
+                "success"
+            )
+
+            return redirect(
+                url_for("creator_studio")
+            )
+
+        return render_template(
+            "edit_creator_project.html",
+            project=project,
+            user_name=session.get("user_name")
         )
-    ).fetchone()
 
-    if not project:
+    except Exception:
 
-        conn.close()
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Edit Creator Project error."
+        )
 
         flash(
-            "Creator project not found.",
+            "Unable to edit creator project.",
             "danger"
         )
 
@@ -1083,95 +1527,9 @@ def edit_creator_project(project_id):
             url_for("creator_studio")
         )
 
-    if request.method == "POST":
+    finally:
 
-        title = request.form.get(
-            "title",
-            ""
-        ).strip()
-
-        description = request.form.get(
-            "description",
-            ""
-        ).strip()
-
-        project_type = request.form.get(
-            "project_type",
-            "General"
-        ).strip()
-
-        status = request.form.get(
-            "status",
-            "Idea"
-        ).strip()
-
-        allowed_statuses = [
-            "Idea",
-            "Draft",
-            "In Production",
-            "Published"
-        ]
-
-        if status not in allowed_statuses:
-
-            status = "Idea"
-
-        if not title:
-
-            conn.close()
-
-            flash(
-                "Project title is required.",
-                "danger"
-            )
-
-            return redirect(
-                url_for(
-                    "edit_creator_project",
-                    project_id=project_id
-                )
-            )
-
-        conn.execute(
-            """
-            UPDATE creator_projects
-            SET
-                title = ?,
-                description = ?,
-                project_type = ?,
-                status = ?
-            WHERE id = ?
-            AND user_id = ?
-            """,
-            (
-                title,
-                description,
-                project_type,
-                status,
-                project_id,
-                session["user_id"]
-            )
-        )
-
-        conn.commit()
-        conn.close()
-
-        flash(
-            "Creator project updated successfully.",
-            "success"
-        )
-
-        return redirect(
-            url_for("creator_studio")
-        )
-
-    conn.close()
-
-    return render_template(
-        "edit_creator_project.html",
-        project=project,
-        user_name=session.get("user_name")
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -1185,27 +1543,70 @@ def edit_creator_project(project_id):
 @login_required
 def delete_creator_project(project_id):
 
-    conn = get_db()
+    conn = None
 
-    project = conn.execute(
-        """
-        SELECT id
-        FROM creator_projects
-        WHERE id = ?
-        AND user_id = ?
-        """,
-        (
-            project_id,
-            session["user_id"]
+    try:
+
+        conn = get_db()
+
+        project = conn.execute(
+            """
+            SELECT id
+            FROM creator_projects
+            WHERE id = ?
+            AND user_id = ?
+            """,
+            (
+                project_id,
+                session["user_id"]
+            )
+        ).fetchone()
+
+        if not project:
+
+            flash(
+                "Creator project not found.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("creator_studio")
+            )
+
+        conn.execute(
+            """
+            DELETE FROM creator_projects
+            WHERE id = ?
+            AND user_id = ?
+            """,
+            (
+                project_id,
+                session["user_id"]
+            )
         )
-    ).fetchone()
 
-    if not project:
-
-        conn.close()
+        conn.commit()
 
         flash(
-            "Creator project not found.",
+            "Creator project deleted.",
+            "success"
+        )
+
+        return redirect(
+            url_for("creator_studio")
+        )
+
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Delete Creator Project error."
+        )
+
+        flash(
+            "Unable to delete creator project.",
             "danger"
         )
 
@@ -1213,29 +1614,9 @@ def delete_creator_project(project_id):
             url_for("creator_studio")
         )
 
-    conn.execute(
-        """
-        DELETE FROM creator_projects
-        WHERE id = ?
-        AND user_id = ?
-        """,
-        (
-            project_id,
-            session["user_id"]
-        )
-    )
+    finally:
 
-    conn.commit()
-    conn.close()
-
-    flash(
-        "Creator project deleted.",
-        "success"
-    )
-
-    return redirect(
-        url_for("creator_studio")
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -1249,56 +1630,135 @@ def delete_creator_project(project_id):
 @login_required
 def business_space():
 
-    conn = get_db()
+    conn = None
 
-    if request.method == "POST":
+    try:
 
-        business_name = request.form.get(
-            "business_name",
-            ""
-        ).strip()
+        conn = get_db()
 
-        description = request.form.get(
-            "description",
-            ""
-        ).strip()
+        if request.method == "POST":
 
-        category = request.form.get(
-            "category",
-            ""
-        ).strip()
+            business_name = request.form.get(
+                "business_name",
+                ""
+            ).strip()
 
-        phone = request.form.get(
-            "phone",
-            ""
-        ).strip()
+            description = request.form.get(
+                "description",
+                ""
+            ).strip()
 
-        location = request.form.get(
-            "location",
-            ""
-        ).strip()
+            category = request.form.get(
+                "category",
+                ""
+            ).strip()
 
-        website = request.form.get(
-            "website",
-            ""
-        ).strip()
+            phone = request.form.get(
+                "phone",
+                ""
+            ).strip()
 
-        if not business_name:
+            location = request.form.get(
+                "location",
+                ""
+            ).strip()
 
-            conn.close()
+            website = request.form.get(
+                "website",
+                ""
+            ).strip()
+
+            if not business_name:
+
+                flash(
+                    "Business name is required.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("business_space")
+                )
+
+            existing = conn.execute(
+                """
+                SELECT id
+                FROM business_profiles
+                WHERE user_id = ?
+                LIMIT 1
+                """,
+                (session["user_id"],)
+            ).fetchone()
+
+            if existing:
+
+                conn.execute(
+                    """
+                    UPDATE business_profiles
+                    SET
+                        business_name = ?,
+                        description = ?,
+                        category = ?,
+                        phone = ?,
+                        location = ?,
+                        website = ?
+                    WHERE id = ?
+                    AND user_id = ?
+                    """,
+                    (
+                        business_name,
+                        description,
+                        category,
+                        phone,
+                        location,
+                        website,
+                        existing["id"],
+                        session["user_id"]
+                    )
+                )
+
+            else:
+
+                conn.execute(
+                    """
+                    INSERT INTO business_profiles
+                    (
+                        user_id,
+                        business_name,
+                        description,
+                        category,
+                        phone,
+                        location,
+                        website,
+                        created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        session["user_id"],
+                        business_name,
+                        description,
+                        category,
+                        phone,
+                        location,
+                        website,
+                        datetime.utcnow().isoformat()
+                    )
+                )
+
+            conn.commit()
 
             flash(
-                "Business name is required.",
-                "danger"
+                "Business profile saved successfully.",
+                "success"
             )
 
             return redirect(
                 url_for("business_space")
             )
 
-        existing = conn.execute(
+        business = conn.execute(
             """
-            SELECT id
+            SELECT *
             FROM business_profiles
             WHERE user_id = ?
             LIMIT 1
@@ -1306,91 +1766,33 @@ def business_space():
             (session["user_id"],)
         ).fetchone()
 
-        if existing:
+        return render_template(
+            "business_space.html",
+            business=business,
+            user_name=session.get("user_name")
+        )
 
-            conn.execute(
-                """
-                UPDATE business_profiles
-                SET
-                    business_name = ?,
-                    description = ?,
-                    category = ?,
-                    phone = ?,
-                    location = ?,
-                    website = ?
-                WHERE id = ?
-                AND user_id = ?
-                """,
-                (
-                    business_name,
-                    description,
-                    category,
-                    phone,
-                    location,
-                    website,
-                    existing["id"],
-                    session["user_id"]
-                )
-            )
+    except Exception:
 
-        else:
+        if conn:
+            conn.rollback()
 
-            conn.execute(
-                """
-                INSERT INTO business_profiles
-                (
-                    user_id,
-                    business_name,
-                    description,
-                    category,
-                    phone,
-                    location,
-                    website,
-                    created_at
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    session["user_id"],
-                    business_name,
-                    description,
-                    category,
-                    phone,
-                    location,
-                    website,
-                    datetime.utcnow().isoformat()
-                )
-            )
-
-        conn.commit()
-        conn.close()
+        app.logger.exception(
+            "Business Space error."
+        )
 
         flash(
-            "Business profile saved successfully.",
-            "success"
+            "Unable to load Business Space.",
+            "danger"
         )
 
         return redirect(
-            url_for("business_space")
+            url_for("workspace")
         )
 
-    business = conn.execute(
-        """
-        SELECT *
-        FROM business_profiles
-        WHERE user_id = ?
-        LIMIT 1
-        """,
-        (session["user_id"],)
-    ).fetchone()
+    finally:
 
-    conn.close()
-
-    return render_template(
-        "business_space.html",
-        business=business,
-        user_name=session.get("user_name")
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -1404,124 +1806,145 @@ def business_space():
 @login_required
 def communities():
 
-    conn = get_db()
+    conn = None
 
-    if request.method == "POST":
+    try:
 
-        name = request.form.get(
-            "name",
-            ""
-        ).strip()
+        conn = get_db()
 
-        description = request.form.get(
-            "description",
-            ""
-        ).strip()
+        if request.method == "POST":
 
-        category = request.form.get(
-            "category",
-            ""
-        ).strip()
+            name = request.form.get(
+                "name",
+                ""
+            ).strip()
 
-        if not name:
+            description = request.form.get(
+                "description",
+                ""
+            ).strip()
 
-            conn.close()
+            category = request.form.get(
+                "category",
+                ""
+            ).strip()
+
+            if not name:
+
+                flash(
+                    "Community name is required.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            cursor = conn.execute(
+                """
+                INSERT INTO communities
+                (
+                    owner_id,
+                    name,
+                    description,
+                    category,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    session["user_id"],
+                    name,
+                    description,
+                    category,
+                    datetime.utcnow().isoformat()
+                )
+            )
+
+            community_id = cursor.lastrowid
+
+            # Automatically make creator a member.
+            conn.execute(
+                """
+                INSERT INTO community_members
+                (
+                    community_id,
+                    user_id,
+                    joined_at
+                )
+                VALUES (?, ?, ?)
+                """,
+                (
+                    community_id,
+                    session["user_id"],
+                    datetime.utcnow().isoformat()
+                )
+            )
+
+            conn.commit()
 
             flash(
-                "Community name is required.",
-                "danger"
+                "Community created successfully.",
+                "success"
             )
 
             return redirect(
                 url_for("communities")
             )
 
-        cursor = conn.execute(
+        all_communities = conn.execute(
             """
-            INSERT INTO communities
-            (
-                owner_id,
-                name,
-                description,
-                category,
-                created_at
-            )
-            VALUES (?, ?, ?, ?, ?)
+            SELECT
+                communities.*,
+                users.name AS owner_name
+            FROM communities
+            JOIN users
+                ON communities.owner_id = users.id
+            ORDER BY communities.id DESC
+            """
+        ).fetchall()
+
+        my_communities = conn.execute(
+            """
+            SELECT communities.*
+            FROM communities
+            JOIN community_members
+                ON communities.id =
+                   community_members.community_id
+            WHERE community_members.user_id = ?
+            ORDER BY communities.id DESC
             """,
-            (
-                session["user_id"],
-                name,
-                description,
-                category,
-                datetime.utcnow().isoformat()
-            )
+            (session["user_id"],)
+        ).fetchall()
+
+        return render_template(
+            "communities.html",
+            communities=all_communities,
+            my_communities=my_communities,
+            user_name=session.get("user_name")
         )
 
-        community_id = cursor.lastrowid
+    except Exception:
 
-        # Automatically make creator a member.
-        conn.execute(
-            """
-            INSERT INTO community_members
-            (
-                community_id,
-                user_id,
-                joined_at
-            )
-            VALUES (?, ?, ?)
-            """,
-            (
-                community_id,
-                session["user_id"],
-                datetime.utcnow().isoformat()
-            )
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Communities error."
         )
-
-        conn.commit()
-        conn.close()
 
         flash(
-            "Community created successfully.",
-            "success"
+            "Unable to load Communities.",
+            "danger"
         )
 
         return redirect(
-            url_for("communities")
+            url_for("workspace")
         )
 
-    all_communities = conn.execute(
-        """
-        SELECT
-            communities.*,
-            users.name AS owner_name
-        FROM communities
-        JOIN users
-            ON communities.owner_id = users.id
-        ORDER BY communities.id DESC
-        """
-    ).fetchall()
+    finally:
 
-    my_communities = conn.execute(
-        """
-        SELECT communities.*
-        FROM communities
-        JOIN community_members
-            ON communities.id =
-               community_members.community_id
-        WHERE community_members.user_id = ?
-        ORDER BY communities.id DESC
-        """,
-        (session["user_id"],)
-    ).fetchall()
-
-    conn.close()
-
-    return render_template(
-        "communities.html",
-        communities=all_communities,
-        my_communities=my_communities,
-        user_name=session.get("user_name")
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -1535,23 +1958,82 @@ def communities():
 @login_required
 def join_community(community_id):
 
-    conn = get_db()
+    conn = None
 
-    community = conn.execute(
-        """
-        SELECT id
-        FROM communities
-        WHERE id = ?
-        """,
-        (community_id,)
-    ).fetchone()
+    try:
 
-    if not community:
+        conn = get_db()
 
-        conn.close()
+        community = conn.execute(
+            """
+            SELECT id
+            FROM communities
+            WHERE id = ?
+            """,
+            (community_id,)
+        ).fetchone()
+
+        if not community:
+
+            flash(
+                "Community not found.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("communities")
+            )
+
+        try:
+
+            conn.execute(
+                """
+                INSERT INTO community_members
+                (
+                    community_id,
+                    user_id,
+                    joined_at
+                )
+                VALUES (?, ?, ?)
+                """,
+                (
+                    community_id,
+                    session["user_id"],
+                    datetime.utcnow().isoformat()
+                )
+            )
+
+            conn.commit()
+
+            flash(
+                "You joined the community.",
+                "success"
+            )
+
+        except sqlite3.IntegrityError:
+
+            conn.rollback()
+
+            flash(
+                "You are already a member of this community.",
+                "warning"
+            )
+
+        return redirect(
+            url_for("communities")
+        )
+
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Join community error."
+        )
 
         flash(
-            "Community not found.",
+            "Unable to join the community.",
             "danger"
         )
 
@@ -1559,46 +2041,9 @@ def join_community(community_id):
             url_for("communities")
         )
 
-    try:
-
-        conn.execute(
-            """
-            INSERT INTO community_members
-            (
-                community_id,
-                user_id,
-                joined_at
-            )
-            VALUES (?, ?, ?)
-            """,
-            (
-                community_id,
-                session["user_id"],
-                datetime.utcnow().isoformat()
-            )
-        )
-
-        conn.commit()
-
-        flash(
-            "You joined the community.",
-            "success"
-        )
-
-    except sqlite3.IntegrityError:
-
-        flash(
-            "You are already a member of this community.",
-            "warning"
-        )
-
     finally:
 
-        conn.close()
-
-    return redirect(
-        url_for("communities")
-    )
+        close_db(conn)
 
 
 # =========================================================
@@ -1614,7 +2059,7 @@ def tools():
 
 
 # =========================================================
-# ERROR HANDLERS
+# 404
 # =========================================================
 
 @app.errorhandler(404)
@@ -1630,21 +2075,30 @@ def page_not_found(error):
     </head>
 
     <body style="
-        font-family:Arial;
+        font-family:Arial,sans-serif;
         text-align:center;
-        padding:50px;
+        padding:50px 20px;
         background:#f5f7fb;
+        color:#111827;
     ">
 
-        <h1>404</h1>
+        <h1 style="font-size:60px;margin-bottom:10px;">
+            404
+        </h1>
 
         <h2>Page not found</h2>
 
-        <p>
+        <p style="color:#6b7280;">
             The page you are looking for does not exist.
         </p>
 
-        <a href="/">
+        <br>
+
+        <a href="/" style="
+            color:#2563eb;
+            text-decoration:none;
+            font-weight:bold;
+        ">
             ← Back to NijaWebbies
         </a>
 
@@ -1653,11 +2107,14 @@ def page_not_found(error):
     """, 404
 
 
+# =========================================================
+# 500
+# =========================================================
+
 @app.errorhandler(500)
 def internal_server_error(error):
 
-    # Important: print the real error to Render logs.
-    # This makes future problems much easier to diagnose.
+    # The real error will appear in Render logs.
     app.logger.exception(
         "NijaWebbies Internal Server Error"
     )
@@ -1672,24 +2129,31 @@ def internal_server_error(error):
     </head>
 
     <body style="
-        font-family:Arial;
+        font-family:Arial,sans-serif;
         text-align:center;
-        padding:50px;
+        padding:50px 20px;
         background:#f5f7fb;
+        color:#111827;
     ">
 
         <h1>Something went wrong</h1>
 
-        <p>
+        <p style="color:#6b7280;">
             NijaWebbies encountered an unexpected error.
         </p>
 
-        <p>
+        <p style="color:#6b7280;">
             Please try again.
         </p>
 
-        <a href="/workspace">
-            ← Back to Workspace
+        <br>
+
+        <a href="/" style="
+            color:#2563eb;
+            text-decoration:none;
+            font-weight:bold;
+        ">
+            ← Back to NijaWebbies
         </a>
 
     </body>
@@ -1703,13 +2167,15 @@ def internal_server_error(error):
 
 if __name__ == "__main__":
 
+    port = int(
+        os.environ.get(
+            "PORT",
+            5000
+        )
+    )
+
     app.run(
         host="0.0.0.0",
-        port=int(
-            os.environ.get(
-                "PORT",
-                5000
-            )
-        ),
+        port=port,
         debug=False
     )
