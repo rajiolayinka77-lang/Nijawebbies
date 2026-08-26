@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Post — NijaWebbies</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 15px 20px;
+        }
+
+        header .top {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 18px 0 7px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 250px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+        .flash {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .hint {
+            font-size: 13px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        footer {
+            text-align: center;
+            color: #777;
+            padding: 30px 10px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                margin-top: 20px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="top">
+        <div class="brand">🇳🇬 NijaWebbies</div>
+
+        <a href="{{ url_for('workspace') }}" class="back">
+            ← Workspace
+        </a>
+    </div>
+</header>
+
+
+<main>
+
+    <div class="card">
+
+        <h1>✍️ Create a Post</h1>
+
+        <p class="subtitle">
+            Share your story, ideas, news, business updates or useful information with the NijaWebbies community.
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+        <form method="POST" action="{{ url_for('create_post') }}">
+
+            <label for="title">Post Title</label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Enter your post title"
+                required
+            >
+
+
+            <label for="category">Category</label>
+
+            <select id="category" name="category">
+
+                <option value="General">General</option>
+
+                <option value="News">News</option>
+
+                <option value="Business">Business</option>
+
+                <option value="Technology">Technology</option>
+
+                <option value="Entertainment">Entertainment</option>
+
+                <option value="Lifestyle">Lifestyle</option>
+
+                <option value="Education">Education</option>
+
+                <option value="Community">Community</option>
+
+                <option value="Other">Other</option>
+
+            </select>
+
+
+            <label for="content">Your Post</label>
+
+            <textarea
+                id="content"
+                name="content"
+                placeholder="Write your post here..."
+                required
+            ></textarea>
+
+            <div class="hint">
+                Write useful and original content for your readers.
+            </div>
+
+
+            <button type="submit" class="button">
+                🚀 Publish Post
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<footer>
+    © 2026 NijaWebbies — Search • Publishing • Creators • Businesses • Communities
+</footer>
+
+</body>
+</html>
