@@ -3,64 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Create Post - NijaWebbies</title>
-
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #222;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 0;
         }
 
         header {
             background: #111827;
             color: white;
-            padding: 16px 20px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 22px;
+            padding: 18px;
         }
 
         .container {
             max-width: 800px;
             margin: 30px auto;
-            padding: 0 15px;
-        }
-
-        .card {
             background: white;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
         }
 
-        h2 {
+        h1 {
             margin-top: 0;
         }
 
         label {
             display: block;
-            font-weight: bold;
             margin-top: 18px;
-            margin-bottom: 7px;
+            font-weight: bold;
         }
 
-        input,
-        textarea,
-        select {
+        input, textarea, select {
             width: 100%;
             padding: 12px;
+            margin-top: 7px;
             border: 1px solid #d1d5db;
             border-radius: 8px;
-            font-size: 15px;
+            box-sizing: border-box;
+            font-size: 16px;
         }
 
         textarea {
@@ -69,34 +53,25 @@
         }
 
         button {
-            margin-top: 20px;
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 8px;
-            background: #2563eb;
+            margin-top: 22px;
+            background: #16a34a;
             color: white;
+            border: none;
+            padding: 13px 22px;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: bold;
             cursor: pointer;
         }
 
         button:hover {
-            background: #1d4ed8;
+            background: #15803d;
         }
 
         .back {
             display: inline-block;
-            margin-top: 15px;
-            text-decoration: none;
+            margin-top: 20px;
             color: #2563eb;
-        }
-
-        .message {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 7px;
-            background: #eef6ff;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -104,69 +79,50 @@
 <body>
 
 <header>
-    <h1>🇳🇬 NijaWebbies</h1>
+    <strong>🇳🇬 NijaWebbies</strong>
 </header>
 
 <div class="container">
 
-    <div class="card">
+    <h1>✍️ Create a Post</h1>
+    <p>Share your ideas, stories, projects or useful information with the NijaWebbies community.</p>
 
-        <h2>✍️ Create a Post</h2>
+    <form method="POST">
 
-        <p>Share your story, news, ideas, or useful information with the NijaWebbies community.</p>
+        <label for="title">Post Title</label>
+        <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Enter your post title"
+            required
+        >
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="message">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        <label for="category">Category</label>
+        <select id="category" name="category">
+            <option value="General">General</option>
+            <option value="Business">Business</option>
+            <option value="Technology">Technology</option>
+            <option value="Education">Education</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="Projects">Projects</option>
+            <option value="News">News</option>
+        </select>
 
-        <form method="POST">
+        <label for="content">Content</label>
+        <textarea
+            id="content"
+            name="content"
+            placeholder="Write your post here..."
+            required
+        ></textarea>
 
-            <label for="title">Post Title</label>
-            <input
-                type="text"
-                id="title"
-                name="title"
-                placeholder="Enter your post title"
-                required
-            >
+        <button type="submit">🚀 Publish Post</button>
 
-            <label for="category">Category</label>
-            <select id="category" name="category">
-                <option value="General">General</option>
-                <option value="News">News</option>
-                <option value="Business">Business</option>
-                <option value="Technology">Technology</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Lifestyle">Lifestyle</option>
-                <option value="Education">Education</option>
-                <option value="Community">Community</option>
-            </select>
+    </form>
 
-            <label for="content">Post Content</label>
-            <textarea
-                id="content"
-                name="content"
-                placeholder="Write your post here..."
-                required
-            ></textarea>
-
-            <button type="submit">
-                🚀 Publish Post
-            </button>
-
-        </form>
-
-        <a class="back" href="{{ url_for('workspace') }}">
-            ← Back to Workspace
-        </a>
-
-    </div>
+    <a class="back" href="{{ url_for('workspace') }}">← Back to Workspace</a>
 
 </div>
 
