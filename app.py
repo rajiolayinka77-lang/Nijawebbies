@@ -38,28 +38,18 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
 def get_db():
-    """
-    Connect to the Render PostgreSQL database.
-    """
-
     if not DATABASE_URL:
         raise RuntimeError(
             "DATABASE_URL environment variable is not configured."
         )
 
-    conn = psycopg2.connect(
+    return psycopg2.connect(
         DATABASE_URL,
         connect_timeout=10
     )
 
-    return conn
-
 
 def close_db(conn):
-    """
-    Safely close a PostgreSQL connection.
-    """
-
     if conn:
         try:
             conn.close()
@@ -76,15 +66,11 @@ def init_db():
     conn = None
 
     try:
-
         conn = get_db()
 
         with conn.cursor() as cursor:
 
-            # =================================================
             # USERS
-            # =================================================
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id SERIAL PRIMARY KEY,
@@ -95,10 +81,7 @@ def init_db():
                 )
             """)
 
-            # =================================================
             # POSTS
-            # =================================================
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS posts (
                     id SERIAL PRIMARY KEY,
@@ -108,15 +91,12 @@ def init_db():
                     created_at TIMESTAMP NOT NULL,
 
                     FOREIGN KEY (user_id)
-                        REFERENCES users(id)
-                        ON DELETE CASCADE
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
                 )
             """)
 
-            # =================================================
             # CREATOR PROJECTS
-            # =================================================
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS creator_projects (
                     id SERIAL PRIMARY KEY,
@@ -128,15 +108,23 @@ def init_db():
                     created_at TIMESTAMP NOT NULL,
 
                     FOREIGN KEY (user_id)
-                        REFERENCES users(id)
-                        ON DELETE CASCADE
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
                 )
             """)
 
-            # =================================================
-            # BUSINESS PROFILES
-            # =================================================
+            # -------------------------------------------------
+            # SAFETY MIGRATION
+            # Adds status if an older creator_projects table
+            # does not already have it.
+            # -------------------------------------------------
 
+            cursor.execute("""
+                ALTER TABLE creator_projects
+                ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Idea'
+            """)
+
+            # BUSINESS PROFILES
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS business_profiles (
                     id SERIAL PRIMARY KEY,
@@ -150,15 +138,12 @@ def init_db():
                     created_at TIMESTAMP NOT NULL,
 
                     FOREIGN KEY (user_id)
-                        REFERENCES users(id)
-                        ON DELETE CASCADE
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
                 )
             """)
 
-            # =================================================
             # COMMUNITIES
-            # =================================================
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS communities (
                     id SERIAL PRIMARY KEY,
@@ -169,15 +154,12 @@ def init_db():
                     created_at TIMESTAMP NOT NULL,
 
                     FOREIGN KEY (owner_id)
-                        REFERENCES users(id)
-                        ON DELETE CASCADE
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
                 )
             """)
 
-            # =================================================
             # COMMUNITY MEMBERS
-            # =================================================
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS community_members (
                     id SERIAL PRIMARY KEY,
@@ -188,12 +170,12 @@ def init_db():
                     UNIQUE(community_id, user_id),
 
                     FOREIGN KEY (community_id)
-                        REFERENCES communities(id)
-                        ON DELETE CASCADE,
+                    REFERENCES communities(id)
+                    ON DELETE CASCADE,
 
                     FOREIGN KEY (user_id)
-                        REFERENCES users(id)
-                        ON DELETE CASCADE
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
                 )
             """)
 
@@ -204,7 +186,6 @@ def init_db():
         )
 
     except Exception:
-
         if conn:
             conn.rollback()
 
@@ -215,20 +196,16 @@ def init_db():
         raise
 
     finally:
-
         close_db(conn)
 
 
 # =========================================================
-# INITIALIZE DATABASE
+# START DATABASE
 # =========================================================
 
 try:
-
     init_db()
-
 except Exception:
-
     app.logger.exception(
         "Database startup failed."
     )
@@ -244,7 +221,6 @@ def is_safe_url(target):
         return False
 
     try:
-
         parsed = urlparse(target)
 
         return (
@@ -255,7 +231,6 @@ def is_safe_url(target):
         )
 
     except Exception:
-
         return False
 
 
@@ -315,7 +290,6 @@ def home():
 def register():
 
     if session.get("user_id"):
-
         return redirect(
             url_for("workspace")
         )
@@ -476,7 +450,6 @@ def register():
             )
 
         finally:
-
             close_db(conn)
 
     return render_template(
@@ -495,7 +468,6 @@ def register():
 def login():
 
     if session.get("user_id"):
-
         return redirect(
             url_for("workspace")
         )
@@ -586,7 +558,6 @@ def login():
             )
 
         finally:
-
             close_db(conn)
 
         password_valid = False
@@ -619,28 +590,18 @@ def login():
                 next=next_page
             )
 
-        # -----------------------------------------------
         # CREATE SESSION
-        # -----------------------------------------------
-
         session.clear()
 
         session["user_id"] = user["id"]
         session["user_name"] = user["name"]
         session["user_email"] = user["email"]
 
-        # -----------------------------------------------
-        # REMEMBER ME
-        # -----------------------------------------------
-
+        # REMEMBER LOGIN
         session.permanent = bool(remember)
 
-        # -----------------------------------------------
-        # REDIRECT
-        # -----------------------------------------------
-
+        # SAFE REDIRECT
         if is_safe_url(next_page):
-
             return redirect(next_page)
 
         return redirect(
@@ -693,6 +654,7 @@ def workspace():
             cursor_factory=RealDictCursor
         ) as cursor:
 
+            # POSTS
             cursor.execute(
                 """
                 SELECT *
@@ -705,6 +667,7 @@ def workspace():
 
             posts = cursor.fetchall()
 
+            # CREATOR PROJECTS
             cursor.execute(
                 """
                 SELECT *
@@ -717,6 +680,7 @@ def workspace():
 
             creator_projects = cursor.fetchall()
 
+            # BUSINESS
             cursor.execute(
                 """
                 SELECT *
@@ -730,6 +694,7 @@ def workspace():
 
             business = cursor.fetchone()
 
+            # COMMUNITIES
             cursor.execute(
                 """
                 SELECT communities.*
@@ -770,7 +735,6 @@ def workspace():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -865,7 +829,6 @@ def create_post():
             )
 
         finally:
-
             close_db(conn)
 
     return render_template(
@@ -991,7 +954,6 @@ def edit_post(post_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1084,7 +1046,6 @@ def delete_post(post_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1136,7 +1097,6 @@ def blog():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1173,7 +1133,6 @@ def view_post(post_id):
             post = cursor.fetchone()
 
         if not post:
-
             return "Post not found", 404
 
         return render_template(
@@ -1190,7 +1149,6 @@ def view_post(post_id):
         return "Unable to load post.", 500
 
     finally:
-
         close_db(conn)
 
 
@@ -1261,7 +1219,6 @@ def search():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1402,8 +1359,101 @@ def creator_studio():
         )
 
     finally:
-
         close_db(conn)
+
+
+# =========================================================
+# VIEW CREATOR PROJECT
+# =========================================================
+# THIS IS THE IMPORTANT NEW ROUTE.
+# It fixes the "Read Project" problem.
+# =========================================================
+
+@app.route(
+    "/creator-project/<int:project_id>"
+)
+@login_required
+def view_creator_project(project_id):
+
+    conn = None
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    creator_projects.*,
+                    users.name AS owner_name
+                FROM creator_projects
+                JOIN users
+                    ON creator_projects.user_id = users.id
+                WHERE creator_projects.id = %s
+                """,
+                (project_id,)
+            )
+
+            project = cursor.fetchone()
+
+        if not project:
+
+            flash(
+                "Creator project not found.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("creator_studio")
+            )
+
+        return render_template(
+            "view_creator_project.html",
+            project=project,
+            user_name=session.get("user_name")
+        )
+
+    except Exception:
+
+        app.logger.exception(
+            "View Creator Project error."
+        )
+
+        flash(
+            "Unable to open this creator project.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("creator_studio")
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# PROJECT URL ALIAS
+# =========================================================
+# Supports /project/1 as well.
+# =========================================================
+
+@app.route(
+    "/project/<int:project_id>"
+)
+@login_required
+def view_project(project_id):
+
+    return redirect(
+        url_for(
+            "view_creator_project",
+            project_id=project_id
+        )
+    )
 
 
 # =========================================================
@@ -1549,7 +1599,6 @@ def edit_creator_project(project_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1642,7 +1691,6 @@ def delete_creator_project(project_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1830,7 +1878,6 @@ def business_space():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1993,7 +2040,6 @@ def communities():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2099,7 +2145,6 @@ def join_community(community_id):
         )
 
     finally:
-
         close_db(conn)
 
 
