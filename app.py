@@ -217,6 +217,7 @@ def is_safe_url(target):
         return False
 
     try:
+
         parsed = urlparse(target)
 
         return (
@@ -595,6 +596,7 @@ def login():
         session.permanent = bool(remember)
 
         if is_safe_url(next_page):
+
             return redirect(next_page)
 
         return redirect(
@@ -963,9 +965,7 @@ def delete_post(post_id):
 
         conn = get_db()
 
-        with conn.cursor(
-            cursor_factory=RealDictCursor
-        ) as cursor:
+        with conn.cursor() as cursor:
 
             cursor.execute(
                 """
@@ -1175,6 +1175,7 @@ def search():
                 posts = cursor.fetchall()
 
             else:
+
                 posts = []
 
         return render_template(
@@ -1598,9 +1599,7 @@ def delete_creator_project(project_id):
 
         conn = get_db()
 
-        with conn.cursor(
-            cursor_factory=RealDictCursor
-        ) as cursor:
+        with conn.cursor() as cursor:
 
             cursor.execute(
                 """
@@ -2028,9 +2027,7 @@ def join_community(community_id):
 
         conn = get_db()
 
-        with conn.cursor(
-            cursor_factory=RealDictCursor
-        ) as cursor:
+        with conn.cursor() as cursor:
 
             cursor.execute(
                 """
@@ -2184,8 +2181,9 @@ def page_not_found(error):
 @app.errorhandler(500)
 def internal_server_error(error):
 
-    app.logger.exception(
-        "NijaWebbies Internal Server Error"
+    app.logger.error(
+        "NijaWebbies Internal Server Error: %s",
+        error
     )
 
     return """
