@@ -113,12 +113,7 @@ def init_db():
                 )
             """)
 
-            # -------------------------------------------------
             # SAFETY MIGRATION
-            # Adds status if an older creator_projects table
-            # does not already have it.
-            # -------------------------------------------------
-
             cursor.execute("""
                 ALTER TABLE creator_projects
                 ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Idea'
@@ -186,6 +181,7 @@ def init_db():
         )
 
     except Exception:
+
         if conn:
             conn.rollback()
 
@@ -590,17 +586,14 @@ def login():
                 next=next_page
             )
 
-        # CREATE SESSION
         session.clear()
 
         session["user_id"] = user["id"]
         session["user_name"] = user["name"]
         session["user_email"] = user["email"]
 
-        # REMEMBER LOGIN
         session.permanent = bool(remember)
 
-        # SAFE REDIRECT
         if is_safe_url(next_page):
             return redirect(next_page)
 
@@ -654,7 +647,6 @@ def workspace():
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # POSTS
             cursor.execute(
                 """
                 SELECT *
@@ -667,7 +659,6 @@ def workspace():
 
             posts = cursor.fetchall()
 
-            # CREATOR PROJECTS
             cursor.execute(
                 """
                 SELECT *
@@ -680,7 +671,6 @@ def workspace():
 
             creator_projects = cursor.fetchall()
 
-            # BUSINESS
             cursor.execute(
                 """
                 SELECT *
@@ -694,7 +684,6 @@ def workspace():
 
             business = cursor.fetchone()
 
-            # COMMUNITIES
             cursor.execute(
                 """
                 SELECT communities.*
@@ -980,8 +969,7 @@ def delete_post(post_id):
 
             cursor.execute(
                 """
-                SELECT id
-                FROM posts
+                DELETE FROM posts
                 WHERE id = %s
                 AND user_id = %s
                 """,
@@ -991,29 +979,19 @@ def delete_post(post_id):
                 )
             )
 
-            post = cursor.fetchone()
+            deleted = cursor.rowcount
 
-            if not post:
+        if deleted == 0:
 
-                flash(
-                    "Post not found or you do not have permission.",
-                    "danger"
-                )
+            conn.rollback()
 
-                return redirect(
-                    url_for("workspace")
-                )
+            flash(
+                "Post not found or you do not have permission.",
+                "danger"
+            )
 
-            cursor.execute(
-                """
-                DELETE FROM posts
-                WHERE id = %s
-                AND user_id = %s
-                """,
-                (
-                    post_id,
-                    session["user_id"]
-                )
+            return redirect(
+                url_for("workspace")
             )
 
         conn.commit()
@@ -1197,7 +1175,6 @@ def search():
                 posts = cursor.fetchall()
 
             else:
-
                 posts = []
 
         return render_template(
@@ -1365,9 +1342,6 @@ def creator_studio():
 # =========================================================
 # VIEW CREATOR PROJECT
 # =========================================================
-# THIS IS THE IMPORTANT NEW ROUTE.
-# It fixes the "Read Project" problem.
-# =========================================================
 
 @app.route(
     "/creator-project/<int:project_id>"
@@ -1394,8 +1368,13 @@ def view_creator_project(project_id):
                 JOIN users
                     ON creator_projects.user_id = users.id
                 WHERE creator_projects.id = %s
+                AND creator_projects.user_id = %s
+                LIMIT 1
                 """,
-                (project_id,)
+                (
+                    project_id,
+                    session["user_id"]
+                )
             )
 
             project = cursor.fetchone()
@@ -1403,7 +1382,7 @@ def view_creator_project(project_id):
         if not project:
 
             flash(
-                "Creator project not found.",
+                "Creator project not found or you do not have permission to view it.",
                 "danger"
             )
 
@@ -1424,7 +1403,7 @@ def view_creator_project(project_id):
         )
 
         flash(
-            "Unable to open this creator project.",
+            "Unable to open this creator project right now.",
             "danger"
         )
 
@@ -1438,8 +1417,7 @@ def view_creator_project(project_id):
 
 # =========================================================
 # PROJECT URL ALIAS
-# =========================================================
-# Supports /project/1 as well.
+# Supports /project/1
 # =========================================================
 
 @app.route(
@@ -1483,6 +1461,7 @@ def edit_creator_project(project_id):
                 FROM creator_projects
                 WHERE id = %s
                 AND user_id = %s
+                LIMIT 1
                 """,
                 (
                     project_id,
@@ -1495,7 +1474,7 @@ def edit_creator_project(project_id):
             if not project:
 
                 flash(
-                    "Creator project not found.",
+                    "Creator project not found or you do not have permission to edit it.",
                     "danger"
                 )
 
@@ -1625,32 +1604,6 @@ def delete_creator_project(project_id):
 
             cursor.execute(
                 """
-                SELECT id
-                FROM creator_projects
-                WHERE id = %s
-                AND user_id = %s
-                """,
-                (
-                    project_id,
-                    session["user_id"]
-                )
-            )
-
-            project = cursor.fetchone()
-
-            if not project:
-
-                flash(
-                    "Creator project not found.",
-                    "danger"
-                )
-
-                return redirect(
-                    url_for("creator_studio")
-                )
-
-            cursor.execute(
-                """
                 DELETE FROM creator_projects
                 WHERE id = %s
                 AND user_id = %s
@@ -1661,10 +1614,25 @@ def delete_creator_project(project_id):
                 )
             )
 
+            deleted = cursor.rowcount
+
+        if deleted == 0:
+
+            conn.rollback()
+
+            flash(
+                "Creator project not found or you do not have permission to delete it.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("creator_studio")
+            )
+
         conn.commit()
 
         flash(
-            "Creator project deleted.",
+            "Creator project deleted successfully.",
             "success"
         )
 
