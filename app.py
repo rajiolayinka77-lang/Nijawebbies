@@ -38,7 +38,6 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
 def get_db():
-
     if not DATABASE_URL:
         raise RuntimeError(
             "DATABASE_URL environment variable is not configured."
@@ -51,7 +50,6 @@ def get_db():
 
 
 def close_db(conn):
-
     if conn:
         try:
             conn.close()
@@ -68,7 +66,6 @@ def init_db():
     conn = None
 
     try:
-
         conn = get_db()
 
         with conn.cursor() as cursor:
@@ -115,7 +112,7 @@ def init_db():
                     user_id INTEGER NOT NULL,
                     title TEXT NOT NULL,
                     description TEXT,
-                    project_type TEXT,
+                    project_type TEXT DEFAULT 'General',
                     status TEXT DEFAULT 'Idea',
                     created_at TIMESTAMP NOT NULL,
 
@@ -125,9 +122,16 @@ def init_db():
                 )
             """)
 
-            # -------------------------------------------------
-            # SAFETY MIGRATION
-            # -------------------------------------------------
+            # Make sure older database has these columns.
+            cursor.execute("""
+                ALTER TABLE creator_projects
+                ADD COLUMN IF NOT EXISTS description TEXT
+            """)
+
+            cursor.execute("""
+                ALTER TABLE creator_projects
+                ADD COLUMN IF NOT EXISTS project_type TEXT DEFAULT 'General'
+            """)
 
             cursor.execute("""
                 ALTER TABLE creator_projects
@@ -216,7 +220,6 @@ def init_db():
         raise
 
     finally:
-
         close_db(conn)
 
 
@@ -225,11 +228,9 @@ def init_db():
 # =========================================================
 
 try:
-
     init_db()
 
 except Exception:
-
     app.logger.exception(
         "Database startup failed."
     )
@@ -256,7 +257,6 @@ def is_safe_url(target):
         )
 
     except Exception:
-
         return False
 
 
@@ -316,7 +316,6 @@ def home():
 def register():
 
     if session.get("user_id"):
-
         return redirect(
             url_for("workspace")
         )
@@ -477,7 +476,6 @@ def register():
             )
 
         finally:
-
             close_db(conn)
 
     return render_template(
@@ -496,7 +494,6 @@ def register():
 def login():
 
     if session.get("user_id"):
-
         return redirect(
             url_for("workspace")
         )
@@ -587,7 +584,6 @@ def login():
             )
 
         finally:
-
             close_db(conn)
 
         password_valid = False
@@ -682,7 +678,6 @@ def workspace():
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # POSTS
             cursor.execute(
                 """
                 SELECT *
@@ -695,7 +690,6 @@ def workspace():
 
             posts = cursor.fetchall()
 
-            # CREATOR PROJECTS
             cursor.execute(
                 """
                 SELECT *
@@ -708,7 +702,6 @@ def workspace():
 
             creator_projects = cursor.fetchall()
 
-            # BUSINESS
             cursor.execute(
                 """
                 SELECT *
@@ -722,7 +715,6 @@ def workspace():
 
             business = cursor.fetchone()
 
-            # COMMUNITIES
             cursor.execute(
                 """
                 SELECT communities.*
@@ -763,7 +755,6 @@ def workspace():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -858,7 +849,6 @@ def create_post():
             )
 
         finally:
-
             close_db(conn)
 
     return render_template(
@@ -893,6 +883,7 @@ def edit_post(post_id):
                 FROM posts
                 WHERE id = %s
                 AND user_id = %s
+                LIMIT 1
                 """,
                 (
                     post_id,
@@ -913,46 +904,51 @@ def edit_post(post_id):
                     url_for("workspace")
                 )
 
-            if request.method == "POST":
+            if request.method == "GET":
 
-                title = request.form.get(
-                    "title",
-                    ""
-                ).strip()
-
-                content = request.form.get(
-                    "content",
-                    ""
-                ).strip()
-
-                if not title or not content:
-
-                    flash(
-                        "Title and content are required.",
-                        "danger"
-                    )
-
-                    return render_template(
-                        "edit_post.html",
-                        post=post
-                    )
-
-                cursor.execute(
-                    """
-                    UPDATE posts
-                    SET
-                        title = %s,
-                        content = %s
-                    WHERE id = %s
-                    AND user_id = %s
-                    """,
-                    (
-                        title,
-                        content,
-                        post_id,
-                        session["user_id"]
-                    )
+                return render_template(
+                    "edit_post.html",
+                    post=post
                 )
+
+            title = request.form.get(
+                "title",
+                ""
+            ).strip()
+
+            content = request.form.get(
+                "content",
+                ""
+            ).strip()
+
+            if not title or not content:
+
+                flash(
+                    "Title and content are required.",
+                    "danger"
+                )
+
+                return render_template(
+                    "edit_post.html",
+                    post=post
+                )
+
+            cursor.execute(
+                """
+                UPDATE posts
+                SET
+                    title = %s,
+                    content = %s
+                WHERE id = %s
+                AND user_id = %s
+                """,
+                (
+                    title,
+                    content,
+                    post_id,
+                    session["user_id"]
+                )
+            )
 
         conn.commit()
 
@@ -984,7 +980,6 @@ def edit_post(post_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1064,7 +1059,6 @@ def delete_post(post_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1116,7 +1110,6 @@ def blog():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1146,6 +1139,7 @@ def view_post(post_id):
                 JOIN users
                     ON posts.user_id = users.id
                 WHERE posts.id = %s
+                LIMIT 1
                 """,
                 (post_id,)
             )
@@ -1153,7 +1147,6 @@ def view_post(post_id):
             post = cursor.fetchone()
 
         if not post:
-
             return "Post not found", 404
 
         return render_template(
@@ -1170,7 +1163,6 @@ def view_post(post_id):
         return "Unable to load post.", 500
 
     finally:
-
         close_db(conn)
 
 
@@ -1241,7 +1233,6 @@ def search():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1297,8 +1288,6 @@ def creator_studio():
                 "🎵 Music",
                 "🎙️ Podcast",
                 "🏪 Business Content",
-
-                # Older project values
                 "Video",
                 "Blog",
                 "Social Media",
@@ -1316,11 +1305,9 @@ def creator_studio():
             ]
 
             if project_type not in allowed_types:
-
                 project_type = "General"
 
             if status not in allowed_statuses:
-
                 status = "Idea"
 
             if not title:
@@ -1415,7 +1402,6 @@ def creator_studio():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1492,12 +1478,12 @@ def view_creator_project(project_id):
         )
 
     finally:
-
         close_db(conn)
 
 
 # =========================================================
 # PROJECT URL ALIAS
+# Supports /project/1
 # =========================================================
 
 @app.route(
@@ -1532,7 +1518,7 @@ def edit_creator_project(project_id):
         conn = get_db()
 
         # -------------------------------------------------
-        # FIND PROJECT
+        # GET PROJECT
         # -------------------------------------------------
 
         with conn.cursor(
@@ -1567,7 +1553,7 @@ def edit_creator_project(project_id):
             )
 
         # -------------------------------------------------
-        # GET = SHOW EDIT FORM
+        # SHOW EDIT FORM
         # -------------------------------------------------
 
         if request.method == "GET":
@@ -1579,7 +1565,7 @@ def edit_creator_project(project_id):
             )
 
         # -------------------------------------------------
-        # POST = SAVE EDIT
+        # RECEIVE EDIT FORM
         # -------------------------------------------------
 
         title = request.form.get(
@@ -1602,6 +1588,10 @@ def edit_creator_project(project_id):
             "Idea"
         ).strip()
 
+        # -------------------------------------------------
+        # ALLOWED PROJECT TYPES
+        # -------------------------------------------------
+
         allowed_types = [
             "General",
             "🎥 Video",
@@ -1612,7 +1602,7 @@ def edit_creator_project(project_id):
             "🎙️ Podcast",
             "🏪 Business Content",
 
-            # Older values
+            # Older projects without emojis
             "Video",
             "Blog",
             "Social Media",
@@ -1622,6 +1612,14 @@ def edit_creator_project(project_id):
             "Business Content"
         ]
 
+        if project_type not in allowed_types:
+
+            project_type = "General"
+
+        # -------------------------------------------------
+        # ALLOWED STATUS
+        # -------------------------------------------------
+
         allowed_statuses = [
             "Idea",
             "Draft",
@@ -1629,13 +1627,13 @@ def edit_creator_project(project_id):
             "Published"
         ]
 
-        if project_type not in allowed_types:
-
-            project_type = "General"
-
         if status not in allowed_statuses:
 
             status = "Idea"
+
+        # -------------------------------------------------
+        # VALIDATE TITLE
+        # -------------------------------------------------
 
         if not title:
 
@@ -1644,6 +1642,12 @@ def edit_creator_project(project_id):
                 "danger"
             )
 
+            # Keep the values the user entered.
+            project["title"] = title
+            project["description"] = description
+            project["project_type"] = project_type
+            project["status"] = status
+
             return render_template(
                 "edit_creator_project.html",
                 project=project,
@@ -1651,7 +1655,7 @@ def edit_creator_project(project_id):
             )
 
         # -------------------------------------------------
-        # UPDATE DATABASE
+        # UPDATE PROJECT
         # -------------------------------------------------
 
         with conn.cursor() as cursor:
@@ -1684,7 +1688,7 @@ def edit_creator_project(project_id):
             conn.rollback()
 
             flash(
-                "No changes were saved.",
+                "No changes were saved. Creator project was not found.",
                 "danger"
             )
 
@@ -1990,7 +1994,6 @@ def business_space():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2153,7 +2156,6 @@ def communities():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2257,7 +2259,6 @@ def join_community(community_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2283,18 +2284,10 @@ def page_not_found(error):
     return """
     <!DOCTYPE html>
     <html>
-
     <head>
-
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-        >
-
-        <title>
-            Page Not Found - NijaWebbies
-        </title>
-
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1">
+        <title>Page Not Found - NijaWebbies</title>
     </head>
 
     <body style="
@@ -2305,38 +2298,27 @@ def page_not_found(error):
         color:#111827;
     ">
 
-        <h1 style="
-            font-size:60px;
-            margin-bottom:10px;
-        ">
+        <h1 style="font-size:60px;margin-bottom:10px;">
             404
         </h1>
 
-        <h2>
-            Page not found
-        </h2>
+        <h2>Page not found</h2>
 
-        <p style="
-            color:#6b7280;
-        ">
+        <p style="color:#6b7280;">
             The page you are looking for does not exist.
         </p>
 
         <br>
 
-        <a
-            href="/"
-            style="
-                color:#2563eb;
-                text-decoration:none;
-                font-weight:bold;
-            "
-        >
+        <a href="/" style="
+            color:#2563eb;
+            text-decoration:none;
+            font-weight:bold;
+        ">
             ← Back to NijaWebbies
         </a>
 
     </body>
-
     </html>
     """, 404
 
@@ -2356,18 +2338,10 @@ def internal_server_error(error):
     return """
     <!DOCTYPE html>
     <html>
-
     <head>
-
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-        >
-
-        <title>
-            NijaWebbies - Error
-        </title>
-
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1">
+        <title>NijaWebbies - Error</title>
     </head>
 
     <body style="
@@ -2378,37 +2352,27 @@ def internal_server_error(error):
         color:#111827;
     ">
 
-        <h1>
-            Something went wrong
-        </h1>
+        <h1>Something went wrong</h1>
 
-        <p style="
-            color:#6b7280;
-        ">
+        <p style="color:#6b7280;">
             NijaWebbies encountered an unexpected error.
         </p>
 
-        <p style="
-            color:#6b7280;
-        ">
+        <p style="color:#6b7280;">
             Please try again.
         </p>
 
         <br>
 
-        <a
-            href="/"
-            style="
-                color:#2563eb;
-                text-decoration:none;
-                font-weight:bold;
-            "
-        >
+        <a href="/" style="
+            color:#2563eb;
+            text-decoration:none;
+            font-weight:bold;
+        ">
             ← Back to NijaWebbies
         </a>
 
     </body>
-
     </html>
     """, 500
 
