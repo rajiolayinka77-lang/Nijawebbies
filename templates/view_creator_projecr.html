@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ project["title"] }} — NijaWebbies</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #17202a;
+        }
+
+        header {
+            background: #0b7a3b;
+            color: white;
+            padding: 16px 20px;
+        }
+
+        .nav {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #0b7a3b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .type {
+            display: inline-block;
+            background: #e8f7ee;
+            color: #0b7a3b;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .status {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+
+        h1 {
+            font-size: 34px;
+            margin: 22px 0 15px;
+        }
+
+        .description {
+            color: #475467;
+            font-size: 17px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .info {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eaecf0;
+            color: #667085;
+            line-height: 1.8;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .edit {
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .back-btn {
+            background: #0b7a3b;
+            color: white;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 30px 20px;
+            background: #17202a;
+            color: white;
+            text-align: center;
+        }
+
+        footer p {
+            color: #d0d5dd;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 27px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="nav">
+
+        <div class="logo">
+            🇳🇬 NijaWebbies
+        </div>
+
+        <a href="{{ url_for('workspace') }}">
+            Workspace
+        </a>
+
+    </div>
+</header>
+
+
+<main class="container">
+
+    <a class="back" href="{{ url_for('creator_studio') }}">
+        ← Back to Creator Studio
+    </a>
+
+
+    <section class="card">
+
+        <div>
+
+            <span class="type">
+                {{ project["project_type"] or "General" }}
+            </span>
+
+            <span class="status">
+                {{ project["status"] or "Idea" }}
+            </span>
+
+        </div>
+
+
+        <h1>
+            {{ project["title"] }}
+        </h1>
+
+
+        {% if project["description"] %}
+
+            <div class="description">
+                {{ project["description"] }}
+            </div>
+
+        {% else %}
+
+            <div class="description">
+                No description has been added to this project yet.
+            </div>
+
+        {% endif %}
+
+
+        <div class="info">
+
+            <strong>Created by:</strong>
+            {{ project["owner_name"] }}
+
+            <br>
+
+            <strong>Created:</strong>
+            {{ project["created_at"] }}
+
+        </div>
+
+
+        <div class="actions">
+
+            <a
+                class="btn edit"
+                href="{{ url_for('edit_creator_project', project_id=project['id']) }}"
+            >
+                ✏️ Edit Project
+            </a>
+
+            <a
+                class="btn back-btn"
+                href="{{ url_for('creator_studio') }}"
+            >
+                📁 My Projects
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <strong>🇳🇬 NijaWebbies</strong>
+
+    <p>
+        A free digital ecosystem for Nigeria, Africa and the world.
+    </p>
+
+    <p>
+        © 2026 NijaWebbies. All rights reserved.
+    </p>
+
+</footer>
+
+</body>
+</html>
