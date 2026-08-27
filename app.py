@@ -70,10 +70,7 @@ def init_db():
 
         with conn.cursor() as cursor:
 
-            # -------------------------------------------------
             # USERS
-            # -------------------------------------------------
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id SERIAL PRIMARY KEY,
@@ -84,10 +81,7 @@ def init_db():
                 )
             """)
 
-            # -------------------------------------------------
             # POSTS
-            # -------------------------------------------------
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS posts (
                     id SERIAL PRIMARY KEY,
@@ -102,10 +96,7 @@ def init_db():
                 )
             """)
 
-            # -------------------------------------------------
             # CREATOR PROJECTS
-            # -------------------------------------------------
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS creator_projects (
                     id SERIAL PRIMARY KEY,
@@ -122,26 +113,19 @@ def init_db():
                 )
             """)
 
-            # Make sure older database has these columns.
-            cursor.execute("""
-                ALTER TABLE creator_projects
-                ADD COLUMN IF NOT EXISTS description TEXT
-            """)
-
-            cursor.execute("""
-                ALTER TABLE creator_projects
-                ADD COLUMN IF NOT EXISTS project_type TEXT DEFAULT 'General'
-            """)
-
+            # Make sure status exists on older installations
             cursor.execute("""
                 ALTER TABLE creator_projects
                 ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Idea'
             """)
 
-            # -------------------------------------------------
-            # BUSINESS PROFILES
-            # -------------------------------------------------
+            # Make sure project_type exists on older installations
+            cursor.execute("""
+                ALTER TABLE creator_projects
+                ADD COLUMN IF NOT EXISTS project_type TEXT DEFAULT 'General'
+            """)
 
+            # BUSINESS PROFILES
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS business_profiles (
                     id SERIAL PRIMARY KEY,
@@ -160,10 +144,7 @@ def init_db():
                 )
             """)
 
-            # -------------------------------------------------
             # COMMUNITIES
-            # -------------------------------------------------
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS communities (
                     id SERIAL PRIMARY KEY,
@@ -179,10 +160,7 @@ def init_db():
                 )
             """)
 
-            # -------------------------------------------------
             # COMMUNITY MEMBERS
-            # -------------------------------------------------
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS community_members (
                     id SERIAL PRIMARY KEY,
@@ -229,7 +207,6 @@ def init_db():
 
 try:
     init_db()
-
 except Exception:
     app.logger.exception(
         "Database startup failed."
@@ -246,7 +223,6 @@ def is_safe_url(target):
         return False
 
     try:
-
         parsed = urlparse(target)
 
         return (
@@ -1063,7 +1039,7 @@ def delete_post(post_id):
 
 
 # =========================================================
-# PUBLIC BLOG
+# BLOG
 # =========================================================
 
 @app.route("/blog")
@@ -1114,7 +1090,7 @@ def blog():
 
 
 # =========================================================
-# VIEW SINGLE POST
+# VIEW POST
 # =========================================================
 
 @app.route("/post/<int:post_id>")
@@ -1253,10 +1229,6 @@ def creator_studio():
 
         conn = get_db()
 
-        # -------------------------------------------------
-        # CREATE PROJECT
-        # -------------------------------------------------
-
         if request.method == "POST":
 
             title = request.form.get(
@@ -1356,10 +1328,6 @@ def creator_studio():
             return redirect(
                 url_for("creator_studio")
             )
-
-        # -------------------------------------------------
-        # LOAD PROJECTS
-        # -------------------------------------------------
 
         with conn.cursor(
             cursor_factory=RealDictCursor
@@ -1483,7 +1451,6 @@ def view_creator_project(project_id):
 
 # =========================================================
 # PROJECT URL ALIAS
-# Supports /project/1
 # =========================================================
 
 @app.route(
@@ -1517,17 +1484,21 @@ def edit_creator_project(project_id):
 
         conn = get_db()
 
-        # -------------------------------------------------
-        # GET PROJECT
-        # -------------------------------------------------
-
+        # Get the project belonging to the logged-in user
         with conn.cursor(
             cursor_factory=RealDictCursor
         ) as cursor:
 
             cursor.execute(
                 """
-                SELECT *
+                SELECT
+                    id,
+                    user_id,
+                    title,
+                    description,
+                    project_type,
+                    status,
+                    created_at
                 FROM creator_projects
                 WHERE id = %s
                 AND user_id = %s
@@ -1553,7 +1524,7 @@ def edit_creator_project(project_id):
             )
 
         # -------------------------------------------------
-        # SHOW EDIT FORM
+        # GET = SHOW EDIT FORM
         # -------------------------------------------------
 
         if request.method == "GET":
@@ -1565,7 +1536,7 @@ def edit_creator_project(project_id):
             )
 
         # -------------------------------------------------
-        # RECEIVE EDIT FORM
+        # POST = SAVE CHANGES
         # -------------------------------------------------
 
         title = request.form.get(
@@ -1613,11 +1584,10 @@ def edit_creator_project(project_id):
         ]
 
         if project_type not in allowed_types:
-
             project_type = "General"
 
         # -------------------------------------------------
-        # ALLOWED STATUS
+        # ALLOWED STATUSES
         # -------------------------------------------------
 
         allowed_statuses = [
@@ -1628,11 +1598,10 @@ def edit_creator_project(project_id):
         ]
 
         if status not in allowed_statuses:
-
             status = "Idea"
 
         # -------------------------------------------------
-        # VALIDATE TITLE
+        # TITLE REQUIRED
         # -------------------------------------------------
 
         if not title:
@@ -1642,7 +1611,7 @@ def edit_creator_project(project_id):
                 "danger"
             )
 
-            # Keep the values the user entered.
+            # Keep the values the user entered
             project["title"] = title
             project["description"] = description
             project["project_type"] = project_type
@@ -1655,7 +1624,7 @@ def edit_creator_project(project_id):
             )
 
         # -------------------------------------------------
-        # UPDATE PROJECT
+        # UPDATE DATABASE
         # -------------------------------------------------
 
         with conn.cursor() as cursor:
@@ -1688,7 +1657,7 @@ def edit_creator_project(project_id):
             conn.rollback()
 
             flash(
-                "No changes were saved. Creator project was not found.",
+                "No changes were saved.",
                 "danger"
             )
 
