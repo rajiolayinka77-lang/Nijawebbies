@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ project["title"] }} — NijaWebbies</title>
+    <title>{{ project["title"] }} — NijaWebbies Creator Studio</title>
+
+    <meta name="description"
+          content="Manage your creative project on NijaWebbies.">
 
     <style>
         * {
@@ -25,7 +28,7 @@
         }
 
         .nav {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
             display: flex;
             justify-content: space-between;
@@ -38,19 +41,24 @@
             font-weight: bold;
         }
 
-        .nav a {
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
             color: white;
             text-decoration: none;
             font-weight: bold;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
-        .back {
+        .back-link {
             display: inline-block;
             margin-bottom: 20px;
             color: #0b7a3b;
@@ -58,77 +66,145 @@
             font-weight: bold;
         }
 
-        .card {
+        .project-card {
             background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+        }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
         }
 
         .type {
-            display: inline-block;
             background: #e8f7ee;
             color: #0b7a3b;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
         }
 
         .status {
-            display: inline-block;
             background: #eef2ff;
             color: #4338ca;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            margin-left: 6px;
         }
 
         h1 {
-            font-size: 34px;
-            margin: 22px 0 15px;
+            margin: 0 0 15px;
+            font-size: 36px;
+            line-height: 1.2;
+        }
+
+        .intro {
+            color: #667085;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .divider {
+            height: 1px;
+            background: #eaecf0;
+            margin: 28px 0;
+        }
+
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section h2 {
+            font-size: 20px;
+            margin-bottom: 12px;
         }
 
         .description {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
             color: #475467;
-            font-size: 17px;
             line-height: 1.8;
             white-space: pre-wrap;
         }
 
-        .info {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #eaecf0;
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 17px;
+        }
+
+        .info-label {
+            display: block;
             color: #667085;
-            line-height: 1.8;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #17202a;
+        }
+
+        .next-step {
+            background: #fff8e7;
+            border: 1px solid #f4df9d;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .next-step h3 {
+            margin-top: 0;
+        }
+
+        .next-step p {
+            color: #667085;
+            line-height: 1.6;
         }
 
         .actions {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-top: 25px;
+            margin-top: 30px;
         }
 
         .btn {
             display: inline-block;
-            padding: 11px 16px;
-            border-radius: 8px;
+            padding: 12px 18px;
+            border-radius: 9px;
             text-decoration: none;
             font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
         }
 
-        .edit {
+        .primary {
+            background: #0b7a3b;
+            color: white;
+        }
+
+        .secondary {
             background: #eef2ff;
             color: #4338ca;
         }
 
-        .back-btn {
-            background: #0b7a3b;
-            color: white;
+        .home-btn {
+            background: #f2f4f7;
+            color: #344054;
         }
 
         footer {
@@ -143,13 +219,27 @@
             color: #d0d5dd;
         }
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 27px;
+        @media (max-width: 700px) {
+
+            .nav {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
-            .card {
+            .nav-links {
+                flex-wrap: wrap;
+            }
+
+            .project-card {
                 padding: 22px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -158,89 +248,210 @@
 <body>
 
 <header>
+
     <div class="nav">
 
         <div class="logo">
             🇳🇬 NijaWebbies
         </div>
 
-        <a href="{{ url_for('workspace') }}">
-            Workspace
-        </a>
+        <div class="nav-links">
+
+            <a href="{{ url_for('workspace') }}">
+                Workspace
+            </a>
+
+            <a href="{{ url_for('creator_studio') }}">
+                Creator Studio
+            </a>
+
+        </div>
 
     </div>
+
 </header>
 
 
 <main class="container">
 
-    <a class="back" href="{{ url_for('creator_studio') }}">
+    <a
+        class="back-link"
+        href="{{ url_for('creator_studio') }}"
+    >
         ← Back to Creator Studio
     </a>
 
 
-    <section class="card">
+    <section class="project-card">
 
-        <div>
+        <!-- PROJECT BADGES -->
 
-            <span class="type">
+        <div class="badges">
+
+            <span class="badge type">
                 {{ project["project_type"] or "General" }}
             </span>
 
-            <span class="status">
+            <span class="badge status">
                 {{ project["status"] or "Idea" }}
             </span>
 
         </div>
 
 
+        <!-- PROJECT TITLE -->
+
         <h1>
             {{ project["title"] }}
         </h1>
 
 
-        {% if project["description"] %}
-
-            <div class="description">
-                {{ project["description"] }}
-            </div>
-
-        {% else %}
-
-            <div class="description">
-                No description has been added to this project yet.
-            </div>
-
-        {% endif %}
+        <p class="intro">
+            This is your creative project workspace on NijaWebbies.
+        </p>
 
 
-        <div class="info">
+        <div class="divider"></div>
 
-            <strong>Created by:</strong>
-            {{ project["owner_name"] }}
 
-            <br>
+        <!-- DESCRIPTION -->
 
-            <strong>Created:</strong>
-            {{ project["created_at"] }}
+        <div class="section">
+
+            <h2>
+                📝 Project Description
+            </h2>
+
+            {% if project["description"] %}
+
+                <div class="description">
+                    {{ project["description"] }}
+                </div>
+
+            {% else %}
+
+                <div class="description">
+                    No description has been added yet.
+                </div>
+
+            {% endif %}
 
         </div>
 
 
+        <!-- PROJECT INFORMATION -->
+
+        <div class="section">
+
+            <h2>
+                📊 Project Information
+            </h2>
+
+            <div class="info-grid">
+
+                <div class="info-box">
+
+                    <span class="info-label">
+                        Project Type
+                    </span>
+
+                    <span class="info-value">
+                        {{ project["project_type"] or "General" }}
+                    </span>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span class="info-label">
+                        Current Status
+                    </span>
+
+                    <span class="info-value">
+                        {{ project["status"] or "Idea" }}
+                    </span>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span class="info-label">
+                        Created By
+                    </span>
+
+                    <span class="info-value">
+                        {{ project["owner_name"] }}
+                    </span>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span class="info-label">
+                        Created
+                    </span>
+
+                    <span class="info-value">
+                        {{ project["created_at"] }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NEXT STEP -->
+
+        <div class="section">
+
+            <div class="next-step">
+
+                <h3>
+                    🚀 Keep Building Your Project
+                </h3>
+
+                <p>
+                    Use this project as your central place for
+                    planning and managing your creative work.
+                    You can edit the project whenever you want
+                    to update its title, description, type or status.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
         <div class="actions">
 
             <a
-                class="btn edit"
+                class="btn primary"
                 href="{{ url_for('edit_creator_project', project_id=project['id']) }}"
             >
                 ✏️ Edit Project
             </a>
 
+
             <a
-                class="btn back-btn"
+                class="btn secondary"
                 href="{{ url_for('creator_studio') }}"
             >
                 📁 My Projects
+            </a>
+
+
+            <a
+                class="btn home-btn"
+                href="{{ url_for('workspace') }}"
+            >
+                🏠 Workspace
             </a>
 
         </div>
@@ -252,7 +463,9 @@
 
 <footer>
 
-    <strong>🇳🇬 NijaWebbies</strong>
+    <strong>
+        🇳🇬 NijaWebbies
+    </strong>
 
     <p>
         A free digital ecosystem for Nigeria, Africa and the world.
