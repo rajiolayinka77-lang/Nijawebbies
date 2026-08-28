@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Edit Creator Project — NijaWebbies</title>
 
@@ -210,9 +211,8 @@
     }
 </style>
 
-</head><body><header><div class="nav">
-
-    <div class="logo">
+</head><body><header>
+    <div class="nav">    <div class="logo">
         🇳🇬 NijaWebbies
     </div>
 
@@ -237,8 +237,6 @@
     ← Back to Creator Studio
 </a>
 
-
-<!-- FLASH MESSAGES -->
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 
@@ -278,8 +276,6 @@
           action="{{ url_for('edit_creator_project', project_id=project['id']) }}">
 
 
-        <!-- TITLE -->
-
         <label for="title">
             Project Title
         </label>
@@ -293,8 +289,6 @@
             required
         >
 
-
-        <!-- PROJECT TYPE -->
 
         <label for="project_type">
             Project Type
@@ -365,8 +359,6 @@
         </select>
 
 
-        <!-- STATUS -->
-
         <label for="status">
             Project Status
         </label>
@@ -408,8 +400,6 @@
         </select>
 
 
-        <!-- DESCRIPTION -->
-
         <label for="description">
             Project Description
         </label>
@@ -421,8 +411,6 @@
             placeholder="Describe your project, idea, goals or content..."
 
 «{{ project['description'] or '' }}</textarea>»
-
-        <!-- BUTTONS -->
 
         <div class="buttons">
 
@@ -441,14 +429,19 @@
 
 
         <div class="project-info">
+
             <strong>Project:</strong>
             {{ project['title'] }}
 
             {% if project['created_at'] %}
+
                 <br><br>
+
                 <strong>Created:</strong>
                 {{ project['created_at'] }}
+
             {% endif %}
+
         </div>
 
     </form>
@@ -465,7 +458,9 @@
     <a href="{{ url_for('workspace') }}">
         Workspace
     </a>
+
     &nbsp; | &nbsp;
+
     <a href="{{ url_for('creator_studio') }}">
         Creator Studio
     </a>
@@ -475,4 +470,5 @@
     © 2026 NijaWebbies. All rights reserved.
 </p>
 
-</footer></body></html>
+</footer></body>
+</html>
