@@ -1415,9 +1415,7 @@ def creator_studio():
 # VIEW CREATOR PROJECT
 # =========================================================
 
-@app.route(
-    "/creator-project/<int:project_id>"
-)
+@app.route("/creator-project/<int:project_id>")
 @login_required
 def view_creator_project(project_id):
 
@@ -1454,7 +1452,7 @@ def view_creator_project(project_id):
         if not project:
 
             flash(
-                "Creator project not found or you do not have permission to view it.",
+                "Creator project not found.",
                 "danger"
             )
 
@@ -1468,10 +1466,13 @@ def view_creator_project(project_id):
             user_name=session.get("user_name")
         )
 
-    except Exception:
+    except Exception as error:
 
         app.logger.exception(
-            "View Creator Project error."
+            "VIEW CREATOR PROJECT FAILED | project_id=%s | user_id=%s | error=%s",
+            project_id,
+            session.get("user_id"),
+            error
         )
 
         flash(
