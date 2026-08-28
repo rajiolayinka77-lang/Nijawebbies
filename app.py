@@ -1704,38 +1704,6 @@ def edit_creator_project(project_id):
 
         if updated != 1:
 
-            conn.rollback()
-
-            flash(
-                "The creator project could not be updated.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("creator_studio")
-            )
-
-        # -------------------------------------------------
-        # SAVE
-        # -------------------------------------------------
-
-        conn.commit()
-
-        flash(
-            "Creator project updated successfully.",
-            "success"
-        )
-
-        return redirect(
-            url_for("creator_studio")
-        )
-
-    except Exception:
-
-        if conn:
-            conn.rollback()
-
-        app.logger.exception(
             "Edit Creator Project error."
         )
 
