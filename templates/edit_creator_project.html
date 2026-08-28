@@ -217,23 +217,14 @@
     </div>
 
     <div class="nav-links">
-        <a href="{{ url_for('workspace') }}">
-            Workspace
-        </a>
-
-        <a href="{{ url_for('creator_studio') }}">
-            Creator Studio
-        </a>
-
-        <a href="{{ url_for('logout') }}">
-            Logout
-        </a>
+        <a href="{{ url_for('workspace') }}">Workspace</a>
+        <a href="{{ url_for('creator_studio') }}">Creator Studio</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 
 </div>
 
-</header><main class="container"><a class="back-link"
-   href="{{ url_for('creator_studio') }}">
+</header><main class="container"><a class="back-link" href="{{ url_for('creator_studio') }}">
     ← Back to Creator Studio
 </a>
 
@@ -284,7 +275,7 @@
             type="text"
             id="title"
             name="title"
-            value="{{ project['title'] }}"
+            value="{{ project['title']|forceescape }}"
             maxlength="150"
             required
         >
@@ -301,58 +292,42 @@
         >
 
             <option value="General"
-                {% if project['project_type'] == 'General' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == 'General' %}selected{% endif %}>
                 General
             </option>
 
             <option value="🎥 Video"
-                {% if project['project_type'] == '🎥 Video' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == '🎥 Video' %}selected{% endif %}>
                 🎥 Video
             </option>
 
             <option value="✍️ Blog"
-                {% if project['project_type'] == '✍️ Blog' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == '✍️ Blog' %}selected{% endif %}>
                 ✍️ Blog
             </option>
 
             <option value="📱 Social Media"
-                {% if project['project_type'] == '📱 Social Media' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == '📱 Social Media' %}selected{% endif %}>
                 📱 Social Media
             </option>
 
             <option value="🎨 Artwork"
-                {% if project['project_type'] == '🎨 Artwork' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == '🎨 Artwork' %}selected{% endif %}>
                 🎨 Artwork
             </option>
 
             <option value="🎵 Music"
-                {% if project['project_type'] == '🎵 Music' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == '🎵 Music' %}selected{% endif %}>
                 🎵 Music
             </option>
 
             <option value="🎙️ Podcast"
-                {% if project['project_type'] == '🎙️ Podcast' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == '🎙️ Podcast' %}selected{% endif %}>
                 🎙️ Podcast
             </option>
 
             <option value="🏪 Business Content"
-                {% if project['project_type'] == '🏪 Business Content' %}
-                    selected
-                {% endif %}>
+                {% if project['project_type'] == '🏪 Business Content' %}selected{% endif %}>
                 🏪 Business Content
             </option>
 
@@ -370,30 +345,22 @@
         >
 
             <option value="Idea"
-                {% if project['status'] == 'Idea' %}
-                    selected
-                {% endif %}>
+                {% if project['status'] == 'Idea' %}selected{% endif %}>
                 💡 Idea
             </option>
 
             <option value="Draft"
-                {% if project['status'] == 'Draft' %}
-                    selected
-                {% endif %}>
+                {% if project['status'] == 'Draft' %}selected{% endif %}>
                 📝 Draft
             </option>
 
             <option value="In Production"
-                {% if project['status'] == 'In Production' %}
-                    selected
-                {% endif %}>
+                {% if project['status'] == 'In Production' %}selected{% endif %}>
                 🎬 In Production
             </option>
 
             <option value="Published"
-                {% if project['status'] == 'Published' %}
-                    selected
-                {% endif %}>
+                {% if project['status'] == 'Published' %}selected{% endif %}>
                 ✅ Published
             </option>
 
@@ -410,7 +377,7 @@
             maxlength="5000"
             placeholder="Describe your project, idea, goals or content..."
 
-«{{ project['description'] or '' }}</textarea>»
+«{{ project['description']|default('', true)|forceescape }}</textarea>»
 
         <div class="buttons">
 
@@ -420,8 +387,7 @@
 
             <a
                 class="back"
-                href="{{ url_for('creator_studio') }}"
-            >
+                href="{{ url_for('creator_studio') }}">
                 ← Cancel
             </a>
 
@@ -455,15 +421,9 @@
 </p>
 
 <p>
-    <a href="{{ url_for('workspace') }}">
-        Workspace
-    </a>
-
+    <a href="{{ url_for('workspace') }}">Workspace</a>
     &nbsp; | &nbsp;
-
-    <a href="{{ url_for('creator_studio') }}">
-        Creator Studio
-    </a>
+    <a href="{{ url_for('creator_studio') }}">Creator Studio</a>
 </p>
 
 <p>
