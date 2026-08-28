@@ -1705,7 +1705,7 @@ def edit_creator_project(project_id):
         if updated != 1:
 
             "Edit Creator Project error."
-        )
+        
 
         flash(
             "Unable to edit creator project right now. Please try again.",
