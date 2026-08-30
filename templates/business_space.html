@@ -169,7 +169,7 @@
     .profile-label {
         font-size: 13px;
         color: #667085;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
         font-weight: bold;
     }
 
@@ -177,16 +177,6 @@
         font-size: 16px;
         line-height: 1.5;
         overflow-wrap: anywhere;
-    }
-
-    .website-link {
-        color: #0b7a3b;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .website-link:hover {
-        text-decoration: underline;
     }
 
     .category-badge {
@@ -197,6 +187,48 @@
         border-radius: 20px;
         font-size: 14px;
         font-weight: bold;
+    }
+
+    .contact-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .contact-button {
+        display: inline-block;
+        padding: 12px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .call-button {
+        background: #0b7a3b;
+        color: white;
+    }
+
+    .website-button {
+        background: #eef4ff;
+        color: #175cd3;
+    }
+
+    .call-button:hover,
+    .website-button:hover {
+        opacity: 0.9;
+    }
+
+    .website-link {
+        color: #175cd3;
+        font-weight: bold;
+        text-decoration: none;
+        word-break: break-all;
+    }
+
+    .website-link:hover {
+        text-decoration: underline;
     }
 
     .discover-card {
@@ -254,6 +286,15 @@
         .profile-card,
         .discover-card {
             padding: 20px;
+        }
+
+        .contact-buttons {
+            flex-direction: column;
+        }
+
+        .contact-button {
+            text-align: center;
+            width: 100%;
         }
     }
 </style>
@@ -453,10 +494,6 @@
 
         </select>
 
-        <span class="help-text">
-            Choose the category that best describes your business.
-        </span>
-
 
         <label for="description">
             Business Description
@@ -521,12 +558,13 @@
 </section>
 
 
-<!-- EXISTING PROFILE -->
+<!-- BUSINESS PROFILE -->
 {% if business %}
 
 <section class="profile-card">
 
     <h2>📋 Your Business Profile</h2>
+
 
     <div class="profile-item">
 
@@ -586,7 +624,7 @@
         </div>
 
         <div class="profile-value">
-            {{ business['phone'] }}
+            📞 {{ business['phone'] }}
         </div>
 
     </div>
@@ -627,10 +665,45 @@
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                🌐 Visit Website
+                🌐 {{ business['website'] }}
             </a>
 
         </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- CONTACT BUTTONS -->
+    {% if business['phone'] or business['website'] %}
+
+    <div class="contact-buttons">
+
+        {% if business['phone'] %}
+
+        <a
+            class="contact-button call-button"
+            href="tel:{{ business['phone'] }}"
+        >
+            📞 Call Business
+        </a>
+
+        {% endif %}
+
+
+        {% if business['website'] %}
+
+        <a
+            class="contact-button website-button"
+            href="{{ business['website'] }}"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            🌐 Visit Website
+        </a>
+
+        {% endif %}
 
     </div>
 
@@ -654,7 +727,7 @@
 {% endif %}
 
 
-<!-- DISCOVERY MESSAGE -->
+<!-- DISCOVERY -->
 <section class="discover-card">
 
     <h2>🚀 Get Your Business Discovered</h2>
