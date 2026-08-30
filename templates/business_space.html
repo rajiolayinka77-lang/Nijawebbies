@@ -1,0 +1,458 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Business Space — NijaWebbies</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        color: #17202a;
+    }
+
+    header {
+        background: #0b7a3b;
+        color: white;
+        padding: 16px 20px;
+    }
+
+    .nav {
+        max-width: 1000px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo {
+        font-size: 21px;
+        font-weight: bold;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .nav a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .nav a:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .hero,
+    .form-card,
+    .profile-card {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    .hero p {
+        color: #667085;
+        line-height: 1.6;
+    }
+
+    label {
+        display: block;
+        margin-top: 16px;
+        margin-bottom: 7px;
+        font-weight: bold;
+    }
+
+    input,
+    textarea,
+    select {
+        width: 100%;
+        padding: 13px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: inherit;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    button {
+        margin-top: 20px;
+        background: #0b7a3b;
+        color: white;
+        border: none;
+        padding: 13px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #096631;
+    }
+
+    .back {
+        display: inline-block;
+        margin-top: 5px;
+        color: #0b7a3b;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .back:hover {
+        text-decoration: underline;
+    }
+
+    .profile-item {
+        margin: 14px 0;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eaecf0;
+    }
+
+    .profile-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-label {
+        font-size: 13px;
+        color: #667085;
+        margin-bottom: 4px;
+    }
+
+    .profile-value {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .empty {
+        color: #667085;
+    }
+
+    @media (max-width: 700px) {
+        .nav {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .nav-links {
+            gap: 10px;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+    }
+</style>
+
+</head><body><header><div class="nav">
+
+    <div class="logo">
+        🇳🇬 NijaWebbies
+    </div>
+
+    <div class="nav-links">
+        <a href="/workspace">Workspace</a>
+        <a href="/blog">Blog</a>
+        <a href="/communities">Communities</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+</div>
+
+</header><main class="container"><section class="hero">
+
+    <h1>🏪 Business Space</h1>
+
+    <p>
+        Welcome, <strong>{{ user_name }}</strong>!
+        Create your business profile and give customers
+        a simple way to discover your business online.
+    </p>
+
+</section>
+
+
+<section class="form-card">
+
+    <h2>🏪 Create or Update Your Business Profile</h2>
+
+    <form method="POST" action="/business-space">
+
+        <label for="business_name">
+            Business Name
+        </label>
+
+        <input
+            type="text"
+            id="business_name"
+            name="business_name"
+            value="{{ business['business_name'] if business else '' }}"
+            placeholder="Enter your business name"
+            required
+        >
+
+
+        <label for="category">
+            Business Category
+        </label>
+
+        <select id="category" name="category">
+
+            <option value="">Select a category</option>
+
+            <option value="Food & Restaurant"
+                {% if business and business['category'] == 'Food & Restaurant' %}selected{% endif %}>
+                🍲 Food & Restaurant
+            </option>
+
+            <option value="Fashion"
+                {% if business and business['category'] == 'Fashion' %}selected{% endif %}>
+                👗 Fashion
+            </option>
+
+            <option value="Beauty"
+                {% if business and business['category'] == 'Beauty' %}selected{% endif %}>
+                💄 Beauty
+            </option>
+
+            <option value="Technology"
+                {% if business and business['category'] == 'Technology' %}selected{% endif %}>
+                💻 Technology
+            </option>
+
+            <option value="Construction"
+                {% if business and business['category'] == 'Construction' %}selected{% endif %}>
+                🏗️ Construction
+            </option>
+
+            <option value="Education"
+                {% if business and business['category'] == 'Education' %}selected{% endif %}>
+                📚 Education
+            </option>
+
+            <option value="Health"
+                {% if business and business['category'] == 'Health' %}selected{% endif %}>
+                🏥 Health
+            </option>
+
+            <option value="Services"
+                {% if business and business['category'] == 'Services' %}selected{% endif %}>
+                🛠️ Services
+            </option>
+
+            <option value="Other"
+                {% if business and business['category'] == 'Other' %}selected{% endif %}>
+                📦 Other
+            </option>
+
+        </select>
+
+
+        <label for="description">
+            Business Description
+        </label>
+
+        <textarea
+            id="description"
+            name="description"
+            placeholder="Tell customers about your business..."
+        >{{ business['description'] if business else '' }}</textarea>
+
+
+        <label for="phone">
+            Phone Number
+        </label>
+
+        <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value="{{ business['phone'] if business else '' }}"
+            placeholder="e.g. 08012345678"
+        >
+
+
+        <label for="location">
+            Business Location
+        </label>
+
+        <input
+            type="text"
+            id="location"
+            name="location"
+            value="{{ business['location'] if business else '' }}"
+            placeholder="City, State"
+        >
+
+
+        <label for="website">
+            Website
+        </label>
+
+        <input
+            type="url"
+            id="website"
+            name="website"
+            value="{{ business['website'] if business else '' }}"
+            placeholder="https://example.com"
+        >
+
+
+        <button type="submit">
+            💾 Save Business Profile
+        </button>
+
+    </form>
+
+</section>
+
+
+{% if business %}
+
+<section class="profile-card">
+
+    <h2>📋 Your Business Profile</h2>
+
+    <div class="profile-item">
+
+        <div class="profile-label">
+            Business Name
+        </div>
+
+        <div class="profile-value">
+            {{ business['business_name'] }}
+        </div>
+
+    </div>
+
+
+    {% if business['category'] %}
+
+    <div class="profile-item">
+
+        <div class="profile-label">
+            Category
+        </div>
+
+        <div class="profile-value">
+            {{ business['category'] }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    {% if business['description'] %}
+
+    <div class="profile-item">
+
+        <div class="profile-label">
+            Description
+        </div>
+
+        <div class="profile-value">
+            {{ business['description'] }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    {% if business['phone'] %}
+
+    <div class="profile-item">
+
+        <div class="profile-label">
+            Phone
+        </div>
+
+        <div class="profile-value">
+            {{ business['phone'] }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    {% if business['location'] %}
+
+    <div class="profile-item">
+
+        <div class="profile-label">
+            Location
+        </div>
+
+        <div class="profile-value">
+            {{ business['location'] }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    {% if business['website'] %}
+
+    <div class="profile-item">
+
+        <div class="profile-label">
+            Website
+        </div>
+
+        <div class="profile-value">
+            {{ business['website'] }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% else %}
+
+<section class="profile-card">
+
+    <h2>📋 Your Business Profile</h2>
+
+    <p class="empty">
+        You haven't created a business profile yet.
+        Fill in the form above to get started.
+    </p>
+
+</section>
+
+{% endif %}
+
+
+<a class="back" href="/workspace">
+    ← Back to Workspace
+</a>
+
+</main></body>
+</html>
