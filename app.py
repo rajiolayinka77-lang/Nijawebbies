@@ -1607,8 +1607,6 @@ def edit_creator_project(project_id):
 
         allowed_types = [
             "General",
-
-            # New values
             "🎥 Video",
             "✍️ Blog",
             "📱 Social Media",
@@ -1616,8 +1614,6 @@ def edit_creator_project(project_id):
             "🎵 Music",
             "🎙️ Podcast",
             "🏪 Business Content",
-
-            # Older values
             "Video",
             "Blog",
             "Social Media",
@@ -1657,7 +1653,6 @@ def edit_creator_project(project_id):
                 "danger"
             )
 
-            # Keep the user's entered values on screen
             project["title"] = title
             project["description"] = description
             project["project_type"] = project_type
@@ -1704,8 +1699,48 @@ def edit_creator_project(project_id):
 
         if updated != 1:
 
-            "Edit Creator Project error."
-        
+            conn.rollback()
+
+            flash(
+                "Unable to update the creator project.",
+                "danger"
+            )
+
+            return redirect(
+                url_for(
+                    "edit_creator_project",
+                    project_id=project_id
+                )
+            )
+
+        # -------------------------------------------------
+        # SAVE CHANGES
+        # -------------------------------------------------
+
+        conn.commit()
+
+        flash(
+            "Creator project updated successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "view_creator_project",
+                project_id=project_id
+            )
+        )
+
+    except Exception:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "Edit Creator Project error | project_id=%s | user_id=%s",
+            project_id,
+            session.get("user_id")
+        )
 
         flash(
             "Unable to edit creator project right now. Please try again.",
@@ -1713,7 +1748,9 @@ def edit_creator_project(project_id):
         )
 
         return redirect(
-            url_for("creator_studio")
+            url_for(
+                "creator_studio"
+            )
         )
 
     finally:
