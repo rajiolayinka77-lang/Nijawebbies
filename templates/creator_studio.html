@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Creator Studio — NijaWebbies</title>
 
@@ -10,6 +14,7 @@
           content="NijaWebbies Creator Studio — create and manage your creative projects.">
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -43,7 +48,7 @@
 
         .nav-links {
             display: flex;
-            gap: 15px;
+            gap: 14px;
             flex-wrap: wrap;
         }
 
@@ -51,6 +56,11 @@
             color: white;
             text-decoration: none;
             font-weight: bold;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
         }
 
         .container {
@@ -67,29 +77,28 @@
             font-weight: bold;
         }
 
-        .hero,
-        .form-card,
-        .project,
-        .empty,
-        .idea {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        .back-link:hover {
+            text-decoration: underline;
         }
 
         .hero {
-            padding: 30px;
+            background: linear-gradient(135deg, #0b7a3b, #159957);
+            color: white;
+            padding: 32px;
+            border-radius: 18px;
             margin-bottom: 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
         }
 
         .hero h1 {
-            margin-top: 0;
+            margin: 0 0 10px;
             font-size: 32px;
         }
 
         .hero p {
-            color: #667085;
+            margin: 0;
             line-height: 1.7;
+            opacity: 0.95;
         }
 
         .flash {
@@ -115,17 +124,23 @@
         }
 
         .form-card {
+            background: white;
             padding: 28px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
         }
 
         .form-card h2 {
             margin-top: 0;
+            margin-bottom: 8px;
         }
 
         .form-intro {
             color: #667085;
             line-height: 1.6;
+            margin-top: 0;
+            margin-bottom: 25px;
         }
 
         .form-group {
@@ -142,16 +157,12 @@
         select,
         textarea {
             width: 100%;
-            padding: 13px;
+            padding: 14px;
             border: 1px solid #d0d5dd;
             border-radius: 9px;
             font-size: 15px;
             font-family: Arial, sans-serif;
-        }
-
-        textarea {
-            min-height: 130px;
-            resize: vertical;
+            background: white;
         }
 
         input:focus,
@@ -159,15 +170,23 @@
         textarea:focus {
             outline: none;
             border-color: #0b7a3b;
+            box-shadow: 0 0 0 2px rgba(11,122,59,0.10);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+            line-height: 1.5;
         }
 
         .submit-btn {
+            width: 100%;
             border: none;
             background: #0b7a3b;
             color: white;
-            padding: 14px 22px;
+            padding: 15px 22px;
             border-radius: 9px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -176,56 +195,93 @@
             background: #08632f;
         }
 
-        .section-title {
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
             margin: 35px 0 18px;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .project-count {
+            background: #e8f7ee;
+            color: #0b7a3b;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
         }
 
         .projects {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
+            gap: 20px;
         }
 
         .project {
+            background: white;
             padding: 24px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border: 1px solid #edf0f2;
+        }
+
+        .project:hover {
+            box-shadow: 0 7px 22px rgba(0,0,0,0.09);
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-bottom: 14px;
+        }
+
+        .project-type,
+        .status {
+            display: inline-block;
+            padding: 7px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .project-type {
-            display: inline-block;
             background: #e8f7ee;
             color: #0b7a3b;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 12px;
         }
 
         .status {
-            display: inline-block;
             background: #eef2ff;
             color: #4338ca;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            margin-left: 5px;
         }
 
         .project h3 {
-            margin: 8px 0 10px;
+            margin: 0 0 10px;
             font-size: 21px;
+            line-height: 1.3;
         }
 
         .project-description {
             color: #667085;
             line-height: 1.6;
             white-space: pre-wrap;
+            margin: 0;
+        }
+
+        .no-description {
+            color: #98a2b3;
+            font-style: italic;
         }
 
         .project-date {
             display: block;
-            margin-top: 15px;
+            margin-top: 16px;
             color: #98a2b3;
             font-size: 13px;
         }
@@ -234,16 +290,19 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-top: 18px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #edf0f2;
         }
 
         .action-btn {
             display: inline-block;
-            padding: 9px 14px;
+            padding: 10px 14px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
             font-size: 14px;
+            border: none;
         }
 
         .view-btn {
@@ -251,9 +310,17 @@
             color: white;
         }
 
+        .view-btn:hover {
+            background: #08632f;
+        }
+
         .edit-btn {
             background: #eef2ff;
             color: #4338ca;
+        }
+
+        .edit-btn:hover {
+            background: #e0e7ff;
         }
 
         .delete-form {
@@ -264,45 +331,70 @@
             border: 1px solid #f3c0c0;
             background: #fff0f0;
             color: #b42318;
-            padding: 9px 14px;
+            padding: 10px 14px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background: #ffe3e3;
         }
 
         .empty {
-            padding: 30px;
+            background: white;
+            padding: 40px 25px;
             text-align: center;
-            color: #667085;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
         }
 
         .empty-icon {
-            font-size: 45px;
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .empty h3 {
+            margin-bottom: 8px;
+        }
+
+        .empty p {
+            color: #667085;
         }
 
         .ideas {
             margin-top: 35px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 18px;
         }
 
         .idea {
-            padding: 20px;
+            background: white;
+            padding: 22px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
         }
 
         .idea-icon {
-            font-size: 30px;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .idea h3 {
+            margin: 5px 0 8px;
         }
 
         .idea p {
             color: #667085;
             line-height: 1.5;
+            margin-bottom: 0;
         }
 
         footer {
-            margin-top: 50px;
-            padding: 30px 20px;
+            margin-top: 55px;
+            padding: 32px 20px;
             background: #17202a;
             color: white;
             text-align: center;
@@ -310,6 +402,7 @@
 
         footer p {
             color: #d0d5dd;
+            line-height: 1.6;
         }
 
         footer a {
@@ -318,10 +411,32 @@
             margin: 0 8px;
         }
 
+        footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 750px) {
+
             .nav {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .nav-links {
+                width: 100%;
+                gap: 10px;
+            }
+
+            .hero {
+                padding: 24px;
+            }
+
+            .hero h1 {
+                font-size: 27px;
+            }
+
+            .form-card {
+                padding: 22px;
             }
 
             .projects,
@@ -329,21 +444,37 @@
                 grid-template-columns: 1fr;
             }
 
-            .hero h1 {
-                font-size: 26px;
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
-            .hero,
-            .form-card {
-                padding: 22px;
+            .project-actions {
+                flex-direction: column;
             }
+
+            .action-btn,
+            .delete-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .delete-form {
+                width: 100%;
+            }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <header>
+
     <div class="nav">
 
         <div class="logo">
@@ -351,27 +482,52 @@
         </div>
 
         <div class="nav-links">
-            <a href="{{ url_for('workspace') }}">Workspace</a>
-            <a href="{{ url_for('blog') }}">Blog</a>
-            <a href="{{ url_for('business_space') }}">Business</a>
-            <a href="{{ url_for('communities') }}">Communities</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+
+            <a href="{{ url_for('workspace') }}">
+                Workspace
+            </a>
+
+            <a href="{{ url_for('blog') }}">
+                Blog
+            </a>
+
+            <a href="{{ url_for('business_space') }}">
+                Business
+            </a>
+
+            <a href="{{ url_for('communities') }}">
+                Communities
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
         </div>
 
     </div>
+
 </header>
 
 
 <main class="container">
 
-    <a class="back-link" href="{{ url_for('workspace') }}">
+
+    <a
+        class="back-link"
+        href="{{ url_for('workspace') }}"
+    >
         ← Back to Workspace
     </a>
 
 
+    <!-- HERO -->
+
     <section class="hero">
 
-        <h1>🎨 Creator Studio</h1>
+        <h1>
+            🎨 Creator Studio
+        </h1>
 
         <p>
             Welcome, <strong>{{ user_name }}</strong>!
@@ -390,15 +546,16 @@
 
             {% for category, message in messages %}
 
-                <div class="flash
+                <div
+                    class="flash
                     {% if category == 'success' %}
                         flash-success
                     {% elif category == 'danger' %}
                         flash-danger
                     {% else %}
                         flash-warning
-                    {% endif %}
-                ">
+                    {% endif %}"
+                >
                     {{ message }}
                 </div>
 
@@ -413,14 +570,20 @@
 
     <section class="form-card">
 
-        <h2>➕ New Creative Project</h2>
+        <h2>
+            ➕ New Creative Project
+        </h2>
 
         <p class="form-intro">
             Start a new project and keep your creative work organized.
         </p>
 
-        <form method="POST"
-              action="{{ url_for('creator_studio') }}">
+
+        <form
+            method="POST"
+            action="{{ url_for('creator_studio') }}"
+        >
+
 
             <div class="form-group">
 
@@ -544,16 +707,27 @@
                 🚀 Create Project
             </button>
 
+
         </form>
 
     </section>
 
 
-    <!-- PROJECTS -->
+    <!-- PROJECT LIST -->
 
-    <h2 class="section-title">
-        📁 My Creative Projects
-    </h2>
+    <div class="section-header">
+
+        <h2 class="section-title">
+            📁 My Creative Projects
+        </h2>
+
+        {% if projects %}
+            <span class="project-count">
+                {{ projects|length }} project{% if projects|length != 1 %}s{% endif %}
+            </span>
+        {% endif %}
+
+    </div>
 
 
     {% if projects %}
@@ -564,7 +738,9 @@
 
                 <article class="project">
 
-                    <div>
+
+                    <div class="project-tags">
+
                         <span class="project-type">
                             {{ project["project_type"] or "General" }}
                         </span>
@@ -572,6 +748,7 @@
                         <span class="status">
                             {{ project["status"] or "Idea" }}
                         </span>
+
                     </div>
 
 
@@ -588,7 +765,7 @@
 
                     {% else %}
 
-                        <p class="project-description">
+                        <p class="project-description no-description">
                             No description added yet.
                         </p>
 
@@ -596,17 +773,18 @@
 
 
                     <span class="project-date">
-                        Created {{ project["created_at"] }}
+                        📅 Created {{ project["created_at"] }}
                     </span>
 
 
                     <div class="project-actions">
 
+
                         <a
                             class="action-btn view-btn"
                             href="{{ url_for('view_creator_project', project_id=project['id']) }}"
                         >
-                            👁️ Read Project
+                            👁️ View Project
                         </a>
 
 
@@ -634,7 +812,9 @@
 
                         </form>
 
+
                     </div>
+
 
                 </article>
 
@@ -642,7 +822,9 @@
 
         </div>
 
+
     {% else %}
+
 
         <div class="empty">
 
@@ -660,22 +842,29 @@
 
         </div>
 
+
     {% endif %}
 
 
-    <!-- IDEAS -->
+    <!-- CREATIVE IDEAS -->
 
-    <h2 class="section-title">
+    <h2 class="section-title" style="margin-top: 40px;">
         💡 What can you create?
     </h2>
 
+
     <section class="ideas">
+
 
         <div class="idea">
 
-            <div class="idea-icon">🎥</div>
+            <div class="idea-icon">
+                🎥
+            </div>
 
-            <h3>Videos</h3>
+            <h3>
+                Videos
+            </h3>
 
             <p>
                 Organize comedy skits, YouTube ideas,
@@ -687,9 +876,13 @@
 
         <div class="idea">
 
-            <div class="idea-icon">📱</div>
+            <div class="idea-icon">
+                📱
+            </div>
 
-            <h3>Social Content</h3>
+            <h3>
+                Social Content
+            </h3>
 
             <p>
                 Keep Facebook, Instagram, TikTok and
@@ -701,9 +894,13 @@
 
         <div class="idea">
 
-            <div class="idea-icon">🎨</div>
+            <div class="idea-icon">
+                🎨
+            </div>
 
-            <h3>Creative Work</h3>
+            <h3>
+                Creative Work
+            </h3>
 
             <p>
                 Manage artwork, music, podcasts,
@@ -712,14 +909,18 @@
 
         </div>
 
+
     </section>
+
 
 </main>
 
 
 <footer>
 
-    <strong>🇳🇬 NijaWebbies</strong>
+    <strong>
+        🇳🇬 NijaWebbies
+    </strong>
 
     <p>
         A free digital ecosystem for Nigeria, Africa and the world.
@@ -751,5 +952,7 @@
 
 </footer>
 
+
 </body>
+
 </html>
