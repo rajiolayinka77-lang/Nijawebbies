@@ -1,6 +1,10 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Business Space — NijaWebbies</title>
+
+<meta name="description"
+      content="Create and manage your business profile on NijaWebbies.">
 
 <style>
     * {
@@ -43,6 +47,7 @@
     .nav a {
         color: white;
         text-decoration: none;
+        font-weight: 500;
     }
 
     .nav a:hover {
@@ -52,12 +57,13 @@
     .container {
         max-width: 900px;
         margin: 30px auto;
-        padding: 0 20px;
+        padding: 0 20px 40px;
     }
 
     .hero,
     .form-card,
-    .profile-card {
+    .profile-card,
+    .discover-card {
         background: white;
         padding: 25px;
         border-radius: 16px;
@@ -65,13 +71,32 @@
         box-shadow: 0 3px 12px rgba(0,0,0,0.05);
     }
 
+    .hero {
+        border-top: 5px solid #0b7a3b;
+    }
+
     h1 {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    h2 {
         margin-top: 0;
     }
 
     .hero p {
         color: #667085;
         line-height: 1.6;
+    }
+
+    .intro-box {
+        background: #ecfdf3;
+        border: 1px solid #abefc6;
+        color: #05603a;
+        padding: 14px;
+        border-radius: 10px;
+        margin-top: 18px;
+        line-height: 1.5;
     }
 
     label {
@@ -90,6 +115,15 @@
         border-radius: 8px;
         font-size: 16px;
         font-family: inherit;
+        background: white;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: #0b7a3b;
+        box-shadow: 0 0 0 3px rgba(11,122,59,0.10);
     }
 
     textarea {
@@ -97,12 +131,20 @@
         resize: vertical;
     }
 
+    .help-text {
+        display: block;
+        margin-top: 5px;
+        color: #667085;
+        font-size: 13px;
+    }
+
     button {
-        margin-top: 20px;
+        width: 100%;
+        margin-top: 22px;
         background: #0b7a3b;
         color: white;
         border: none;
-        padding: 13px 20px;
+        padding: 14px 20px;
         border-radius: 8px;
         font-size: 16px;
         font-weight: bold;
@@ -111,6 +153,65 @@
 
     button:hover {
         background: #096631;
+    }
+
+    .profile-item {
+        margin: 14px 0;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eaecf0;
+    }
+
+    .profile-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .profile-label {
+        font-size: 13px;
+        color: #667085;
+        margin-bottom: 4px;
+        font-weight: bold;
+    }
+
+    .profile-value {
+        font-size: 16px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .website-link {
+        color: #0b7a3b;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .website-link:hover {
+        text-decoration: underline;
+    }
+
+    .category-badge {
+        display: inline-block;
+        background: #ecfdf3;
+        color: #05603a;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .discover-card {
+        background: linear-gradient(135deg, #0b7a3b, #075e2e);
+        color: white;
+    }
+
+    .discover-card h2 {
+        margin-bottom: 8px;
+    }
+
+    .discover-card p {
+        line-height: 1.6;
+        margin-bottom: 0;
+        color: #e8f5ee;
     }
 
     .back {
@@ -125,29 +226,13 @@
         text-decoration: underline;
     }
 
-    .profile-item {
-        margin: 14px 0;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #eaecf0;
-    }
-
-    .profile-item:last-child {
-        border-bottom: none;
-    }
-
-    .profile-label {
-        font-size: 13px;
-        color: #667085;
-        margin-bottom: 4px;
-    }
-
-    .profile-value {
-        font-size: 16px;
-        line-height: 1.5;
-    }
-
     .empty {
         color: #667085;
+        line-height: 1.6;
+    }
+
+    .required {
+        color: #b42318;
     }
 
     @media (max-width: 700px) {
@@ -163,12 +248,18 @@
         .container {
             margin-top: 20px;
         }
+
+        .hero,
+        .form-card,
+        .profile-card,
+        .discover-card {
+            padding: 20px;
+        }
     }
 </style>
 
-</head><body><header><div class="nav">
-
-    <div class="logo">
+</head><body><header>
+    <div class="nav">    <div class="logo">
         🇳🇬 NijaWebbies
     </div>
 
@@ -181,7 +272,8 @@
 
 </div>
 
-</header><main class="container"><section class="hero">
+</header><main class="container"><!-- HERO -->
+<section class="hero">
 
     <h1>🏪 Business Space</h1>
 
@@ -191,9 +283,16 @@
         a simple way to discover your business online.
     </p>
 
+    <div class="intro-box">
+        💡 <strong>Grow your visibility:</strong>
+        Add your business information so people can understand
+        what you offer and how to contact you.
+    </div>
+
 </section>
 
 
+<!-- BUSINESS FORM -->
 <section class="form-card">
 
     <h2>🏪 Create or Update Your Business Profile</h2>
@@ -201,7 +300,7 @@
     <form method="POST" action="/business-space">
 
         <label for="business_name">
-            Business Name
+            Business Name <span class="required">*</span>
         </label>
 
         <input
@@ -215,10 +314,10 @@
 
 
         <label for="category">
-            Business Category
+            Business Category <span class="required">*</span>
         </label>
 
-        <select id="category" name="category">
+        <select id="category" name="category" required>
 
             <option value="">Select a category</option>
 
@@ -262,12 +361,101 @@
                 🛠️ Services
             </option>
 
-            <option value="Other"
-                {% if business and business['category'] == 'Other' %}selected{% endif %}>
-                📦 Other
+            <option value="Entertainment & Media"
+                {% if business and business['category'] == 'Entertainment & Media' %}selected{% endif %}>
+                🎬 Entertainment & Media
+            </option>
+
+            <option value="Music & Events"
+                {% if business and business['category'] == 'Music & Events' %}selected{% endif %}>
+                🎵 Music & Events
+            </option>
+
+            <option value="Photography & Creative"
+                {% if business and business['category'] == 'Photography & Creative' %}selected{% endif %}>
+                📸 Photography & Creative
+            </option>
+
+            <option value="Automotive"
+                {% if business and business['category'] == 'Automotive' %}selected{% endif %}>
+                🚗 Automotive
+            </option>
+
+            <option value="Real Estate & Property"
+                {% if business and business['category'] == 'Real Estate & Property' %}selected{% endif %}>
+                🏠 Real Estate & Property
+            </option>
+
+            <option value="Retail & Shopping"
+                {% if business and business['category'] == 'Retail & Shopping' %}selected{% endif %}>
+                🛒 Retail & Shopping
+            </option>
+
+            <option value="Finance & Accounting"
+                {% if business and business['category'] == 'Finance & Accounting' %}selected{% endif %}>
+                💰 Finance & Accounting
+            </option>
+
+            <option value="Logistics & Transportation"
+                {% if business and business['category'] == 'Logistics & Transportation' %}selected{% endif %}>
+                🚚 Logistics & Transportation
+            </option>
+
+            <option value="Agriculture & Farming"
+                {% if business and business['category'] == 'Agriculture & Farming' %}selected{% endif %}>
+                🌾 Agriculture & Farming
+            </option>
+
+            <option value="Professional Services"
+                {% if business and business['category'] == 'Professional Services' %}selected{% endif %}>
+                💼 Professional Services
+            </option>
+
+            <option value="Hospitality & Accommodation"
+                {% if business and business['category'] == 'Hospitality & Accommodation' %}selected{% endif %}>
+                🏨 Hospitality & Accommodation
+            </option>
+
+            <option value="Cleaning & Maintenance"
+                {% if business and business['category'] == 'Cleaning & Maintenance' %}selected{% endif %}>
+                🧹 Cleaning & Maintenance
+            </option>
+
+            <option value="Wholesale & Distribution"
+                {% if business and business['category'] == 'Wholesale & Distribution' %}selected{% endif %}>
+                📦 Wholesale & Distribution
+            </option>
+
+            <option value="Digital & Online Business"
+                {% if business and business['category'] == 'Digital & Online Business' %}selected{% endif %}>
+                🌐 Digital & Online Business
+            </option>
+
+            <option value="Telecommunications"
+                {% if business and business['category'] == 'Telecommunications' %}selected{% endif %}>
+                📱 Telecommunications
+            </option>
+
+            <option value="Repairs & Technical Services"
+                {% if business and business['category'] == 'Repairs & Technical Services' %}selected{% endif %}>
+                🔧 Repairs & Technical Services
+            </option>
+
+            <option value="Training & Coaching"
+                {% if business and business['category'] == 'Training & Coaching' %}selected{% endif %}>
+                🎓 Training & Coaching
+            </option>
+
+            <option value="Other Business"
+                {% if business and business['category'] == 'Other Business' %}selected{% endif %}>
+                📦 Other Business
             </option>
 
         </select>
+
+        <span class="help-text">
+            Choose the category that best describes your business.
+        </span>
 
 
         <label for="description">
@@ -319,6 +507,10 @@
             placeholder="https://example.com"
         >
 
+        <span class="help-text">
+            If you don't have a website, you can leave this blank.
+        </span>
+
 
         <button type="submit">
             💾 Save Business Profile
@@ -329,6 +521,7 @@
 </section>
 
 
+<!-- EXISTING PROFILE -->
 {% if business %}
 
 <section class="profile-card">
@@ -357,7 +550,9 @@
         </div>
 
         <div class="profile-value">
-            {{ business['category'] }}
+            <span class="category-badge">
+                {{ business['category'] }}
+            </span>
         </div>
 
     </div>
@@ -408,7 +603,7 @@
         </div>
 
         <div class="profile-value">
-            {{ business['location'] }}
+            📍 {{ business['location'] }}
         </div>
 
     </div>
@@ -425,7 +620,16 @@
         </div>
 
         <div class="profile-value">
-            {{ business['website'] }}
+
+            <a
+                class="website-link"
+                href="{{ business['website'] }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                🌐 Visit Website
+            </a>
+
         </div>
 
     </div>
@@ -448,6 +652,21 @@
 </section>
 
 {% endif %}
+
+
+<!-- DISCOVERY MESSAGE -->
+<section class="discover-card">
+
+    <h2>🚀 Get Your Business Discovered</h2>
+
+    <p>
+        NijaWebbies is building a digital space where businesses,
+        creators and communities can connect with people online.
+        Keep your profile updated so your business information is
+        ready for future discovery features.
+    </p>
+
+</section>
 
 
 <a class="back" href="/workspace">
