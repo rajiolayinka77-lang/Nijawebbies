@@ -199,6 +199,7 @@
     }
 
     .phone-link,
+    .whatsapp-link,
     .website-link {
         color: #0b7a3b;
         text-decoration: none;
@@ -206,6 +207,7 @@
     }
 
     .phone-link:hover,
+    .whatsapp-link:hover,
     .website-link:hover {
         text-decoration: underline;
     }
@@ -237,6 +239,31 @@
 
     .required {
         color: #d92d20;
+    }
+
+    .flash {
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        line-height: 1.5;
+    }
+
+    .flash-success {
+        background: #ecfdf3;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .flash-danger {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .flash-warning {
+        background: #fffbeb;
+        color: #92400e;
+        border: 1px solid #fde68a;
     }
 
     @media (max-width: 700px) {
@@ -287,7 +314,26 @@
 
 </div>
 
-</header><main class="container"><!-- HERO -->
+</header><main class="container"><!-- FLASH MESSAGES -->
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="flash flash-{{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- HERO -->
 
 <section class="hero">
 
@@ -314,7 +360,7 @@
 
     <h2>🏪 Create or Update Your Business Profile</h2>
 
-    <form method="POST" action="/business-space">
+    <form method="POST" action="{{ url_for('business_space') }}">
 
         <!-- BUSINESS NAME -->
 
@@ -348,7 +394,6 @@
             <option value="">
                 Select a category
             </option>
-
 
             <optgroup label="🍽️ Food, Hospitality & Lifestyle">
 
@@ -627,8 +672,7 @@
             name="description"
             maxlength="1000"
             placeholder="Tell customers about your business, products or services..."
-
-«{{ business['description'] if business else '' }}</textarea>»
+        >{{ business['description'] if business else '' }}</textarea>
 
         <span class="help-text">
             Tell people what your business does and what you offer.
@@ -649,6 +693,26 @@
             placeholder="e.g. 09131333120"
             maxlength="30"
         >
+
+
+        <!-- WHATSAPP -->
+
+        <label for="whatsapp">
+            WhatsApp Number
+        </label>
+
+        <input
+            type="tel"
+            id="whatsapp"
+            name="whatsapp"
+            value="{{ business['whatsapp'] if business else '' }}"
+            placeholder="e.g. 08012345678"
+            maxlength="30"
+        >
+
+        <span class="help-text">
+            Add the WhatsApp number customers can use to contact your business.
+        </span>
 
 
         <!-- LOCATION -->
@@ -779,6 +843,32 @@
     {% endif %}
 
 
+    {% if business['whatsapp'] %}
+
+    <div class="profile-item">
+
+        <div class="profile-label">
+            WhatsApp
+        </div>
+
+        <div class="profile-value">
+
+            <a
+                class="whatsapp-link"
+                href="https://wa.me/{{ business['whatsapp'] | replace('+', '') | replace(' ', '') | replace('-', '') }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                💬 {{ business['whatsapp'] }}
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
     {% if business['location'] %}
 
     <div class="profile-item">
@@ -839,6 +929,7 @@
     <ul class="feature-list">
         <li>📍 Help people understand where your business is located.</li>
         <li>📞 Make it easy for customers to contact you.</li>
+        <li>💬 Give customers a WhatsApp contact option.</li>
         <li>🏷️ Choose the right category for your business.</li>
         <li>🌐 Add your website when you have one.</li>
         <li>🚀 Prepare your business for future NijaWebbies discovery features.</li>
@@ -870,7 +961,7 @@
 
 <a
     class="back"
-    href="/workspace"
+    href="{{ url_for('workspace') }}"
 >
     ← Back to Workspace
 </a>
