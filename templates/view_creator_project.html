@@ -1,246 +1,480 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{{ project.title }} — NijaWebbies</title>
 
-    <title>{{ project.title }} — NijaWebbies</title>
+<meta name="description"
+      content="View and manage your NijaWebbies creator project.">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-            color: #1f2937;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        color: #17202a;
+    }
 
-        .topbar {
-            background: #111827;
-            color: white;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* HEADER */
+    header {
+        background: #0b7a3b;
+        color: white;
+        padding: 16px 20px;
+    }
 
-        .brand {
-            font-size: 20px;
-            font-weight: bold;
-        }
+    .nav {
+        max-width: 1000px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
 
-        .topbar a {
-            color: white;
-            text-decoration: none;
+    .logo {
+        font-size: 21px;
+        font-weight: bold;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    /* MAIN */
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 18px;
+        color: #0b7a3b;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .card {
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    }
+
+    h1 {
+        margin: 0 0 12px;
+        font-size: 32px;
+        word-break: break-word;
+    }
+
+    .intro {
+        color: #667085;
+        line-height: 1.6;
+        margin-bottom: 22px;
+    }
+
+    /* BADGES */
+    .badges {
+        margin-bottom: 25px;
+    }
+
+    .type,
+    .status {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-right: 7px;
+        margin-bottom: 7px;
+    }
+
+    .type {
+        background: #e8f7ee;
+        color: #0b7a3b;
+    }
+
+    .status {
+        background: #eef2ff;
+        color: #4338ca;
+    }
+
+    /* SECTION */
+    .section {
+        margin-top: 28px;
+    }
+
+    .section h2 {
+        margin-bottom: 12px;
+        font-size: 21px;
+    }
+
+    .description {
+        background: #f8fafc;
+        border: 1px solid #eaecf0;
+        border-radius: 12px;
+        padding: 18px;
+        line-height: 1.8;
+        color: #475467;
+        white-space: pre-wrap;
+        min-height: 80px;
+    }
+
+    /* DETAILS */
+    .details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .detail {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 17px;
+        border: 1px solid #eaecf0;
+    }
+
+    .detail strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #17202a;
+    }
+
+    .detail span {
+        color: #667085;
+    }
+
+    /* ACTIONS */
+    .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        padding-top: 22px;
+        border-top: 1px solid #eaecf0;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .edit {
+        background: #0b7a3b;
+        color: white;
+    }
+
+    .edit:hover {
+        background: #08632f;
+    }
+
+    .back-btn {
+        background: #e9eef2;
+        color: #17202a;
+    }
+
+    .back-btn:hover {
+        background: #dfe5e9;
+    }
+
+    /* CREATOR TIP */
+    .tip {
+        margin-top: 25px;
+        background: #fff7df;
+        border-left: 5px solid #e5a900;
+        padding: 17px;
+        border-radius: 10px;
+        color: #694f00;
+        line-height: 1.6;
+    }
+
+    /* FOOTER */
+    footer {
+        margin-top: 50px;
+        padding: 30px 20px;
+        background: #17202a;
+        color: white;
+        text-align: center;
+    }
+
+    footer p {
+        color: #d0d5dd;
+    }
+
+    footer a {
+        color: white;
+        text-decoration: none;
+        margin: 0 8px;
+    }
+
+    /* MOBILE */
+    @media (max-width: 650px) {
+
+        .nav {
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: bold;
+            margin: 20px auto;
+            padding: 0 15px;
         }
 
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            padding: 22px;
         }
 
         h1 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 32px;
-        }
-
-        .type {
-            display: inline-block;
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .status {
-            display: inline-block;
-            background: #dcfce7;
-            color: #166534;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            margin-left: 8px;
-        }
-
-        .section {
-            margin-top: 28px;
-        }
-
-        .section h2 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .description {
-            line-height: 1.7;
-            color: #4b5563;
-            white-space: pre-wrap;
+            font-size: 26px;
         }
 
         .details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .detail {
-            background: #f9fafb;
-            padding: 16px;
-            border-radius: 10px;
-        }
-
-        .detail strong {
-            display: block;
-            margin-bottom: 5px;
-            color: #111827;
+            grid-template-columns: 1fr;
         }
 
         .actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 30px;
+            flex-direction: column;
         }
 
         .btn {
-            display: inline-block;
-            padding: 12px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
+            text-align: center;
+            width: 100%;
         }
+    }
+</style>
 
-        .edit {
-            background: #2563eb;
-            color: white;
-        }
+</head><body><header><div class="nav">
 
-        .back-btn {
-            background: #e5e7eb;
-            color: #111827;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                margin: 20px auto;
-                padding: 0 15px;
-            }
-
-            .card {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 26px;
-            }
-
-            .details {
-                grid-template-columns: 1fr;
-            }
-
-            .status {
-                margin-left: 0;
-                margin-top: 8px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="topbar">
-        <div class="brand">🇳🇬 NijaWebbies</div>
-        <a href="{{ url_for('workspace') }}">Workspace</a>
+    <div class="logo">
+        🇳🇬 NijaWebbies
     </div>
 
-    <div class="container">
+    <div class="nav-links">
 
-        <a href="{{ url_for('creator_studio') }}" class="back">
-            ← Back to Creator Studio
+        <a href="{{ url_for('workspace') }}">
+            Workspace
         </a>
 
-        <div class="card">
+        <a href="{{ url_for('creator_studio') }}">
+            Creator Studio
+        </a>
 
-            <h1>{{ project.title }}</h1>
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
 
-            {% if project.project_type %}
-                <span class="type">{{ project.project_type }}</span>
+    </div>
+
+</div>
+
+</header><main class="container"><a
+    href="{{ url_for('creator_studio') }}"
+    class="back-link"
+>
+    ← Back to Creator Studio
+</a>
+
+
+<div class="card">
+
+    <h1>
+        {{ project.title }}
+    </h1>
+
+    <p class="intro">
+        Your creative project on NijaWebbies.
+    </p>
+
+
+    <!-- PROJECT BADGES -->
+
+    <div class="badges">
+
+        <span class="type">
+            {{ project.project_type or "General" }}
+        </span>
+
+        <span class="status">
+            {{ project.status or "Idea" }}
+        </span>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    <div class="section">
+
+        <h2>
+            📝 About This Project
+        </h2>
+
+        <div class="description">
+
+            {% if project.description %}
+
+                {{ project.description }}
+
+            {% else %}
+
+                No project description has been added yet.
+
             {% endif %}
-
-            {% if project.status %}
-                <span class="status">{{ project.status }}</span>
-            {% endif %}
-
-            <div class="section">
-                <h2>About This Project</h2>
-
-                <div class="description">
-                    {% if project.description %}
-                        {{ project.description }}
-                    {% else %}
-                        No project description has been added yet.
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="details">
-
-                <div class="detail">
-                    <strong>Project Type</strong>
-                    {{ project.project_type or "Not specified" }}
-                </div>
-
-                <div class="detail">
-                    <strong>Status</strong>
-                    {{ project.status or "Not specified" }}
-                </div>
-
-            </div>
-
-            <div class="actions">
-
-                <a
-                    href="{{ url_for('edit_creator_project', project_id=project.id) }}"
-                    class="btn edit">
-                    ✏️ Edit Project
-                </a>
-
-                <a
-                    href="{{ url_for('creator_studio') }}"
-                    class="btn back-btn">
-                    ← Back to Projects
-                </a>
-
-            </div>
 
         </div>
 
     </div>
 
-</body>
+
+    <!-- PROJECT DETAILS -->
+
+    <div class="section">
+
+        <h2>
+            📋 Project Details
+        </h2>
+
+        <div class="details">
+
+            <div class="detail">
+
+                <strong>
+                    Project Type
+                </strong>
+
+                <span>
+                    {{ project.project_type or "Not specified" }}
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <strong>
+                    Status
+                </strong>
+
+                <span>
+                    {{ project.status or "Not specified" }}
+                </span>
+
+            </div>
+
+
+            {% if project.created_at %}
+
+            <div class="detail">
+
+                <strong>
+                    📅 Created
+                </strong>
+
+                <span>
+                    {{ project.created_at }}
+                </span>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if project.updated_at %}
+
+            <div class="detail">
+
+                <strong>
+                    🔄 Last Updated
+                </strong>
+
+                <span>
+                    {{ project.updated_at }}
+                </span>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="actions">
+
+        <a
+            href="{{ url_for('edit_creator_project', project_id=project.id) }}"
+            class="btn edit"
+        >
+            ✏️ Edit Project
+        </a>
+
+
+        <a
+            href="{{ url_for('creator_studio') }}"
+            class="btn back-btn"
+        >
+            ← Back to Projects
+        </a>
+
+    </div>
+
+
+    <!-- TIP -->
+
+    <div class="tip">
+
+        💡 <strong>Creator Tip:</strong>
+        Keep your project description updated with your ideas,
+        goals and important notes. You can edit this project
+        anytime from the button above.
+
+    </div>
+
+</div>
+
+</main><footer><strong>
+    🇳🇬 NijaWebbies
+</strong>
+
+<p>
+    A free digital ecosystem for Nigeria, Africa and the world.
+</p>
+
+<p>
+
+    <a href="{{ url_for('workspace') }}">
+        Workspace
+    </a>
+
+    <a href="{{ url_for('creator_studio') }}">
+        Creator Studio
+    </a>
+
+</p>
+
+<p>
+    © 2026 NijaWebbies. All rights reserved.
+</p>
+
+</footer></body>
 </html>
