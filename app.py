@@ -7,12 +7,11 @@ from functools import wraps
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
-=========================================================
+app = Flask(__name__)
 
-APP
-
-=========================================================
-
+# =========================================================
+# APP
+# =========================================================
 app = Flask(name)
 
 app.config["SECRET_KEY"] = os.environ.get(
