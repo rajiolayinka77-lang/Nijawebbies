@@ -1,5 +1,4 @@
-<!DOCTYPE html><html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Business Space — NijaWebbies</title>
 
@@ -7,6 +6,7 @@
       content="Create and manage your business profile on NijaWebbies.">
 
 <style>
+
     * {
         box-sizing: border-box;
     }
@@ -241,10 +241,15 @@
         color: #d92d20;
     }
 
+    .flash-messages {
+        margin-bottom: 20px;
+    }
+
     .flash {
-        padding: 12px 15px;
+        padding: 13px 16px;
         border-radius: 8px;
-        margin-bottom: 18px;
+        margin-bottom: 10px;
+        font-weight: 500;
         line-height: 1.5;
     }
 
@@ -264,6 +269,12 @@
         background: #fffbeb;
         color: #92400e;
         border: 1px solid #fde68a;
+    }
+
+    .flash-info {
+        background: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
     }
 
     @media (max-width: 700px) {
@@ -298,18 +309,33 @@
             font-size: 21px;
         }
     }
+
 </style>
 
-</head><body><header>
-    <div class="nav">    <div class="logo">
+</head><body><header><div class="nav">
+
+    <div class="logo">
         🇳🇬 NijaWebbies
     </div>
 
     <div class="nav-links">
-        <a href="/workspace">Workspace</a>
-        <a href="/blog">Blog</a>
-        <a href="/communities">Communities</a>
-        <a href="/logout">Logout</a>
+
+        <a href="{{ url_for('workspace') }}">
+            Workspace
+        </a>
+
+        <a href="{{ url_for('blog') }}">
+            Blog
+        </a>
+
+        <a href="{{ url_for('communities') }}">
+            Communities
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
     </div>
 
 </div>
@@ -320,6 +346,8 @@
 
     {% if messages %}
 
+    <div class="flash-messages">
+
         {% for category, message in messages %}
 
             <div class="flash flash-{{ category }}">
@@ -327,6 +355,8 @@
             </div>
 
         {% endfor %}
+
+    </div>
 
     {% endif %}
 
@@ -337,18 +367,24 @@
 
 <section class="hero">
 
-    <h1>🏪 Business Space</h1>
+    <h1>
+        🏪 Business Space
+    </h1>
 
     <p>
-        Welcome, <strong>{{ user_name }}</strong>!
+        Welcome,
+        <strong>{{ user_name }}</strong>!
         Create or update your business profile and give
         customers a simple way to discover your business online.
     </p>
 
     <div class="tip">
+
         💡 <strong>Grow your visibility:</strong>
+
         Add your business information so people can understand
         what you offer and how to contact you.
+
     </div>
 
 </section>
@@ -358,14 +394,21 @@
 
 <section class="form-card">
 
-    <h2>🏪 Create or Update Your Business Profile</h2>
+    <h2>
+        🏪 Create or Update Your Business Profile
+    </h2>
 
-    <form method="POST" action="{{ url_for('business_space') }}">
+    <form method="POST"
+          action="{{ url_for('business_space') }}">
+
 
         <!-- BUSINESS NAME -->
 
         <label for="business_name">
-            Business Name <span class="required">*</span>
+
+            Business Name
+            <span class="required">*</span>
+
         </label>
 
         <input
@@ -382,7 +425,10 @@
         <!-- CATEGORY -->
 
         <label for="category">
-            Business Category <span class="required">*</span>
+
+            Business Category
+            <span class="required">*</span>
+
         </label>
 
         <select
@@ -394,6 +440,7 @@
             <option value="">
                 Select a category
             </option>
+
 
             <optgroup label="🍽️ Food, Hospitality & Lifestyle">
 
@@ -706,7 +753,7 @@
             id="whatsapp"
             name="whatsapp"
             value="{{ business['whatsapp'] if business else '' }}"
-            placeholder="e.g. 08012345678"
+            placeholder="e.g. 09131333120"
             maxlength="30"
         >
 
@@ -768,7 +815,12 @@
 
 <section class="profile-card">
 
-    <h2>📋 Your Business Profile</h2>
+    <h2>
+        📋 Your Business Profile
+    </h2>
+
+
+    <!-- BUSINESS NAME -->
 
     <div class="profile-item">
 
@@ -783,6 +835,8 @@
     </div>
 
 
+    <!-- CATEGORY -->
+
     {% if business['category'] %}
 
     <div class="profile-item">
@@ -792,15 +846,19 @@
         </div>
 
         <div class="profile-value">
+
             <span class="category-badge">
                 {{ business['category'] }}
             </span>
+
         </div>
 
     </div>
 
     {% endif %}
 
+
+    <!-- DESCRIPTION -->
 
     {% if business['description'] %}
 
@@ -818,6 +876,8 @@
 
     {% endif %}
 
+
+    <!-- PHONE -->
 
     {% if business['phone'] %}
 
@@ -843,6 +903,8 @@
     {% endif %}
 
 
+    <!-- WHATSAPP -->
+
     {% if business['whatsapp'] %}
 
     <div class="profile-item">
@@ -855,11 +917,11 @@
 
             <a
                 class="whatsapp-link"
-                href="https://wa.me/{{ business['whatsapp'] | replace('+', '') | replace(' ', '') | replace('-', '') }}"
+                href="https://wa.me/{{ business['whatsapp'] | replace('+', '') | replace(' ', '') | replace('-', '') | replace('(', '') | replace(')', '') }}"
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                💬 {{ business['whatsapp'] }}
+                💬 Chat on WhatsApp
             </a>
 
         </div>
@@ -868,6 +930,8 @@
 
     {% endif %}
 
+
+    <!-- LOCATION -->
 
     {% if business['location'] %}
 
@@ -885,6 +949,8 @@
 
     {% endif %}
 
+
+    <!-- WEBSITE -->
 
     {% if business['website'] %}
 
@@ -918,7 +984,9 @@
 
 <section class="discover-card">
 
-    <h2>🚀 Get Your Business Discovered</h2>
+    <h2>
+        🚀 Get Your Business Discovered
+    </h2>
 
     <p>
         Your business profile is now stored on NijaWebbies.
@@ -927,12 +995,31 @@
     </p>
 
     <ul class="feature-list">
-        <li>📍 Help people understand where your business is located.</li>
-        <li>📞 Make it easy for customers to contact you.</li>
-        <li>💬 Give customers a WhatsApp contact option.</li>
-        <li>🏷️ Choose the right category for your business.</li>
-        <li>🌐 Add your website when you have one.</li>
-        <li>🚀 Prepare your business for future NijaWebbies discovery features.</li>
+
+        <li>
+            📍 Help people understand where your business is located.
+        </li>
+
+        <li>
+            📞 Make it easy for customers to contact you.
+        </li>
+
+        <li>
+            💬 Give customers a WhatsApp contact option.
+        </li>
+
+        <li>
+            🏷️ Choose the right category for your business.
+        </li>
+
+        <li>
+            🌐 Add your website when you have one.
+        </li>
+
+        <li>
+            🚀 Prepare your business for future NijaWebbies discovery features.
+        </li>
+
     </ul>
 
 </section>
@@ -940,16 +1027,23 @@
 
 {% else %}
 
+
 <!-- EMPTY PROFILE -->
 
 <section class="profile-card">
 
-    <h2>📋 Your Business Profile</h2>
+    <h2>
+        📋 Your Business Profile
+    </h2>
 
     <p class="empty">
+
         You haven't created a business profile yet.
+
         Fill in the form above and click
-        <strong>Save Business Profile</strong> to get started.
+        <strong>Save Business Profile</strong>
+        to get started.
+
     </p>
 
 </section>
@@ -966,5 +1060,4 @@
     ← Back to Workspace
 </a>
 
-</main></body>
-</html>
+</main></body></html>
