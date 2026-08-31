@@ -2111,7 +2111,114 @@ def business_space():
 
         close_db(conn)
 
+# =========================================================
+# PUBLIC BUSINESS PROFILE
+# =========================================================
 
+@app.route("/business/<int:business_id>")
+def public_business_profile(business_id):
+
+    conn = None
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    business_profiles.*
+                FROM business_profiles
+                WHERE business_profiles.id = %s
+                LIMIT 1
+                """,
+                (business_id,)
+            )
+
+            business = cursor.fetchone()
+
+        if not business:
+
+            return "Business profile not found.", 404
+
+        # -----------------------------------------------------
+        # PREPARE WHATSAPP LINK
+        # -----------------------------------------------------
+
+        whatsapp_link = None
+
+        if business.get("whatsapp"):
+
+            whatsapp_link = str(
+                business["whatsapp"]
+            ).strip()
+
+            whatsapp_link = (
+                whatsapp_link
+                .replace("+", "")
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
+            )
+
+            if whatsapp_link.startswith("0"):
+
+                whatsapp_link = (
+                    "234" +
+                    whatsapp_link[1:]
+                )
+
+            elif not whatsapp_link.startswith("234"):
+
+                whatsapp_link = (
+                    "234" +
+                    whatsapp_link
+                )
+
+        # -----------------------------------------------------
+        # PREPARE PHONE LINK
+        # -----------------------------------------------------
+
+        phone_link = None
+
+        if business.get("phone"):
+
+            phone_link = str(
+                business["phone"]
+            ).strip()
+
+            phone_link = (
+                phone_link
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
+            )
+
+        return render_template(
+            "public_business_profile.html",
+            business=business,
+            whatsapp_link=whatsapp_link,
+            phone_link=phone_link
+        )
+
+    except Exception:
+
+        app.logger.exception(
+            "Public Business Profile error | business_id=%s",
+            business_id
+        )
+
+        return "Unable to load business profile.", 500
+
+    finally:
+
+        close_db(conn)
 # =========================================================
 # BUSINESS PREMIUM UPGRADE PAGE
 # =========================================================
