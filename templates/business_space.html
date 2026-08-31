@@ -1,7 +1,9 @@
-<!DOCTYPE html><html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Business Space — NijaWebbies</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Business Space — NijaWebbies</title>
 
 <meta name="description"
       content="Create and manage your business profile on NijaWebbies.">
@@ -64,7 +66,8 @@
     .hero,
     .form-card,
     .profile-card,
-    .discover-card {
+    .discover-card,
+    .upgrade-card {
         background: white;
         padding: 25px;
         border-radius: 16px;
@@ -81,7 +84,9 @@
         margin-top: 0;
     }
 
-    .hero p {
+    .hero p,
+    .upgrade-card p,
+    .discover-card p {
         color: #667085;
         line-height: 1.6;
     }
@@ -136,7 +141,7 @@
         line-height: 1.4;
     }
 
-    button {
+    .save-button {
         width: 100%;
         margin-top: 22px;
         background: #0b7a3b;
@@ -149,7 +154,7 @@
         cursor: pointer;
     }
 
-    button:hover {
+    .save-button:hover {
         background: #096631;
     }
 
@@ -213,6 +218,21 @@
         text-decoration: underline;
     }
 
+    .whatsapp-button {
+        display: inline-block;
+        margin-top: 5px;
+        background: #25D366;
+        color: white;
+        padding: 11px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .whatsapp-button:hover {
+        opacity: 0.9;
+    }
+
     .empty {
         color: #667085;
         line-height: 1.6;
@@ -224,11 +244,6 @@
             #ffffff,
             #f0fdf4
         );
-    }
-
-    .discover-card p {
-        color: #667085;
-        line-height: 1.6;
     }
 
     .feature-list {
@@ -278,6 +293,77 @@
         border: 1px solid #bfdbfe;
     }
 
+    /* =========================
+       UPGRADE
+    ========================= */
+
+    .upgrade-card {
+        background: linear-gradient(
+            135deg,
+            #fffdf2,
+            #ffffff
+        );
+
+        border: 1px solid #f0d77a;
+    }
+
+    .upgrade-badge {
+        display: inline-block;
+        background: #f59e0b;
+        color: white;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .upgrade-price {
+        font-size: 30px;
+        font-weight: bold;
+        color: #17202a;
+        margin: 10px 0;
+    }
+
+    .upgrade-price span {
+        font-size: 14px;
+        color: #667085;
+        font-weight: normal;
+    }
+
+    .upgrade-list {
+        padding-left: 20px;
+        color: #475467;
+        line-height: 1.9;
+    }
+
+    .upgrade-button {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        margin-top: 12px;
+        padding: 14px 20px;
+        border-radius: 8px;
+        background: #f59e0b;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .upgrade-button:hover {
+        background: #d97706;
+    }
+
+    .upgrade-note {
+        font-size: 13px;
+        color: #667085;
+        margin-top: 10px;
+        text-align: center;
+    }
+
     @media (max-width: 700px) {
 
         .nav {
@@ -297,7 +383,8 @@
         .hero,
         .form-card,
         .profile-card,
-        .discover-card {
+        .discover-card,
+        .upgrade-card {
             padding: 20px;
             border-radius: 13px;
         }
@@ -309,12 +396,14 @@
         h2 {
             font-size: 21px;
         }
+
     }
 
 </style>
 
-</head><body><header>
-    <div class="nav">    <div class="logo">
+</head><body><header><div class="nav">
+
+    <div class="logo">
         🇳🇬 NijaWebbies
     </div>
 
@@ -340,726 +429,836 @@
 
 </div>
 
-</header><main class="container"><!-- FLASH MESSAGES -->
+</header><main class="container"><!-- FLASH MESSAGES -->{% with messages = get_flashed_messages(with_categories=true) %}
 
-{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
 
-    {% if messages %}
+    <div class="flash-messages">
 
-        <div class="flash-messages">
+        {% for category, message in messages %}
 
-            {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">
+                {{ message }}
+            </div>
 
-                <div class="flash flash-{{ category }}">
-                    {{ message }}
-                </div>
+        {% endfor %}
 
-            {% endfor %}
+    </div>
 
-        </div>
-
-    {% endif %}
+{% endif %}
 
 {% endwith %}
 
+<!-- HERO --><section class="hero"><h1>
+    🏪 Business Space
+</h1>
 
-<!-- HERO -->
+<p>
+    Welcome,
+    <strong>{{ user_name }}</strong>!
+    Create or update your business profile and give
+    customers a simple way to discover your business online.
+</p>
 
-<section class="hero">
+<div class="tip">
 
-    <h1>
-        🏪 Business Space
-    </h1>
+    💡 <strong>Grow your visibility:</strong>
 
-    <p>
-        Welcome,
-        <strong>{{ user_name }}</strong>!
-        Create or update your business profile and give
-        customers a simple way to discover your business online.
-    </p>
+    Add your business information so people can understand
+    what you offer and how to contact you.
 
-    <div class="tip">
+</div>
 
-        💡 <strong>Grow your visibility:</strong>
+</section><!-- BUSINESS FORM --><section class="form-card"><h2>
+    🏪 Create or Update Your Business Profile
+</h2>
 
-        Add your business information so people can understand
-        what you offer and how to contact you.
-
-    </div>
-
-</section>
-
-
-<!-- BUSINESS FORM -->
-
-<section class="form-card">
-
-    <h2>
-        🏪 Create or Update Your Business Profile
-    </h2>
-
-    <form method="POST"
-          action="{{ url_for('business_space') }}">
-
-
-        <!-- BUSINESS NAME -->
-
-        <label for="business_name">
-            Business Name
-            <span class="required">*</span>
-        </label>
-
-        <input
-            type="text"
-            id="business_name"
-            name="business_name"
-            value="{{ business['business_name'] if business and business['business_name'] else '' }}"
-            placeholder="Enter your business name"
-            maxlength="150"
-            required
-        >
-
-
-        <!-- CATEGORY -->
-
-        <label for="category">
-            Business Category
-            <span class="required">*</span>
-        </label>
-
-        <select
-            id="category"
-            name="category"
-            required
-        >
-
-            <option value="">
-                Select a category
-            </option>
-
-
-            <optgroup label="🍽️ Food, Hospitality & Lifestyle">
-
-                <option value="Food & Restaurant"
-                    {% if business and business['category'] == 'Food & Restaurant' %}selected{% endif %}>
-                    🍲 Food & Restaurant
-                </option>
-
-                <option value="Bakery & Catering"
-                    {% if business and business['category'] == 'Bakery & Catering' %}selected{% endif %}>
-                    🧁 Bakery & Catering
-                </option>
-
-                <option value="Hospitality & Accommodation"
-                    {% if business and business['category'] == 'Hospitality & Accommodation' %}selected{% endif %}>
-                    🏨 Hospitality & Accommodation
-                </option>
-
-                <option value="Cleaning & Maintenance"
-                    {% if business and business['category'] == 'Cleaning & Maintenance' %}selected{% endif %}>
-                    🧹 Cleaning & Maintenance
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="🎬 Entertainment, Media & Creative">
-
-                <option value="Entertainment & Media"
-                    {% if business and business['category'] == 'Entertainment & Media' %}selected{% endif %}>
-                    🎬 Entertainment & Media
-                </option>
-
-                <option value="Music & Events"
-                    {% if business and business['category'] == 'Music & Events' %}selected{% endif %}>
-                    🎵 Music & Events
-                </option>
-
-                <option value="Photography & Creative"
-                    {% if business and business['category'] == 'Photography & Creative' %}selected{% endif %}>
-                    📸 Photography & Creative
-                </option>
-
-                <option value="Film & Video Production"
-                    {% if business and business['category'] == 'Film & Video Production' %}selected{% endif %}>
-                    🎥 Film & Video Production
-                </option>
-
-                <option value="Publishing & Writing"
-                    {% if business and business['category'] == 'Publishing & Writing' %}selected{% endif %}>
-                    ✍️ Publishing & Writing
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="👗 Fashion & Beauty">
-
-                <option value="Fashion"
-                    {% if business and business['category'] == 'Fashion' %}selected{% endif %}>
-                    👗 Fashion
-                </option>
-
-                <option value="Beauty"
-                    {% if business and business['category'] == 'Beauty' %}selected{% endif %}>
-                    💄 Beauty
-                </option>
-
-                <option value="Hair & Barbing"
-                    {% if business and business['category'] == 'Hair & Barbing' %}selected{% endif %}>
-                    💇 Hair & Barbing
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="💻 Technology & Digital">
-
-                <option value="Technology"
-                    {% if business and business['category'] == 'Technology' %}selected{% endif %}>
-                    💻 Technology
-                </option>
-
-                <option value="Digital & Online Business"
-                    {% if business and business['category'] == 'Digital & Online Business' %}selected{% endif %}>
-                    🌐 Digital & Online Business
-                </option>
-
-                <option value="Software & Web Development"
-                    {% if business and business['category'] == 'Software & Web Development' %}selected{% endif %}>
-                    🖥️ Software & Web Development
-                </option>
-
-                <option value="Telecommunications"
-                    {% if business and business['category'] == 'Telecommunications' %}selected{% endif %}>
-                    📱 Telecommunications
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="🏗️ Construction & Property">
-
-                <option value="Construction"
-                    {% if business and business['category'] == 'Construction' %}selected{% endif %}>
-                    🏗️ Construction
-                </option>
-
-                <option value="Real Estate & Property"
-                    {% if business and business['category'] == 'Real Estate & Property' %}selected{% endif %}>
-                    🏠 Real Estate & Property
-                </option>
-
-                <option value="Architecture & Design"
-                    {% if business and business['category'] == 'Architecture & Design' %}selected{% endif %}>
-                    📐 Architecture & Design
-                </option>
-
-                <option value="Building Materials"
-                    {% if business and business['category'] == 'Building Materials' %}selected{% endif %}>
-                    🧱 Building Materials
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="🛒 Retail & Commerce">
-
-                <option value="Retail & Shopping"
-                    {% if business and business['category'] == 'Retail & Shopping' %}selected{% endif %}>
-                    🛒 Retail & Shopping
-                </option>
-
-                <option value="Wholesale & Distribution"
-                    {% if business and business['category'] == 'Wholesale & Distribution' %}selected{% endif %}>
-                    📦 Wholesale & Distribution
-                </option>
-
-                <option value="Import & Export"
-                    {% if business and business['category'] == 'Import & Export' %}selected{% endif %}>
-                    🚢 Import & Export
-                </option>
-
-                <option value="E-commerce"
-                    {% if business and business['category'] == 'E-commerce' %}selected{% endif %}>
-                    🛍️ E-commerce
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="🚗 Transport & Automotive">
-
-                <option value="Automotive"
-                    {% if business and business['category'] == 'Automotive' %}selected{% endif %}>
-                    🚗 Automotive
-                </option>
-
-                <option value="Logistics & Transportation"
-                    {% if business and business['category'] == 'Logistics & Transportation' %}selected{% endif %}>
-                    🚚 Logistics & Transportation
-                </option>
-
-                <option value="Car Rental & Services"
-                    {% if business and business['category'] == 'Car Rental & Services' %}selected{% endif %}>
-                    🚘 Car Rental & Services
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="🌾 Agriculture & Natural Resources">
-
-                <option value="Agriculture & Farming"
-                    {% if business and business['category'] == 'Agriculture & Farming' %}selected{% endif %}>
-                    🌾 Agriculture & Farming
-                </option>
-
-                <option value="Food Production"
-                    {% if business and business['category'] == 'Food Production' %}selected{% endif %}>
-                    🌱 Food Production
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="📚 Education & Professional">
-
-                <option value="Education"
-                    {% if business and business['category'] == 'Education' %}selected{% endif %}>
-                    📚 Education
-                </option>
-
-                <option value="Training & Coaching"
-                    {% if business and business['category'] == 'Training & Coaching' %}selected{% endif %}>
-                    🎓 Training & Coaching
-                </option>
-
-                <option value="Professional Services"
-                    {% if business and business['category'] == 'Professional Services' %}selected{% endif %}>
-                    💼 Professional Services
-                </option>
-
-                <option value="Legal Services"
-                    {% if business and business['category'] == 'Legal Services' %}selected{% endif %}>
-                    ⚖️ Legal Services
-                </option>
-
-                <option value="Finance & Accounting"
-                    {% if business and business['category'] == 'Finance & Accounting' %}selected{% endif %}>
-                    💰 Finance & Accounting
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="🏥 Health & Wellness">
-
-                <option value="Health"
-                    {% if business and business['category'] == 'Health' %}selected{% endif %}>
-                    🏥 Health
-                </option>
-
-                <option value="Fitness & Wellness"
-                    {% if business and business['category'] == 'Fitness & Wellness' %}selected{% endif %}>
-                    🧘 Fitness & Wellness
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="🛠️ Services & Repairs">
-
-                <option value="Services"
-                    {% if business and business['category'] == 'Services' %}selected{% endif %}>
-                    🛠️ Services
-                </option>
-
-                <option value="Repairs & Technical Services"
-                    {% if business and business['category'] == 'Repairs & Technical Services' %}selected{% endif %}>
-                    🔧 Repairs & Technical Services
-                </option>
-
-                <option value="Security Services"
-                    {% if business and business['category'] == 'Security Services' %}selected{% endif %}>
-                    🛡️ Security Services
-                </option>
-
-            </optgroup>
-
-
-            <optgroup label="📦 Other">
-
-                <option value="Other Business"
-                    {% if business and business['category'] == 'Other Business' %}selected{% endif %}>
-                    📦 Other Business
-                </option>
-
-            </optgroup>
-
-        </select>
-
-        <span class="help-text">
-            Choose the category that best describes your business.
-        </span>
-
-
-        <!-- DESCRIPTION -->
-
-        <label for="description">
-            Business Description
-        </label>
-
-        <textarea
-            id="description"
-            name="description"
-            maxlength="1000"
-            placeholder="Tell customers about your business, products or services..."
-        >{{ business['description'] if business and business['description'] else '' }}</textarea>
-
-        <span class="help-text">
-            Tell people what your business does and what you offer.
-        </span>
-
-
-        <!-- PHONE -->
-
-        <label for="phone">
-            Phone Number
-        </label>
-
-        <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value="{{ business['phone'] if business and business['phone'] else '' }}"
-            placeholder="e.g. 09131333120"
-            maxlength="30"
-        >
-
-
-        <!-- WHATSAPP -->
-
-        <label for="whatsapp">
-            WhatsApp Number
-        </label>
-
-        <input
-            type="tel"
-            id="whatsapp"
-            name="whatsapp"
-            value="{{ business['whatsapp'] if business and business['whatsapp'] else '' }}"
-            placeholder="e.g. 09131333120"
-            maxlength="30"
-        >
-
-        <span class="help-text">
-            Add the WhatsApp number customers can use to contact your business.
-            Use a Nigerian number such as 08012345678.
-        </span>
-
-
-        <!-- LOCATION -->
-
-        <label for="location">
-            Business Location
-        </label>
-
-        <input
-            type="text"
-            id="location"
-            name="location"
-            value="{{ business['location'] if business and business['location'] else '' }}"
-            placeholder="e.g. Lagos, Nigeria"
-            maxlength="200"
-        >
-
-
-        <!-- WEBSITE -->
-
-        <label for="website">
-            Website
-        </label>
-
-        <input
-            type="url"
-            id="website"
-            name="website"
-            value="{{ business['website'] if business and business['website'] else '' }}"
-            placeholder="https://example.com"
-            maxlength="300"
-        >
-
-        <span class="help-text">
-            If you don't have a website, you can leave this blank.
-        </span>
-
-
-        <!-- SAVE -->
-
-        <button type="submit">
-            💾 Save Business Profile
-        </button>
-
-    </form>
-
-</section>
-
-
-<!-- PROFILE -->
-
-{% if business %}
-
-<section class="profile-card">
-
-    <h2>
-        📋 Your Business Profile
-    </h2>
-
+<form method="POST"
+      action="{{ url_for('business_space') }}">
 
     <!-- BUSINESS NAME -->
 
-    {% if business['business_name'] %}
+    <label for="business_name">
 
-    <div class="profile-item">
+        Business Name
 
-        <div class="profile-label">
-            Business Name
-        </div>
+        <span class="required">*</span>
 
-        <div class="profile-value">
-            {{ business['business_name'] }}
-        </div>
+    </label>
 
-    </div>
-
-    {% endif %}
+    <input
+        type="text"
+        id="business_name"
+        name="business_name"
+        value="{{ business['business_name'] if business and business['business_name'] else '' }}"
+        placeholder="Enter your business name"
+        maxlength="150"
+        required
+    >
 
 
     <!-- CATEGORY -->
 
-    {% if business['category'] %}
+    <label for="category">
 
-    <div class="profile-item">
+        Business Category
 
-        <div class="profile-label">
-            Category
-        </div>
+        <span class="required">*</span>
 
-        <div class="profile-value">
+    </label>
 
-            <span class="category-badge">
-                {{ business['category'] }}
-            </span>
+    <select
+        id="category"
+        name="category"
+        required
+    >
 
-        </div>
+        <option value="">
+            Select a category
+        </option>
 
-    </div>
 
-    {% endif %}
+        <optgroup label="🍽️ Food, Hospitality & Lifestyle">
+
+            <option value="Food & Restaurant"
+                {% if business and business['category'] == 'Food & Restaurant' %}selected{% endif %}>
+                🍲 Food & Restaurant
+            </option>
+
+            <option value="Bakery & Catering"
+                {% if business and business['category'] == 'Bakery & Catering' %}selected{% endif %}>
+                🧁 Bakery & Catering
+            </option>
+
+            <option value="Hospitality & Accommodation"
+                {% if business and business['category'] == 'Hospitality & Accommodation' %}selected{% endif %}>
+                🏨 Hospitality & Accommodation
+            </option>
+
+            <option value="Cleaning & Maintenance"
+                {% if business and business['category'] == 'Cleaning & Maintenance' %}selected{% endif %}>
+                🧹 Cleaning & Maintenance
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="🎬 Entertainment, Media & Creative">
+
+            <option value="Entertainment & Media"
+                {% if business and business['category'] == 'Entertainment & Media' %}selected{% endif %}>
+                🎬 Entertainment & Media
+            </option>
+
+            <option value="Music & Events"
+                {% if business and business['category'] == 'Music & Events' %}selected{% endif %}>
+                🎵 Music & Events
+            </option>
+
+            <option value="Photography & Creative"
+                {% if business and business['category'] == 'Photography & Creative' %}selected{% endif %}>
+                📸 Photography & Creative
+            </option>
+
+            <option value="Film & Video Production"
+                {% if business and business['category'] == 'Film & Video Production' %}selected{% endif %}>
+                🎥 Film & Video Production
+            </option>
+
+            <option value="Publishing & Writing"
+                {% if business and business['category'] == 'Publishing & Writing' %}selected{% endif %}>
+                ✍️ Publishing & Writing
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="👗 Fashion & Beauty">
+
+            <option value="Fashion"
+                {% if business and business['category'] == 'Fashion' %}selected{% endif %}>
+                👗 Fashion
+            </option>
+
+            <option value="Beauty"
+                {% if business and business['category'] == 'Beauty' %}selected{% endif %}>
+                💄 Beauty
+            </option>
+
+            <option value="Hair & Barbing"
+                {% if business and business['category'] == 'Hair & Barbing' %}selected{% endif %}>
+                💇 Hair & Barbing
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="💻 Technology & Digital">
+
+            <option value="Technology"
+                {% if business and business['category'] == 'Technology' %}selected{% endif %}>
+                💻 Technology
+            </option>
+
+            <option value="Digital & Online Business"
+                {% if business and business['category'] == 'Digital & Online Business' %}selected{% endif %}>
+                🌐 Digital & Online Business
+            </option>
+
+            <option value="Software & Web Development"
+                {% if business and business['category'] == 'Software & Web Development' %}selected{% endif %}>
+                🖥️ Software & Web Development
+            </option>
+
+            <option value="Telecommunications"
+                {% if business and business['category'] == 'Telecommunications' %}selected{% endif %}>
+                📱 Telecommunications
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="🏗️ Construction & Property">
+
+            <option value="Construction"
+                {% if business and business['category'] == 'Construction' %}selected{% endif %}>
+                🏗️ Construction
+            </option>
+
+            <option value="Real Estate & Property"
+                {% if business and business['category'] == 'Real Estate & Property' %}selected{% endif %}>
+                🏠 Real Estate & Property
+            </option>
+
+            <option value="Architecture & Design"
+                {% if business and business['category'] == 'Architecture & Design' %}selected{% endif %}>
+                📐 Architecture & Design
+            </option>
+
+            <option value="Building Materials"
+                {% if business and business['category'] == 'Building Materials' %}selected{% endif %}>
+                🧱 Building Materials
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="🛒 Retail & Commerce">
+
+            <option value="Retail & Shopping"
+                {% if business and business['category'] == 'Retail & Shopping' %}selected{% endif %}>
+                🛒 Retail & Shopping
+            </option>
+
+            <option value="Wholesale & Distribution"
+                {% if business and business['category'] == 'Wholesale & Distribution' %}selected{% endif %}>
+                📦 Wholesale & Distribution
+            </option>
+
+            <option value="Import & Export"
+                {% if business and business['category'] == 'Import & Export' %}selected{% endif %}>
+                🚢 Import & Export
+            </option>
+
+            <option value="E-commerce"
+                {% if business and business['category'] == 'E-commerce' %}selected{% endif %}>
+                🛍️ E-commerce
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="🚗 Transport & Automotive">
+
+            <option value="Automotive"
+                {% if business and business['category'] == 'Automotive' %}selected{% endif %}>
+                🚗 Automotive
+            </option>
+
+            <option value="Logistics & Transportation"
+                {% if business and business['category'] == 'Logistics & Transportation' %}selected{% endif %}>
+                🚚 Logistics & Transportation
+            </option>
+
+            <option value="Car Rental & Services"
+                {% if business and business['category'] == 'Car Rental & Services' %}selected{% endif %}>
+                🚘 Car Rental & Services
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="🌾 Agriculture & Natural Resources">
+
+            <option value="Agriculture & Farming"
+                {% if business and business['category'] == 'Agriculture & Farming' %}selected{% endif %}>
+                🌾 Agriculture & Farming
+            </option>
+
+            <option value="Food Production"
+                {% if business and business['category'] == 'Food Production' %}selected{% endif %}>
+                🌱 Food Production
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="📚 Education & Professional">
+
+            <option value="Education"
+                {% if business and business['category'] == 'Education' %}selected{% endif %}>
+                📚 Education
+            </option>
+
+            <option value="Training & Coaching"
+                {% if business and business['category'] == 'Training & Coaching' %}selected{% endif %}>
+                🎓 Training & Coaching
+            </option>
+
+            <option value="Professional Services"
+                {% if business and business['category'] == 'Professional Services' %}selected{% endif %}>
+                💼 Professional Services
+            </option>
+
+            <option value="Legal Services"
+                {% if business and business['category'] == 'Legal Services' %}selected{% endif %}>
+                ⚖️ Legal Services
+            </option>
+
+            <option value="Finance & Accounting"
+                {% if business and business['category'] == 'Finance & Accounting' %}selected{% endif %}>
+                💰 Finance & Accounting
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="🏥 Health & Wellness">
+
+            <option value="Health"
+                {% if business and business['category'] == 'Health' %}selected{% endif %}>
+                🏥 Health
+            </option>
+
+            <option value="Fitness & Wellness"
+                {% if business and business['category'] == 'Fitness & Wellness' %}selected{% endif %}>
+                🧘 Fitness & Wellness
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="🛠️ Services & Repairs">
+
+            <option value="Services"
+                {% if business and business['category'] == 'Services' %}selected{% endif %}>
+                🛠️ Services
+            </option>
+
+            <option value="Repairs & Technical Services"
+                {% if business and business['category'] == 'Repairs & Technical Services' %}selected{% endif %}>
+                🔧 Repairs & Technical Services
+            </option>
+
+            <option value="Security Services"
+                {% if business and business['category'] == 'Security Services' %}selected{% endif %}>
+                🛡️ Security Services
+            </option>
+
+        </optgroup>
+
+
+        <optgroup label="📦 Other">
+
+            <option value="Other Business"
+                {% if business and business['category'] == 'Other Business' %}selected{% endif %}>
+                📦 Other Business
+            </option>
+
+        </optgroup>
+
+    </select>
+
+    <span class="help-text">
+        Choose the category that best describes your business.
+    </span>
 
 
     <!-- DESCRIPTION -->
 
-    {% if business['description'] %}
+    <label for="description">
+        Business Description
+    </label>
 
-    <div class="profile-item">
+    <textarea
+        id="description"
+        name="description"
+        maxlength="1000"
+        placeholder="Tell customers about your business, products or services..."
+    >{{ business['description'] if business and business['description'] else '' }}</textarea>
 
-        <div class="profile-label">
-            Description
-        </div>
-
-        <div class="profile-value">
-            {{ business['description'] }}
-        </div>
-
-    </div>
-
-    {% endif %}
+    <span class="help-text">
+        Tell people what your business does and what you offer.
+    </span>
 
 
     <!-- PHONE -->
 
-    {% if business['phone'] %}
+    <label for="phone">
+        Phone Number
+    </label>
 
-    <div class="profile-item">
-
-        <div class="profile-label">
-            Phone
-        </div>
-
-        <div class="profile-value">
-
-            <a
-                class="phone-link"
-                href="tel:{{ business['phone'] }}"
-            >
-                📞 {{ business['phone'] }}
-            </a>
-
-        </div>
-
-    </div>
-
-    {% endif %}
+    <input
+        type="tel"
+        id="phone"
+        name="phone"
+        value="{{ business['phone'] if business and business['phone'] else '' }}"
+        placeholder="e.g. 09131333120"
+        maxlength="30"
+    >
 
 
     <!-- WHATSAPP -->
 
-    {% if business['whatsapp'] and business['whatsapp'] != 'None' %}
+    <label for="whatsapp">
+        WhatsApp Number
+    </label>
 
-    <div class="profile-item">
+    <input
+        type="tel"
+        id="whatsapp"
+        name="whatsapp"
+        value="{{ business['whatsapp'] if business and business['whatsapp'] else '' }}"
+        placeholder="e.g. 09131333120"
+        maxlength="30"
+    >
 
-        <div class="profile-label">
-            WhatsApp
-        </div>
-
-        <div class="profile-value">
-
-            <a
-                class="whatsapp-link"
-                href="https://wa.me/{{ business['whatsapp'] | replace('+', '') | replace(' ', '') | replace('-', '') | replace('(', '') | replace(')', '') }}"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                💬 Chat on WhatsApp
-            </a>
-
-        </div>
-
-    </div>
-
-    {% endif %}
+    <span class="help-text">
+        Enter your Nigerian WhatsApp number.
+        Example: 09131333120
+    </span>
 
 
     <!-- LOCATION -->
 
-    {% if business['location'] %}
+    <label for="location">
+        Business Location
+    </label>
 
-    <div class="profile-item">
-
-        <div class="profile-label">
-            Location
-        </div>
-
-        <div class="profile-value">
-            📍 {{ business['location'] }}
-        </div>
-
-    </div>
-
-    {% endif %}
+    <input
+        type="text"
+        id="location"
+        name="location"
+        value="{{ business['location'] if business and business['location'] else '' }}"
+        placeholder="e.g. Lagos, Nigeria"
+        maxlength="200"
+    >
 
 
     <!-- WEBSITE -->
 
-    {% if business['website'] %}
+    <label for="website">
+        Website
+    </label>
 
-    <div class="profile-item">
+    <input
+        type="url"
+        id="website"
+        name="website"
+        value="{{ business['website'] if business and business['website'] else '' }}"
+        placeholder="https://example.com"
+        maxlength="300"
+    >
 
-        <div class="profile-label">
-            Website
-        </div>
+    <span class="help-text">
+        If you don't have a website, you can leave this blank.
+    </span>
 
-        <div class="profile-value">
 
-            <a
-                class="website-link"
-                href="{{ business['website'] }}"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                🌐 Visit Website
-            </a>
+    <!-- SAVE -->
 
-        </div>
+    <button
+        type="submit"
+        class="save-button"
+    >
+        💾 Save Business Profile
+    </button>
 
+</form>
+
+</section><!-- UPGRADE --><section class="upgrade-card"><span class="upgrade-badge">
+    ⭐ NijaWebbies Premium
+</span>
+
+<h2>
+    🚀 Upgrade Your Business
+</h2>
+
+<p>
+    Take your business profile further with premium
+    visibility and future business discovery features.
+</p>
+
+<div class="upgrade-price">
+    ₦2,000 <span>/ month</span>
+</div>
+
+<ul class="upgrade-list">
+
+    <li>
+        🚀 Enhanced business visibility
+    </li>
+
+    <li>
+        🔎 Better business discovery features
+    </li>
+
+    <li>
+        📱 Enhanced customer contact options
+    </li>
+
+    <li>
+        🌐 Business profile website support
+    </li>
+
+    <li>
+        ⭐ Premium business profile features
+    </li>
+
+</ul>
+
+<button
+    type="button"
+    class="upgrade-button"
+    onclick="showUpgradeMessage()"
+>
+    ⭐ Upgrade to Premium
+</button>
+
+<div class="upgrade-note">
+    Premium payment and activation will be connected
+    to the NijaWebbies upgrade system.
+</div>
+
+</section><!-- PROFILE -->{% if business %}
+
+<section class="profile-card"><h2>
+    📋 Your Business Profile
+</h2>
+
+
+<!-- BUSINESS NAME -->
+
+{% if business['business_name'] %}
+
+<div class="profile-item">
+
+    <div class="profile-label">
+        Business Name
     </div>
 
-    {% endif %}
+    <div class="profile-value">
+        {{ business['business_name'] }}
+    </div>
 
-</section>
-
-
-<!-- DISCOVERY -->
-
-<section class="discover-card">
-
-    <h2>
-        🚀 Get Your Business Discovered
-    </h2>
-
-    <p>
-        Your business profile is now stored on NijaWebbies.
-        Keep your information updated so your business can
-        be ready for future discovery features.
-    </p>
-
-    <ul class="feature-list">
-
-        <li>
-            📍 Help people understand where your business is located.
-        </li>
-
-        <li>
-            📞 Make it easy for customers to contact you.
-        </li>
-
-        <li>
-            💬 Give customers a WhatsApp contact option.
-        </li>
-
-        <li>
-            🏷️ Choose the right category for your business.
-        </li>
-
-        <li>
-            🌐 Add your website when you have one.
-        </li>
-
-        <li>
-            🚀 Prepare your business for future NijaWebbies discovery features.
-        </li>
-
-    </ul>
-
-</section>
-
-
-{% else %}
-
-
-<!-- EMPTY PROFILE -->
-
-<section class="profile-card">
-
-    <h2>
-        📋 Your Business Profile
-    </h2>
-
-    <p class="empty">
-
-        You haven't created a business profile yet.
-
-        Fill in the form above and click
-        <strong>Save Business Profile</strong>
-        to get started.
-
-    </p>
-
-</section>
+</div>
 
 {% endif %}
 
 
-<!-- BACK -->
+<!-- CATEGORY -->
 
-<a
-    class="back"
-    href="{{ url_for('workspace') }}"
->
-    ← Back to Workspace
-</a>
+{% if business['category'] %}
 
-</main></body>
-</html>can
+<div class="profile-item">
+
+    <div class="profile-label">
+        Category
+    </div>
+
+    <div class="profile-value">
+
+        <span class="category-badge">
+            {{ business['category'] }}
+        </span>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- DESCRIPTION -->
+
+{% if business['description'] %}
+
+<div class="profile-item">
+
+    <div class="profile-label">
+        Description
+    </div>
+
+    <div class="profile-value">
+        {{ business['description'] }}
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- PHONE -->
+
+{% if business['phone'] %}
+
+<div class="profile-item">
+
+    <div class="profile-label">
+        Phone
+    </div>
+
+    <div class="profile-value">
+
+        <a
+            class="phone-link"
+            href="tel:{{ business['phone'] }}"
+        >
+            📞 {{ business['phone'] }}
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- WHATSAPP -->
+
+{% if business['whatsapp'] and business['whatsapp'] != 'None' %}
+
+<div class="profile-item">
+
+    <div class="profile-label">
+        WhatsApp
+    </div>
+
+    <div class="profile-value">
+
+        <a
+            id="whatsappChatLink"
+            class="whatsapp-button"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            💬 Chat on WhatsApp
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- LOCATION -->
+
+{% if business['location'] %}
+
+<div class="profile-item">
+
+    <div class="profile-label">
+        Location
+    </div>
+
+    <div class="profile-value">
+        📍 {{ business['location'] }}
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- WEBSITE -->
+
+{% if business['website'] %}
+
+<div class="profile-item">
+
+    <div class="profile-label">
+        Website
+    </div>
+
+    <div class="profile-value">
+
+        <a
+            class="website-link"
+            href="{{ business['website'] }}"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            🌐 Visit Website
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+</section><!-- DISCOVERY --><section class="discover-card"><h2>
+    🚀 Get Your Business Discovered
+</h2>
+
+<p>
+    Your business profile is now stored on NijaWebbies.
+    Keep your information updated so your business can
+    be ready for future discovery features.
+</p>
+
+<ul class="feature-list">
+
+    <li>
+        📍 Help people understand where your business is located.
+    </li>
+
+    <li>
+        📞 Make it easy for customers to contact you.
+    </li>
+
+    <li>
+        💬 Give customers a direct WhatsApp contact option.
+    </li>
+
+    <li>
+        🏷️ Choose the right category for your business.
+    </li>
+
+    <li>
+        🌐 Add your website when you have one.
+    </li>
+
+    <li>
+        🚀 Prepare your business for future NijaWebbies discovery features.
+    </li>
+
+</ul>
+
+</section>{% else %}
+
+<!-- EMPTY PROFILE --><section class="profile-card"><h2>
+    📋 Your Business Profile
+</h2>
+
+<p class="empty">
+
+    You haven't created a business profile yet.
+
+    Fill in the form above and click
+    <strong>Save Business Profile</strong>
+    to get started.
+
+</p>
+
+</section>{% endif %}
+
+<!-- BACK --><a
+class="back"
+href="{{ url_for('workspace') }}"
+
+«»
+
+← Back to Workspace
+
+</a></main><script>
+
+    /* =====================================================
+       WHATSAPP NUMBER CONVERTER
+
+       Examples:
+
+       09131333120
+       becomes
+       2349131333120
+
+       +2349131333120
+       becomes
+       2349131333120
+
+       0913 133 3120
+       becomes
+       2349131333120
+       ===================================================== */
+
+    function convertNigeriaWhatsAppNumber(number) {
+
+        if (!number) {
+            return "";
+        }
+
+        let value = String(number).trim();
+
+        /* Remove spaces, brackets, hyphens and other symbols */
+        value = value.replace(/[^\d+]/g, "");
+
+        /* Remove + */
+        value = value.replace("+", "");
+
+        /* Already international Nigerian format */
+        if (value.startsWith("234")) {
+            return value;
+        }
+
+        /* Nigerian local format */
+        if (value.startsWith("0")) {
+            return "234" + value.substring(1);
+        }
+
+        /* Handle numbers entered without the leading zero */
+        return "234" + value;
+    }
+
+
+    {% if business and business['whatsapp'] and business['whatsapp'] != 'None' %}
+
+    const whatsappNumber =
+        "{{ business['whatsapp'] }}";
+
+    const convertedWhatsApp =
+        convertNigeriaWhatsAppNumber(whatsappNumber);
+
+    const whatsappLink =
+        document.getElementById("whatsappChatLink");
+
+    if (whatsappLink && convertedWhatsApp) {
+
+        whatsappLink.href =
+            "https://wa.me/" + convertedWhatsApp;
+
+    }
+
+    {% endif %}
+
+
+    /* =====================================================
+       UPGRADE MESSAGE
+
+       The Python backend currently does not contain an
+       upgrade/payment route, so we do not create a broken
+       /upgrade URL here.
+       ===================================================== */
+
+    function showUpgradeMessage() {
+
+        alert(
+            "⭐ NijaWebbies Premium\n\n" +
+            "Premium Business features are being prepared.\n\n" +
+            "The payment and account upgrade system will be connected next."
+        );
+
+    }
+
+</script></body></html>
