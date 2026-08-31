@@ -66,7 +66,6 @@ def init_db():
     conn = None
 
     try:
-
         conn = get_db()
 
         with conn.cursor() as cursor:
@@ -123,6 +122,7 @@ def init_db():
                 )
             """)
 
+            # Safety migration for older databases
             cursor.execute("""
                 ALTER TABLE creator_projects
                 ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Idea'
@@ -151,34 +151,10 @@ def init_db():
                 )
             """)
 
-            cursor.execute("""
-                ALTER TABLE business_profiles
-                ADD COLUMN IF NOT EXISTS description TEXT
-            """)
-
-            cursor.execute("""
-                ALTER TABLE business_profiles
-                ADD COLUMN IF NOT EXISTS category TEXT
-            """)
-
-            cursor.execute("""
-                ALTER TABLE business_profiles
-                ADD COLUMN IF NOT EXISTS phone TEXT
-            """)
-
+            # Safety migration for older databases
             cursor.execute("""
                 ALTER TABLE business_profiles
                 ADD COLUMN IF NOT EXISTS whatsapp TEXT
-            """)
-
-            cursor.execute("""
-                ALTER TABLE business_profiles
-                ADD COLUMN IF NOT EXISTS location TEXT
-            """)
-
-            cursor.execute("""
-                ALTER TABLE business_profiles
-                ADD COLUMN IF NOT EXISTS website TEXT
             """)
 
             # =================================================
@@ -241,7 +217,6 @@ def init_db():
         raise
 
     finally:
-
         close_db(conn)
 
 
@@ -250,11 +225,9 @@ def init_db():
 # =========================================================
 
 try:
-
     init_db()
 
 except Exception:
-
     app.logger.exception(
         "Database startup failed."
     )
@@ -270,7 +243,6 @@ def is_safe_url(target):
         return False
 
     try:
-
         parsed = urlparse(target)
 
         return (
@@ -281,54 +253,7 @@ def is_safe_url(target):
         )
 
     except Exception:
-
         return False
-
-
-def normalize_nigeria_number(number):
-
-    """
-    Converts common Nigerian phone formats to:
-
-    234XXXXXXXXXX
-
-    Examples:
-
-    09131333120
-    -> 2349131333120
-
-    +2349131333120
-    -> 2349131333120
-
-    2349131333120
-    -> 2349131333120
-
-    9131333120
-    -> 2349131333120
-    """
-
-    if not number:
-        return ""
-
-    value = str(number).strip()
-
-    value = (
-        value
-        .replace(" ", "")
-        .replace("-", "")
-        .replace("(", "")
-        .replace(")", "")
-    )
-
-    value = value.replace("+", "")
-
-    if value.startswith("234"):
-        return value
-
-    if value.startswith("0"):
-        return "234" + value[1:]
-
-    return "234" + value
 
 
 # =========================================================
@@ -753,7 +678,6 @@ def workspace():
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # Posts
             cursor.execute(
                 """
                 SELECT *
@@ -766,7 +690,6 @@ def workspace():
 
             posts = cursor.fetchall()
 
-            # Creator Projects
             cursor.execute(
                 """
                 SELECT *
@@ -779,7 +702,6 @@ def workspace():
 
             creator_projects = cursor.fetchall()
 
-            # Business
             cursor.execute(
                 """
                 SELECT *
@@ -793,7 +715,6 @@ def workspace():
 
             business = cursor.fetchone()
 
-            # Communities
             cursor.execute(
                 """
                 SELECT communities.*
@@ -1322,6 +1243,32 @@ def search():
 # CREATOR STUDIO
 # =========================================================
 
+ALLOWED_PROJECT_TYPES = [
+    "General",
+    "🎥 Video",
+    "✍️ Blog",
+    "📱 Social Media",
+    "🎨 Artwork",
+    "🎵 Music",
+    "🎙️ Podcast",
+    "🏪 Business Content",
+    "Video",
+    "Blog",
+    "Social Media",
+    "Artwork",
+    "Music",
+    "Podcast",
+    "Business Content"
+]
+
+ALLOWED_PROJECT_STATUSES = [
+    "Idea",
+    "Draft",
+    "In Production",
+    "Published"
+]
+
+
 @app.route(
     "/creator-studio",
     methods=["GET", "POST"]
@@ -1357,35 +1304,10 @@ def creator_studio():
                 "Idea"
             ).strip()
 
-            allowed_types = [
-                "General",
-                "🎥 Video",
-                "✍️ Blog",
-                "📱 Social Media",
-                "🎨 Artwork",
-                "🎵 Music",
-                "🎙️ Podcast",
-                "🏪 Business Content",
-                "Video",
-                "Blog",
-                "Social Media",
-                "Artwork",
-                "Music",
-                "Podcast",
-                "Business Content"
-            ]
-
-            allowed_statuses = [
-                "Idea",
-                "Draft",
-                "In Production",
-                "Published"
-            ]
-
-            if project_type not in allowed_types:
+            if project_type not in ALLOWED_PROJECT_TYPES:
                 project_type = "General"
 
-            if status not in allowed_statuses:
+            if status not in ALLOWED_PROJECT_STATUSES:
                 status = "Idea"
 
             if not title:
@@ -1484,9 +1406,7 @@ def creator_studio():
 # VIEW CREATOR PROJECT
 # =========================================================
 
-@app.route(
-    "/creator-project/<int:project_id>"
-)
+@app.route("/creator-project/<int:project_id>")
 @login_required
 def view_creator_project(project_id):
 
@@ -1564,9 +1484,7 @@ def view_creator_project(project_id):
 # PROJECT URL ALIAS
 # =========================================================
 
-@app.route(
-    "/project/<int:project_id>"
-)
+@app.route("/project/<int:project_id>")
 @login_required
 def view_project(project_id):
 
@@ -1654,35 +1572,10 @@ def edit_creator_project(project_id):
             "Idea"
         ).strip()
 
-        allowed_types = [
-            "General",
-            "🎥 Video",
-            "✍️ Blog",
-            "📱 Social Media",
-            "🎨 Artwork",
-            "🎵 Music",
-            "🎙️ Podcast",
-            "🏪 Business Content",
-            "Video",
-            "Blog",
-            "Social Media",
-            "Artwork",
-            "Music",
-            "Podcast",
-            "Business Content"
-        ]
-
-        allowed_statuses = [
-            "Idea",
-            "Draft",
-            "In Production",
-            "Published"
-        ]
-
-        if project_type not in allowed_types:
+        if project_type not in ALLOWED_PROJECT_TYPES:
             project_type = "General"
 
-        if status not in allowed_statuses:
+        if status not in ALLOWED_PROJECT_STATUSES:
             status = "Idea"
 
         if not title:
@@ -1881,7 +1774,7 @@ def business_space():
         conn = get_db()
 
         # =====================================================
-        # SAVE BUSINESS PROFILE
+        # SAVE / UPDATE BUSINESS PROFILE
         # =====================================================
 
         if request.method == "POST":
@@ -1921,9 +1814,9 @@ def business_space():
                 ""
             ).strip()
 
-            # =================================================
+            # -------------------------------------------------
             # VALIDATION
-            # =================================================
+            # -------------------------------------------------
 
             if not business_name:
 
@@ -1947,17 +1840,52 @@ def business_space():
                     url_for("business_space")
                 )
 
-            # =================================================
-            # NORMALIZE WHATSAPP
-            # =================================================
+            # -------------------------------------------------
+            # CLEAN WHATSAPP NUMBER
+            # -------------------------------------------------
 
-            whatsapp = normalize_nigeria_number(
+            whatsapp_clean = (
                 whatsapp
+                .strip()
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
             )
 
-            # =================================================
+            if whatsapp_clean:
+
+                if whatsapp_clean.startswith("+234"):
+
+                    whatsapp_clean = whatsapp_clean[1:]
+
+                elif whatsapp_clean.startswith("234"):
+
+                    pass
+
+                elif whatsapp_clean.startswith("0"):
+
+                    whatsapp_clean = (
+                        "234" +
+                        whatsapp_clean[1:]
+                    )
+
+                else:
+
+                    whatsapp_clean = (
+                        "234" +
+                        whatsapp_clean
+                    )
+
+                whatsapp = whatsapp_clean
+
+            else:
+
+                whatsapp = ""
+
+            # -------------------------------------------------
             # FIND EXISTING PROFILE
-            # =================================================
+            # -------------------------------------------------
 
             with conn.cursor(
                 cursor_factory=RealDictCursor
@@ -1978,9 +1906,9 @@ def business_space():
 
                 existing = cursor.fetchone()
 
-                # =================================================
-                # UPDATE
-                # =================================================
+                # -------------------------------------------------
+                # UPDATE EXISTING PROFILE
+                # -------------------------------------------------
 
                 if existing:
 
@@ -2011,9 +1939,9 @@ def business_space():
                         )
                     )
 
-                # =================================================
-                # CREATE
-                # =================================================
+                # -------------------------------------------------
+                # CREATE NEW PROFILE
+                # -------------------------------------------------
 
                 else:
 
@@ -2069,7 +1997,7 @@ def business_space():
             )
 
         # =====================================================
-        # LOAD BUSINESS PROFILE
+        # LOAD EXISTING BUSINESS PROFILE
         # =====================================================
 
         with conn.cursor(
@@ -2099,15 +2027,35 @@ def business_space():
 
         if business and business.get("whatsapp"):
 
-            whatsapp_link = normalize_nigeria_number(
+            whatsapp_link = str(
                 business["whatsapp"]
+            ).strip()
+
+            whatsapp_link = (
+                whatsapp_link
+                .replace("+", "")
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
             )
+
+            if whatsapp_link.startswith("0"):
+
+                whatsapp_link = (
+                    "234" +
+                    whatsapp_link[1:]
+                )
+
+            elif not whatsapp_link.startswith("234"):
+
+                whatsapp_link = (
+                    "234" +
+                    whatsapp_link
+                )
 
         # =====================================================
         # BUSINESS PREMIUM
-        #
-        # This is only an offer at this stage.
-        # It does NOT falsely mark the user as paid.
         # =====================================================
 
         business_upgrade = {
@@ -2116,20 +2064,16 @@ def business_space():
             "period": "month",
 
             "features": [
-                "Enhanced business profile",
-                "Better business visibility",
-                "WhatsApp customer contact",
-                "Website link",
-                "Business discovery features",
-                "Priority business listing"
+                "Enhanced business visibility",
+                "Better business discovery",
+                "Enhanced customer contact options",
+                "Business profile website support",
+                "Premium business profile features"
             ]
         }
 
+        # Payment activation is not being falsely claimed here.
         is_business_premium = False
-
-        # =====================================================
-        # RENDER BUSINESS SPACE
-        # =====================================================
 
         return render_template(
             "business_space.html",
@@ -2142,8 +2086,6 @@ def business_space():
 
             is_business_premium=is_business_premium,
 
-            # IMPORTANT:
-            # This matches the HTML you supplied.
             user_name=session.get("user_name")
         )
 
@@ -2171,15 +2113,28 @@ def business_space():
 
 
 # =========================================================
-# BUSINESS UPGRADE PAGE
+# BUSINESS PREMIUM UPGRADE PAGE
 # =========================================================
 
 @app.route("/upgrade")
 @login_required
 def upgrade():
 
+    business_upgrade = {
+        "price": "₦2,000",
+        "period": "month",
+        "features": [
+            "Enhanced business visibility",
+            "Better business discovery",
+            "Enhanced customer contact options",
+            "Business profile website support",
+            "Premium business profile features"
+        ]
+    }
+
     return render_template(
         "upgrade.html",
+        business_upgrade=business_upgrade,
         user_name=session.get("user_name")
     )
 
@@ -2201,9 +2156,9 @@ def communities():
 
         conn = get_db()
 
-        # =================================================
+        # =====================================================
         # CREATE COMMUNITY
-        # =================================================
+        # =====================================================
 
         if request.method == "POST":
 
@@ -2259,8 +2214,6 @@ def communities():
 
                 community_id = cursor.fetchone()[0]
 
-                # Automatically make creator a member
-
                 cursor.execute(
                     """
                     INSERT INTO community_members
@@ -2290,9 +2243,9 @@ def communities():
                 url_for("communities")
             )
 
-        # =================================================
+        # =====================================================
         # LOAD COMMUNITIES
-        # =================================================
+        # =====================================================
 
         with conn.cursor(
             cursor_factory=RealDictCursor
@@ -2508,9 +2461,7 @@ def page_not_found(error):
         404
     </h1>
 
-    <h2>
-        Page not found
-    </h2>
+    <h2>Page not found</h2>
 
     <p style="color:#6b7280;">
         The page you are looking for does not exist.
@@ -2565,9 +2516,7 @@ def internal_server_error(error):
     color:#111827;
 ">
 
-    <h1>
-        Something went wrong
-    </h1>
+    <h1>Something went wrong</h1>
 
     <p style="color:#6b7280;">
         NijaWebbies encountered an unexpected error.
