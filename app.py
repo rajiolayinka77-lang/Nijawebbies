@@ -66,6 +66,7 @@ def init_db():
     conn = None
 
     try:
+
         conn = get_db()
 
         with conn.cursor() as cursor:
@@ -150,12 +151,6 @@ def init_db():
                 )
             """)
 
-            # -------------------------------------------------
-            # IMPORTANT:
-            # Add WhatsApp column to older databases.
-            # This does not delete existing business data.
-            # -------------------------------------------------
-
             cursor.execute("""
                 ALTER TABLE business_profiles
                 ADD COLUMN IF NOT EXISTS whatsapp TEXT
@@ -221,6 +216,7 @@ def init_db():
         raise
 
     finally:
+
         close_db(conn)
 
 
@@ -229,6 +225,7 @@ def init_db():
 # =========================================================
 
 try:
+
     init_db()
 
 except Exception:
@@ -248,6 +245,7 @@ def is_safe_url(target):
         return False
 
     try:
+
         parsed = urlparse(target)
 
         return (
@@ -258,6 +256,7 @@ def is_safe_url(target):
         )
 
     except Exception:
+
         return False
 
 
@@ -1410,7 +1409,9 @@ def creator_studio():
 # VIEW CREATOR PROJECT
 # =========================================================
 
-@app.route("/creator-project/<int:project_id>")
+@app.route(
+    "/creator-project/<int:project_id>"
+)
 @login_required
 def view_creator_project(project_id):
 
@@ -1789,7 +1790,6 @@ def delete_creator_project(project_id):
         close_db(conn)
 
 
-
 # =========================================================
 # BUSINESS SPACE
 # =========================================================
@@ -1848,10 +1848,6 @@ def business_space():
                 ""
             ).strip()
 
-            # -------------------------------------------------
-            # BASIC VALIDATION
-            # -------------------------------------------------
-
             if not business_name:
 
                 flash(
@@ -1875,21 +1871,7 @@ def business_space():
                 )
 
             # -------------------------------------------------
-            # WHATSAPP NUMBER
-            #
-            # Examples:
-            #
-            # 09131333120
-            #     ↓
-            # 2349131333120
-            #
-            # +2349131333120
-            #     ↓
-            # 2349131333120
-            #
-            # 2349131333120
-            #     ↓
-            # 2349131333120
+            # NORMALIZE WHATSAPP NUMBER
             # -------------------------------------------------
 
             whatsapp_clean = (
@@ -1920,8 +1902,6 @@ def business_space():
 
                 else:
 
-                    # Number entered without leading 0
-                    # Example: 9131333120
                     whatsapp_clean = (
                         "234" +
                         whatsapp_clean
@@ -1934,7 +1914,7 @@ def business_space():
                 whatsapp = ""
 
             # -------------------------------------------------
-            # FIND EXISTING BUSINESS PROFILE
+            # FIND EXISTING PROFILE
             # -------------------------------------------------
 
             with conn.cursor(
@@ -1957,7 +1937,7 @@ def business_space():
                 existing = cursor.fetchone()
 
                 # -------------------------------------------------
-                # UPDATE EXISTING PROFILE
+                # UPDATE
                 # -------------------------------------------------
 
                 if existing:
@@ -1990,7 +1970,7 @@ def business_space():
                     )
 
                 # -------------------------------------------------
-                # CREATE NEW PROFILE
+                # CREATE
                 # -------------------------------------------------
 
                 else:
@@ -2070,7 +2050,7 @@ def business_space():
             business = cursor.fetchone()
 
         # -------------------------------------------------
-        # CREATE WHATSAPP LINK NUMBER
+        # WHATSAPP LINK
         # -------------------------------------------------
 
         whatsapp_link = None
@@ -2105,13 +2085,7 @@ def business_space():
                 )
 
         # -------------------------------------------------
-        # BUSINESS PREMIUM VALUES
-        #
-        # This displays the upgrade offer.
-        #
-        # IMPORTANT:
-        # This does NOT pretend that payment has happened.
-        # Actual payment/activation can be connected later.
+        # BUSINESS UPGRADE
         # -------------------------------------------------
 
         business_upgrade = {
@@ -2132,16 +2106,16 @@ def business_space():
         # -------------------------------------------------
         # CURRENT PREMIUM STATUS
         #
-        # For now, Business Space is not marking anyone
-        # as Premium because the payment system has not
-        # been connected yet.
+        # Payment is NOT activated here yet.
         # -------------------------------------------------
 
         is_business_premium = False
 
-        # -------------------------------------------------
-        # SEND EVERYTHING TO BUSINESS SPACE HTML
-        # -------------------------------------------------
+        # IMPORTANT:
+        # Your HTML was using is_premium.
+        # We now send BOTH names so either template version works.
+
+        is_premium = is_business_premium
 
         return render_template(
             "business_space.html",
@@ -2154,13 +2128,14 @@ def business_space():
 
             is_business_premium=is_business_premium,
 
+            is_premium=is_premium,
+
             user_name=session.get("user_name")
         )
 
     except Exception:
 
         if conn:
-
             conn.rollback()
 
         app.logger.exception(
@@ -2182,8 +2157,18 @@ def business_space():
 
 
 # =========================================================
-# COMMUNITIES
+# PREMIUM / UPGRADE
 # =========================================================
+
+@app.route("/upgrade")
+@login_required
+def upgrade():
+
+    return render_template(
+        "upgrade.html",
+        user_name=session.get("user_name")
+    )
+
 
 # =========================================================
 # COMMUNITIES
