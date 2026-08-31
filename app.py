@@ -1875,35 +1875,41 @@ def business_space():
                 )
 
             # -------------------------------------------------
-            # CLEAN WHATSAPP NUMBER
+            # WHATSAPP NUMBER
             #
             # Examples:
+            #
             # 09131333120
-            # 08012345678
-            # +2349131333120
+            #     ↓
             # 2349131333120
             #
-            # The original number is stored in the database.
-            # The WhatsApp link conversion is handled below.
+            # +2349131333120
+            #     ↓
+            # 2349131333120
+            #
+            # 2349131333120
+            #     ↓
+            # 2349131333120
             # -------------------------------------------------
 
             whatsapp_clean = (
                 whatsapp
+                .strip()
                 .replace(" ", "")
                 .replace("-", "")
                 .replace("(", "")
                 .replace(")", "")
             )
 
-            # -------------------------------------------------
-            # VALIDATE NIGERIAN WHATSAPP NUMBER
-            # -------------------------------------------------
-
             if whatsapp_clean:
 
                 if whatsapp_clean.startswith("+234"):
 
                     whatsapp_clean = whatsapp_clean[1:]
+
+                elif whatsapp_clean.startswith("234"):
+
+                    pass
 
                 elif whatsapp_clean.startswith("0"):
 
@@ -1912,10 +1918,20 @@ def business_space():
                         whatsapp_clean[1:]
                     )
 
-                # If it is not a Nigerian format,
-                # leave the cleaned number as supplied.
+                else:
+
+                    # Number entered without leading 0
+                    # Example: 9131333120
+                    whatsapp_clean = (
+                        "234" +
+                        whatsapp_clean
+                    )
 
                 whatsapp = whatsapp_clean
+
+            else:
+
+                whatsapp = ""
 
             # -------------------------------------------------
             # FIND EXISTING BUSINESS PROFILE
@@ -1930,6 +1946,7 @@ def business_space():
                     SELECT id
                     FROM business_profiles
                     WHERE user_id = %s
+                    ORDER BY id DESC
                     LIMIT 1
                     """,
                     (
@@ -2053,17 +2070,19 @@ def business_space():
             business = cursor.fetchone()
 
         # -------------------------------------------------
-        # WHATSAPP LINK NUMBER
-        #
-        # The HTML can use this value directly.
+        # CREATE WHATSAPP LINK NUMBER
         # -------------------------------------------------
 
         whatsapp_link = None
 
         if business and business.get("whatsapp"):
 
+            whatsapp_link = str(
+                business["whatsapp"]
+            ).strip()
+
             whatsapp_link = (
-                str(business["whatsapp"])
+                whatsapp_link
                 .replace("+", "")
                 .replace(" ", "")
                 .replace("-", "")
@@ -2078,21 +2097,28 @@ def business_space():
                     whatsapp_link[1:]
                 )
 
-            elif whatsapp_link.startswith("+234"):
+            elif not whatsapp_link.startswith("234"):
 
-                whatsapp_link = whatsapp_link[1:]
+                whatsapp_link = (
+                    "234" +
+                    whatsapp_link
+                )
 
         # -------------------------------------------------
-        # BUSINESS UPGRADE
+        # BUSINESS PREMIUM VALUES
         #
-        # This is the foundation for the Business Upgrade
-        # feature. Payment can be connected later.
+        # This displays the upgrade offer.
+        #
+        # IMPORTANT:
+        # This does NOT pretend that payment has happened.
+        # Actual payment/activation can be connected later.
         # -------------------------------------------------
 
         business_upgrade = {
             "available": True,
             "price": "₦2,000",
             "period": "month",
+
             "features": [
                 "Enhanced business profile",
                 "Better business visibility",
@@ -2103,17 +2129,38 @@ def business_space():
             ]
         }
 
+        # -------------------------------------------------
+        # CURRENT PREMIUM STATUS
+        #
+        # For now, Business Space is not marking anyone
+        # as Premium because the payment system has not
+        # been connected yet.
+        # -------------------------------------------------
+
+        is_business_premium = False
+
+        # -------------------------------------------------
+        # SEND EVERYTHING TO BUSINESS SPACE HTML
+        # -------------------------------------------------
+
         return render_template(
             "business_space.html",
+
             business=business,
+
             whatsapp_link=whatsapp_link,
+
             business_upgrade=business_upgrade,
+
+            is_business_premium=is_business_premium,
+
             user_name=session.get("user_name")
         )
 
     except Exception:
 
         if conn:
+
             conn.rollback()
 
         app.logger.exception(
@@ -2132,6 +2179,11 @@ def business_space():
     finally:
 
         close_db(conn)
+
+
+# =========================================================
+# COMMUNITIES
+# =========================================================
 
 # =========================================================
 # COMMUNITIES
