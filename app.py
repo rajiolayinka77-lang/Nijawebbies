@@ -1789,6 +1789,7 @@ def delete_creator_project(project_id):
         close_db(conn)
 
 
+
 # =========================================================
 # BUSINESS SPACE
 # =========================================================
@@ -1805,6 +1806,10 @@ def business_space():
     try:
 
         conn = get_db()
+
+        # -------------------------------------------------
+        # SAVE / UPDATE BUSINESS PROFILE
+        # -------------------------------------------------
 
         if request.method == "POST":
 
@@ -1843,6 +1848,10 @@ def business_space():
                 ""
             ).strip()
 
+            # -------------------------------------------------
+            # BASIC VALIDATION
+            # -------------------------------------------------
+
             if not business_name:
 
                 flash(
@@ -1853,6 +1862,64 @@ def business_space():
                 return redirect(
                     url_for("business_space")
                 )
+
+            if not category:
+
+                flash(
+                    "Please select a business category.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("business_space")
+                )
+
+            # -------------------------------------------------
+            # CLEAN WHATSAPP NUMBER
+            #
+            # Examples:
+            # 09131333120
+            # 08012345678
+            # +2349131333120
+            # 2349131333120
+            #
+            # The original number is stored in the database.
+            # The WhatsApp link conversion is handled below.
+            # -------------------------------------------------
+
+            whatsapp_clean = (
+                whatsapp
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
+            )
+
+            # -------------------------------------------------
+            # VALIDATE NIGERIAN WHATSAPP NUMBER
+            # -------------------------------------------------
+
+            if whatsapp_clean:
+
+                if whatsapp_clean.startswith("+234"):
+
+                    whatsapp_clean = whatsapp_clean[1:]
+
+                elif whatsapp_clean.startswith("0"):
+
+                    whatsapp_clean = (
+                        "234" +
+                        whatsapp_clean[1:]
+                    )
+
+                # If it is not a Nigerian format,
+                # leave the cleaned number as supplied.
+
+                whatsapp = whatsapp_clean
+
+            # -------------------------------------------------
+            # FIND EXISTING BUSINESS PROFILE
+            # -------------------------------------------------
 
             with conn.cursor(
                 cursor_factory=RealDictCursor
@@ -1865,10 +1932,16 @@ def business_space():
                     WHERE user_id = %s
                     LIMIT 1
                     """,
-                    (session["user_id"],)
+                    (
+                        session["user_id"],
+                    )
                 )
 
                 existing = cursor.fetchone()
+
+                # -------------------------------------------------
+                # UPDATE EXISTING PROFILE
+                # -------------------------------------------------
 
                 if existing:
 
@@ -1899,6 +1972,10 @@ def business_space():
                         )
                     )
 
+                # -------------------------------------------------
+                # CREATE NEW PROFILE
+                # -------------------------------------------------
+
                 else:
 
                     cursor.execute(
@@ -1915,7 +1992,18 @@ def business_space():
                             website,
                             created_at
                         )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES
+                        (
+                            %s,
+                            %s,
+                            %s,
+                            %s,
+                            %s,
+                            %s,
+                            %s,
+                            %s,
+                            %s
+                        )
                         """,
                         (
                             session["user_id"],
@@ -1941,6 +2029,10 @@ def business_space():
                 url_for("business_space")
             )
 
+        # -------------------------------------------------
+        # LOAD BUSINESS PROFILE
+        # -------------------------------------------------
+
         with conn.cursor(
             cursor_factory=RealDictCursor
         ) as cursor:
@@ -1950,16 +2042,72 @@ def business_space():
                 SELECT *
                 FROM business_profiles
                 WHERE user_id = %s
+                ORDER BY id DESC
                 LIMIT 1
                 """,
-                (session["user_id"],)
+                (
+                    session["user_id"],
+                )
             )
 
             business = cursor.fetchone()
 
+        # -------------------------------------------------
+        # WHATSAPP LINK NUMBER
+        #
+        # The HTML can use this value directly.
+        # -------------------------------------------------
+
+        whatsapp_link = None
+
+        if business and business.get("whatsapp"):
+
+            whatsapp_link = (
+                str(business["whatsapp"])
+                .replace("+", "")
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "")
+            )
+
+            if whatsapp_link.startswith("0"):
+
+                whatsapp_link = (
+                    "234" +
+                    whatsapp_link[1:]
+                )
+
+            elif whatsapp_link.startswith("+234"):
+
+                whatsapp_link = whatsapp_link[1:]
+
+        # -------------------------------------------------
+        # BUSINESS UPGRADE
+        #
+        # This is the foundation for the Business Upgrade
+        # feature. Payment can be connected later.
+        # -------------------------------------------------
+
+        business_upgrade = {
+            "available": True,
+            "price": "₦2,000",
+            "period": "month",
+            "features": [
+                "Enhanced business profile",
+                "Better business visibility",
+                "WhatsApp customer contact",
+                "Website link",
+                "Business discovery features",
+                "Priority business listing"
+            ]
+        }
+
         return render_template(
             "business_space.html",
             business=business,
+            whatsapp_link=whatsapp_link,
+            business_upgrade=business_upgrade,
             user_name=session.get("user_name")
         )
 
@@ -1984,7 +2132,6 @@ def business_space():
     finally:
 
         close_db(conn)
-
 
 # =========================================================
 # COMMUNITIES
