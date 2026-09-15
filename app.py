@@ -1182,6 +1182,10 @@ def search():
 
     conn = None
 
+    posts = []
+    businesses = []
+    communities = []
+
     try:
 
         conn = get_db()
@@ -1192,6 +1196,13 @@ def search():
 
             if query:
 
+                search_term = f"%{query}%"
+
+
+                # ==========================================
+                # SEARCH BLOG ARTICLES
+                # ==========================================
+
                 cursor.execute(
                     """
                     SELECT
@@ -1200,26 +1211,98 @@ def search():
                     FROM posts
                     JOIN users
                         ON posts.user_id = users.id
-                    WHERE posts.title ILIKE %s
-                       OR posts.content ILIKE %s
+                    WHERE
+                        posts.title ILIKE %s
+                        OR posts.content ILIKE %s
                     ORDER BY posts.id DESC
                     """,
                     (
-                        f"%{query}%",
-                        f"%{query}%"
+                        search_term,
+                        search_term
                     )
                 )
 
                 posts = cursor.fetchall()
 
-            else:
 
-                posts = []
+                # ==========================================
+                # SEARCH BUSINESS PROFILES
+                # ==========================================
+
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        user_id,
+                        business_name,
+                        description,
+                        category,
+                        phone,
+                        whatsapp,
+                        location,
+                        website,
+                        created_at
+                    FROM business_profiles
+                    WHERE
+                        business_name ILIKE %s
+                        OR description ILIKE %s
+                        OR category ILIKE %s
+                        OR location ILIKE %s
+                    ORDER BY id DESC
+                    """,
+                    (
+                        search_term,
+                        search_term,
+                        search_term,
+                        search_term
+                    )
+                )
+
+                businesses = cursor.fetchall()
+
+
+                # ==========================================
+                # SEARCH COMMUNITIES
+                # ==========================================
+
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        owner_id,
+                        name,
+                        description,
+                        category,
+                        created_at
+                    FROM communities
+                    WHERE
+                        name ILIKE %s
+                        OR description ILIKE %s
+                        OR category ILIKE %s
+                    ORDER BY id DESC
+                    """,
+                    (
+                        search_term,
+                        search_term,
+                        search_term
+                    )
+                )
+
+                communities = cursor.fetchall()
+
+        total_results = (
+            len(posts)
+            + len(businesses)
+            + len(communities)
+        )
 
         return render_template(
             "search.html",
             posts=posts,
-            query=query
+            businesses=businesses,
+            communities=communities,
+            query=query,
+            total_results=total_results
         )
 
     except Exception:
@@ -1231,7 +1314,10 @@ def search():
         return render_template(
             "search.html",
             posts=[],
-            query=query
+            businesses=[],
+            communities=[],
+            query=query,
+            total_results=0
         )
 
     finally:
