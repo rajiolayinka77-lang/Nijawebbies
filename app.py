@@ -2131,9 +2131,18 @@ def public_business_profile(business_id):
             cursor.execute(
                 """
                 SELECT
-                    business_profiles.*
+                    id,
+                    user_id,
+                    business_name,
+                    description,
+                    category,
+                    phone,
+                    whatsapp,
+                    location,
+                    website,
+                    created_at
                 FROM business_profiles
-                WHERE business_profiles.id = %s
+                WHERE id = %s
                 LIMIT 1
                 """,
                 (business_id,)
@@ -2188,17 +2197,44 @@ def public_business_profile(business_id):
 
         if business.get("phone"):
 
-            phone_link = str(
+            phone_number = str(
                 business["phone"]
             ).strip()
 
-            phone_link = (
-                phone_link
+            phone_number = (
+                phone_number
                 .replace(" ", "")
                 .replace("-", "")
                 .replace("(", "")
                 .replace(")", "")
             )
+
+            phone_link = "tel:" + phone_number
+
+        # -----------------------------------------------------
+        # PREPARE WEBSITE LINK
+        # -----------------------------------------------------
+
+        website = business.get("website")
+
+        if website:
+
+            website = str(
+                website
+            ).strip()
+
+            if website and not (
+                website.startswith("http://")
+                or website.startswith("https://")
+            ):
+
+                website = "https://" + website
+
+            business["website"] = website
+
+        # -----------------------------------------------------
+        # DISPLAY PUBLIC BUSINESS PROFILE
+        # -----------------------------------------------------
 
         return render_template(
             "public_business_profile.html",
@@ -2207,18 +2243,27 @@ def public_business_profile(business_id):
             phone_link=phone_link
         )
 
-    except Exception:
+    except Exception as error:
 
         app.logger.exception(
-            "Public Business Profile error | business_id=%s",
-            business_id
+            "PUBLIC BUSINESS PROFILE FAILED | business_id=%s | error=%s",
+            business_id,
+            error
         )
 
-        return "Unable to load business profile.", 500
+        return (
+            "Unable to load business profile.",
+            500
+        )
 
     finally:
 
         close_db(conn)
+
+
+# =========================================================
+# BUSINESS PREMIUM UPGRADE PAGE
+# =========================================================
 # =========================================================
 # BUSINESS PREMIUM UPGRADE PAGE
 # =========================================================
