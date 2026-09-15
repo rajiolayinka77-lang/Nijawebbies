@@ -2110,7 +2110,161 @@ def business_space():
     finally:
 
         close_db(conn)
+# =========================================================
+# PUBLIC BUSINESS DIRECTORY / SEARCH
+# =========================================================
 
+@app.route("/businesses")
+def businesses():
+    q = request.args.get("q", "").strip()
+    category = request.args.get("category", "").strip()
+    location = request.args.get("location", "").strip()
+
+    conn = None
+
+    try:
+        conn = get_db()
+
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+
+            query = """
+                SELECT
+                    id,
+                    business_name,
+                    description,
+                    category,
+                    phone,
+                    whatsapp,
+                    location,
+                    website,
+                    created_at
+                FROM business_profiles
+                WHERE 1=1
+            """
+
+            params = []
+
+            if q:
+                query += """
+                    AND (
+                        business_name ILIKE %s
+                        OR description ILIKE %s
+                        OR category ILIKE %s
+                        OR location ILIKE %s
+                    )
+                """
+
+                search_term = f"%{q}%"
+
+                params.extend([
+                    search_term,
+                    search_term,
+                    search_term,
+                    search_term
+                ])
+
+            if category:
+                query += " AND category ILIKE %s"
+                params.append(f"%{category}%")
+
+            if location:
+                query += " AND location ILIKE %s"
+                params.append(f"%{location}%")
+
+            query += """
+                ORDER BY created_at DESC
+            """
+
+            cur.execute(query, params)
+            businesses_list = cur.fetchall()
+
+        # Prepare WhatsApp and phone links
+        for business in businesses_list:
+
+            # Phone link
+            phone = business.get("phone") or ""
+            clean_phone = "".join(
+                character for character in phone
+                if character.isdigit() or character == "+"
+            )
+
+            if clean_phone:
+                business["phone_link"] = f"tel:{clean_phone}"
+            else:
+                business["phone_link"] = None
+
+            # WhatsApp link
+            whatsapp = business.get("whatsapp") or ""
+
+            if whatsapp:
+                whatsapp_digits = "".join(
+                    character for character in whatsapp
+                    if character.isdigit()
+                )
+
+                if whatsapp_digits:
+                    if whatsapp_digits.startswith("0"):
+                        whatsapp_digits = "234" + whatsapp_digits[1:]
+
+                    elif not whatsapp_digits.startswith("234"):
+                        whatsapp_digits = "234" + whatsapp_digits
+
+                    business["whatsapp_link"] = (
+                        f"https://wa.me/{whatsapp_digits}"
+                    )
+                else:
+                    business["whatsapp_link"] = None
+            else:
+                business["whatsapp_link"] = None
+
+            # Website link
+            website = business.get("website") or ""
+
+            if website:
+                if not website.startswith(("http://", "https://")):
+                    website = "https://" + website
+
+                business["website_link"] = website
+            else:
+                business["website_link"] = None
+
+        # Get categories for the filter
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("""
+                SELECT DISTINCT category
+                FROM business_profiles
+                WHERE category IS NOT NULL
+                  AND TRIM(category) <> ''
+                ORDER BY category ASC
+            """)
+
+            categories = cur.fetchall()
+
+        return render_template(
+            "businesses.html",
+            businesses=businesses_list,
+            categories=categories,
+            q=q,
+            selected_category=category,
+            location=location
+        )
+
+    except Exception as e:
+        print("BUSINESS DIRECTORY ERROR:", e)
+        flash("Unable to load business directory.", "error")
+
+        return render_template(
+            "businesses.html",
+            businesses=[],
+            categories=[],
+            q=q,
+            selected_category=category,
+            location=location
+        )
+
+    finally:
+        if conn:
+            conn.close()
 # =========================================================
 # PUBLIC BUSINESS PROFILE
 # =========================================================
