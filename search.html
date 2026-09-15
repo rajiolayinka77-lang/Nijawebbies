@@ -5,9 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Search - NijaWebbies</title>
+    <title>Search NijaWebbies</title>
+
+    <meta name="description"
+          content="Search NijaWebbies for articles, businesses and communities.">
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -37,89 +41,179 @@
             color: white;
             text-decoration: none;
             margin-left: 15px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
         }
 
         .search-area {
             background: white;
-            padding: 40px 20px;
+            padding: 45px 20px;
             text-align: center;
         }
 
         .search-area h1 {
+            margin-bottom: 10px;
             color: #075b2c;
         }
 
+        .search-area p {
+            color: #666;
+        }
+
         .search-box {
-            max-width: 650px;
+            max-width: 700px;
             margin: 25px auto 0;
             display: flex;
         }
 
         .search-box input {
             flex: 1;
-            padding: 15px;
+            padding: 16px;
             border: 1px solid #ccc;
             border-radius: 8px 0 0 8px;
             font-size: 16px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #0b7a3b;
         }
 
         .search-box button {
-            padding: 15px 22px;
+            padding: 16px 25px;
             border: none;
             background: #0b7a3b;
             color: white;
             border-radius: 0 8px 8px 0;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .search-box button:hover {
+            background: #075b2c;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
+        .results-heading {
+            margin-bottom: 25px;
+        }
+
+        .results-heading h2 {
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .results-count {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #075b2c;
+            border-bottom: 2px solid #e4e8eb;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+        }
+
         .result {
             background: white;
-            padding: 25px;
-            margin-bottom: 18px;
+            padding: 22px;
+            margin-bottom: 15px;
             border-radius: 12px;
             box-shadow: 0 3px 12px rgba(0,0,0,0.06);
         }
 
-        .result h2 {
+        .result h3 {
             margin-top: 0;
+            margin-bottom: 8px;
         }
 
-        .result h2 a {
+        .result h3 a {
             color: #075b2c;
             text-decoration: none;
+        }
+
+        .result h3 a:hover {
+            text-decoration: underline;
         }
 
         .result p {
             color: #555;
             line-height: 1.6;
+            margin: 8px 0;
         }
 
-        .author {
+        .meta {
             color: #777;
             font-size: 13px;
+            margin-bottom: 8px;
         }
 
-        .read {
+        .badge {
             display: inline-block;
-            margin-top: 10px;
-            padding: 9px 16px;
+            background: #e8f8ee;
+            color: #087443;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 15px;
             background: #0b7a3b;
             color: white;
             text-decoration: none;
             border-radius: 6px;
+            font-size: 14px;
+            margin-right: 6px;
+        }
+
+        .btn:hover {
+            background: #075b2c;
+        }
+
+        .btn-secondary {
+            background: #eef2f5;
+            color: #075b2c;
+        }
+
+        .btn-secondary:hover {
+            background: #dfe6eb;
         }
 
         .empty {
             background: white;
-            padding: 40px 20px;
+            padding: 45px 20px;
             text-align: center;
             border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+        }
+
+        .empty h2 {
+            color: #075b2c;
+        }
+
+        .empty p {
+            color: #666;
         }
 
         footer {
@@ -130,6 +224,10 @@
             padding: 30px 15px;
         }
 
+        footer h3 {
+            margin-top: 0;
+        }
+
         @media (max-width: 600px) {
 
             header {
@@ -137,8 +235,12 @@
                 gap: 12px;
             }
 
+            nav {
+                text-align: center;
+            }
+
             nav a {
-                margin: 0 7px;
+                margin: 0 6px;
             }
 
             .search-box {
@@ -148,10 +250,18 @@
             .search-box input,
             .search-box button {
                 border-radius: 7px;
+                width: 100%;
                 margin-bottom: 8px;
             }
+
+            .result {
+                padding: 18px;
+            }
+
         }
+
     </style>
+
 </head>
 
 <body>
@@ -165,18 +275,21 @@
     <nav>
         <a href="/">Home</a>
         <a href="/blog">Blog</a>
-        <a href="/workspace">Workspace</a>
+        <a href="/businesses">Businesses</a>
+        <a href="/communities">Communities</a>
         <a href="/tools">Tools</a>
+        <a href="/workspace">Workspace</a>
     </nav>
 
 </header>
+
 
 <section class="search-area">
 
     <h1>🔎 Search NijaWebbies</h1>
 
     <p>
-        Search articles published by the NijaWebbies community.
+        Discover articles, businesses and communities across NijaWebbies.
     </p>
 
     <form
@@ -189,7 +302,7 @@
             type="text"
             name="q"
             value="{{ query }}"
-            placeholder="Search articles..."
+            placeholder="Search articles, businesses or communities..."
             required
         >
 
@@ -201,77 +314,237 @@
 
 </section>
 
+
 <div class="container">
 
     {% if query %}
 
-        <h2>
-            Search results for "{{ query }}"
-        </h2>
+        <div class="results-heading">
 
-    {% endif %}
+            <h2>
+                Search results for "{{ query }}"
+            </h2>
 
-
-    {% if posts %}
-
-        {% for post in posts %}
-
-            <article class="result">
-
-                <h2>
-
-                    <a href="/post/{{ post['id'] }}">
-                        {{ post['title'] }}
-                    </a>
-
-                </h2>
-
-                <div class="author">
-
-                    Published by
-                    <strong>{{ post['name'] }}</strong>
-
-                    ·
-
-                    {{ post['created_at'] }}
-
-                </div>
-
-                <p>
-                    {{ post['content'][:300] }}
-
-                    {% if post['content']|length > 300 %}
-                        ...
-                    {% endif %}
-                </p>
-
-                <a
-                    class="read"
-                    href="/post/{{ post['id'] }}"
-                >
-                    Read Article →
-                </a>
-
-            </article>
-
-        {% endfor %}
-
-    {% elif query %}
-
-        <div class="empty">
-
-            <h2>No results found</h2>
-
-            <p>
-                We couldn't find an article matching
-                "{{ query }}".
-            </p>
-
-            <p>
-                Try another search.
-            </p>
+            <div class="results-count">
+                {{ total_results }} result{% if total_results != 1 %}s{% endif %} found
+            </div>
 
         </div>
+
+
+        <!-- =========================
+             ARTICLES
+        ========================== -->
+
+        {% if posts %}
+
+            <section class="section">
+
+                <h2 class="section-title">
+                    📝 Articles
+                </h2>
+
+                {% for post in posts %}
+
+                    <article class="result">
+
+                        <span class="badge">
+                            Article
+                        </span>
+
+                        <h3>
+
+                            <a href="/post/{{ post['id'] }}">
+                                {{ post['title'] }}
+                            </a>
+
+                        </h3>
+
+                        <div class="meta">
+
+                            Published by
+                            <strong>{{ post['name'] }}</strong>
+
+                            {% if post['created_at'] %}
+                                · {{ post['created_at'] }}
+                            {% endif %}
+
+                        </div>
+
+                        <p>
+
+                            {{ post['content'][:300] }}
+
+                            {% if post['content']|length > 300 %}
+                                ...
+                            {% endif %}
+
+                        </p>
+
+                        <div class="actions">
+
+                            <a
+                                class="btn"
+                                href="/post/{{ post['id'] }}"
+                            >
+                                Read Article →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- =========================
+             BUSINESSES
+        ========================== -->
+
+        {% if businesses %}
+
+            <section class="section">
+
+                <h2 class="section-title">
+                    🏪 Businesses
+                </h2>
+
+                {% for business in businesses %}
+
+                    <article class="result">
+
+                        <span class="badge">
+                            {{ business['category'] or 'Business' }}
+                        </span>
+
+                        <h3>
+
+                            <a href="/business/{{ business['id'] }}">
+                                {{ business['business_name'] }}
+                            </a>
+
+                        </h3>
+
+                        {% if business['location'] %}
+
+                            <div class="meta">
+                                📍 {{ business['location'] }}
+                            </div>
+
+                        {% endif %}
+
+                        {% if business['description'] %}
+
+                            <p>
+                                {{ business['description'][:300] }}
+
+                                {% if business['description']|length > 300 %}
+                                    ...
+                                {% endif %}
+                            </p>
+
+                        {% endif %}
+
+                        <div class="actions">
+
+                            <a
+                                class="btn"
+                                href="/business/{{ business['id'] }}"
+                            >
+                                View Business →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- =========================
+             COMMUNITIES
+        ========================== -->
+
+        {% if communities %}
+
+            <section class="section">
+
+                <h2 class="section-title">
+                    👥 Communities
+                </h2>
+
+                {% for community in communities %}
+
+                    <article class="result">
+
+                        <span class="badge">
+                            {{ community['category'] or 'Community' }}
+                        </span>
+
+                        <h3>
+                            {{ community['name'] }}
+                        </h3>
+
+                        {% if community['description'] %}
+
+                            <p>
+                                {{ community['description'][:300] }}
+
+                                {% if community['description']|length > 300 %}
+                                    ...
+                                {% endif %}
+                            </p>
+
+                        {% endif %}
+
+                        <div class="actions">
+
+                            <a
+                                class="btn"
+                                href="/communities"
+                            >
+                                View Communities →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% endif %}
+
+
+        {% if not posts and not businesses and not communities %}
+
+            <div class="empty">
+
+                <h2>🔎 No Results Found</h2>
+
+                <p>
+                    We couldn't find anything matching
+                    "<strong>{{ query }}</strong>".
+                </p>
+
+                <p>
+                    Try another word, business name,
+                    article topic or community.
+                </p>
+
+            </div>
+
+        {% endif %}
+
 
     {% else %}
 
@@ -280,8 +553,8 @@
             <h2>🔎 Start Searching</h2>
 
             <p>
-                Enter a word or topic above to search
-                NijaWebbies articles.
+                Search NijaWebbies for articles,
+                businesses and communities.
             </p>
 
         </div>
@@ -290,9 +563,16 @@
 
 </div>
 
+
 <footer>
 
-    <h3>NijaWebbies</h3>
+    <h3>
+        🇳🇬 NijaWebbies
+    </h3>
+
+    <p>
+        Built for Nigeria & Africa.
+    </p>
 
     <p>
         Start free. Create. Publish. Grow.
@@ -305,4 +585,5 @@
 </footer>
 
 </body>
+
 </html>
