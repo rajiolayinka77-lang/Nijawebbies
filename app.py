@@ -122,7 +122,6 @@ def init_db():
                 )
             """)
 
-            # Safety migration for older databases
             cursor.execute("""
                 ALTER TABLE creator_projects
                 ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Idea'
@@ -151,7 +150,6 @@ def init_db():
                 )
             """)
 
-            # Safety migration for older databases
             cursor.execute("""
                 ALTER TABLE business_profiles
                 ADD COLUMN IF NOT EXISTS whatsapp TEXT
@@ -206,7 +204,6 @@ def init_db():
         )
 
     except Exception:
-
         if conn:
             conn.rollback()
 
@@ -1194,10 +1191,6 @@ def search():
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # =====================================================
-            # GET BUSINESS CATEGORIES
-            # =====================================================
-
             cursor.execute(
                 """
                 SELECT DISTINCT category
@@ -1209,10 +1202,6 @@ def search():
             )
 
             categories = cursor.fetchall()
-
-            # =====================================================
-            # SEARCH BLOG POSTS
-            # =====================================================
 
             if query:
 
@@ -1238,10 +1227,6 @@ def search():
                 )
 
                 posts = cursor.fetchall()
-
-            # =====================================================
-            # SEARCH BUSINESSES
-            # =====================================================
 
             business_query = """
                 SELECT
@@ -1301,8 +1286,6 @@ def search():
                     f"%{location}%"
                 )
 
-            # Only show businesses when there is
-            # a search/filter request.
             if query or category or location:
 
                 business_query += """
@@ -1349,13 +1332,12 @@ def search():
 
                 communities = cursor.fetchall()
 
-        # =========================================================
+        # =====================================================
         # PREPARE BUSINESS LINKS
-        # =========================================================
+        # =====================================================
 
         for business in businesses:
 
-            # Phone link
             phone = business.get("phone") or ""
 
             clean_phone = "".join(
@@ -1366,16 +1348,10 @@ def search():
             )
 
             if clean_phone:
-
-                business["phone_link"] = (
-                    f"tel:{clean_phone}"
-                )
-
+                business["phone_link"] = f"tel:{clean_phone}"
             else:
-
                 business["phone_link"] = None
 
-            # WhatsApp link
             whatsapp = business.get("whatsapp") or ""
 
             if whatsapp:
@@ -1414,7 +1390,6 @@ def search():
 
                 business["whatsapp_link"] = None
 
-            # Website link
             website = business.get("website") or ""
 
             if website:
@@ -1434,19 +1409,11 @@ def search():
 
                 business["website_link"] = None
 
-        # =========================================================
-        # RESULT COUNT
-        # =========================================================
-
         total_results = (
             len(posts)
             + len(businesses)
             + len(communities)
         )
-
-        # =========================================================
-        # RENDER SEARCH PAGE
-        # =========================================================
 
         return render_template(
             "search.html",
@@ -2017,10 +1984,6 @@ def business_space():
 
         conn = get_db()
 
-        # =====================================================
-        # SAVE / UPDATE BUSINESS PROFILE
-        # =====================================================
-
         if request.method == "POST":
 
             business_name = request.form.get(
@@ -2058,10 +2021,6 @@ def business_space():
                 ""
             ).strip()
 
-            # -------------------------------------------------
-            # VALIDATION
-            # -------------------------------------------------
-
             if not business_name:
 
                 flash(
@@ -2083,10 +2042,6 @@ def business_space():
                 return redirect(
                     url_for("business_space")
                 )
-
-            # -------------------------------------------------
-            # CLEAN WHATSAPP NUMBER
-            # -------------------------------------------------
 
             whatsapp_clean = (
                 whatsapp
@@ -2127,10 +2082,6 @@ def business_space():
 
                 whatsapp = ""
 
-            # -------------------------------------------------
-            # FIND EXISTING PROFILE
-            # -------------------------------------------------
-
             with conn.cursor(
                 cursor_factory=RealDictCursor
             ) as cursor:
@@ -2149,10 +2100,6 @@ def business_space():
                 )
 
                 existing = cursor.fetchone()
-
-                # -------------------------------------------------
-                # UPDATE EXISTING PROFILE
-                # -------------------------------------------------
 
                 if existing:
 
@@ -2182,10 +2129,6 @@ def business_space():
                             session["user_id"]
                         )
                     )
-
-                # -------------------------------------------------
-                # CREATE NEW PROFILE
-                # -------------------------------------------------
 
                 else:
 
@@ -2240,10 +2183,6 @@ def business_space():
                 url_for("business_space")
             )
 
-        # =====================================================
-        # LOAD EXISTING BUSINESS PROFILE
-        # =====================================================
-
         with conn.cursor(
             cursor_factory=RealDictCursor
         ) as cursor:
@@ -2262,10 +2201,6 @@ def business_space():
             )
 
             business = cursor.fetchone()
-
-        # =====================================================
-        # WHATSAPP LINK
-        # =====================================================
 
         whatsapp_link = None
 
@@ -2298,15 +2233,10 @@ def business_space():
                     whatsapp_link
                 )
 
-        # =====================================================
-        # BUSINESS PREMIUM
-        # =====================================================
-
         business_upgrade = {
             "available": True,
             "price": "₦2,000",
             "period": "month",
-
             "features": [
                 "Enhanced business visibility",
                 "Better business discovery",
@@ -2316,20 +2246,14 @@ def business_space():
             ]
         }
 
-        # Payment activation is not being falsely claimed here.
         is_business_premium = False
 
         return render_template(
             "business_space.html",
-
             business=business,
-
             whatsapp_link=whatsapp_link,
-
             business_upgrade=business_upgrade,
-
             is_business_premium=is_business_premium,
-
             user_name=session.get("user_name")
         )
 
@@ -2354,12 +2278,15 @@ def business_space():
     finally:
 
         close_db(conn)
+
+
 # =========================================================
 # PUBLIC BUSINESS DIRECTORY / SEARCH
 # =========================================================
 
 @app.route("/businesses")
 def businesses():
+
     q = request.args.get("q", "").strip()
     category = request.args.get("category", "").strip()
     location = request.args.get("location", "").strip()
@@ -2367,9 +2294,12 @@ def businesses():
     conn = None
 
     try:
+
         conn = get_db()
 
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cur:
 
             query = """
                 SELECT
@@ -2389,6 +2319,7 @@ def businesses():
             params = []
 
             if q:
+
                 query += """
                     AND (
                         business_name ILIKE %s
@@ -2408,72 +2339,114 @@ def businesses():
                 ])
 
             if category:
+
                 query += " AND category ILIKE %s"
-                params.append(f"%{category}%")
+
+                params.append(
+                    f"%{category}%"
+                )
 
             if location:
+
                 query += " AND location ILIKE %s"
-                params.append(f"%{location}%")
+
+                params.append(
+                    f"%{location}%"
+                )
 
             query += """
                 ORDER BY created_at DESC
             """
 
-            cur.execute(query, params)
+            cur.execute(
+                query,
+                params
+            )
+
             businesses_list = cur.fetchall()
 
-        # Prepare WhatsApp and phone links
         for business in businesses_list:
 
-            # Phone link
             phone = business.get("phone") or ""
+
             clean_phone = "".join(
-                character for character in phone
-                if character.isdigit() or character == "+"
+                character
+                for character in phone
+                if character.isdigit()
+                or character == "+"
             )
 
             if clean_phone:
-                business["phone_link"] = f"tel:{clean_phone}"
+
+                business["phone_link"] = (
+                    f"tel:{clean_phone}"
+                )
+
             else:
+
                 business["phone_link"] = None
 
-            # WhatsApp link
             whatsapp = business.get("whatsapp") or ""
 
             if whatsapp:
+
                 whatsapp_digits = "".join(
-                    character for character in whatsapp
+                    character
+                    for character in whatsapp
                     if character.isdigit()
                 )
 
                 if whatsapp_digits:
+
                     if whatsapp_digits.startswith("0"):
-                        whatsapp_digits = "234" + whatsapp_digits[1:]
+
+                        whatsapp_digits = (
+                            "234"
+                            + whatsapp_digits[1:]
+                        )
 
                     elif not whatsapp_digits.startswith("234"):
-                        whatsapp_digits = "234" + whatsapp_digits
+
+                        whatsapp_digits = (
+                            "234"
+                            + whatsapp_digits
+                        )
 
                     business["whatsapp_link"] = (
                         f"https://wa.me/{whatsapp_digits}"
                     )
+
                 else:
+
                     business["whatsapp_link"] = None
+
             else:
+
                 business["whatsapp_link"] = None
 
-            # Website link
             website = business.get("website") or ""
 
             if website:
-                if not website.startswith(("http://", "https://")):
-                    website = "https://" + website
+
+                if not website.startswith(
+                    ("http://", "https://")
+                ):
+
+                    website = (
+                        "https://"
+                        + website
+                    )
 
                 business["website_link"] = website
+
             else:
+
                 business["website_link"] = None
 
-        # Get categories for the filter
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cur:
+
             cur.execute("""
                 SELECT DISTINCT category
                 FROM business_profiles
@@ -2494,8 +2467,16 @@ def businesses():
         )
 
     except Exception as e:
-        print("BUSINESS DIRECTORY ERROR:", e)
-        flash("Unable to load business directory.", "error")
+
+        app.logger.exception(
+            "BUSINESS DIRECTORY ERROR: %s",
+            e
+        )
+
+        flash(
+            "Unable to load business directory.",
+            "error"
+        )
 
         return render_template(
             "businesses.html",
@@ -2507,8 +2488,10 @@ def businesses():
         )
 
     finally:
-        if conn:
-            conn.close()
+
+        close_db(conn)
+
+
 # =========================================================
 # PUBLIC BUSINESS PROFILE
 # =========================================================
@@ -2552,10 +2535,6 @@ def public_business_profile(business_id):
 
             return "Business profile not found.", 404
 
-        # -----------------------------------------------------
-        # PREPARE WHATSAPP LINK
-        # -----------------------------------------------------
-
         whatsapp_link = None
 
         if business.get("whatsapp"):
@@ -2587,10 +2566,6 @@ def public_business_profile(business_id):
                     whatsapp_link
                 )
 
-        # -----------------------------------------------------
-        # PREPARE PHONE LINK
-        # -----------------------------------------------------
-
         phone_link = None
 
         if business.get("phone"):
@@ -2609,10 +2584,6 @@ def public_business_profile(business_id):
 
             phone_link = "tel:" + phone_number
 
-        # -----------------------------------------------------
-        # PREPARE WEBSITE LINK
-        # -----------------------------------------------------
-
         website = business.get("website")
 
         if website:
@@ -2629,10 +2600,6 @@ def public_business_profile(business_id):
                 website = "https://" + website
 
             business["website"] = website
-
-        # -----------------------------------------------------
-        # DISPLAY PUBLIC BUSINESS PROFILE
-        # -----------------------------------------------------
 
         return render_template(
             "public_business_profile.html",
@@ -2659,9 +2626,6 @@ def public_business_profile(business_id):
         close_db(conn)
 
 
-# =========================================================
-# BUSINESS PREMIUM UPGRADE PAGE
-# =========================================================
 # =========================================================
 # BUSINESS PREMIUM UPGRADE PAGE
 # =========================================================
@@ -2692,6 +2656,8 @@ def upgrade():
 # =========================================================
 # COMMUNITIES
 # =========================================================
+# FIXED VERSION
+# =========================================================
 
 @app.route(
     "/communities",
@@ -2702,7 +2668,24 @@ def communities():
 
     conn = None
 
+    user_id = session.get("user_id")
+
     try:
+
+        # -----------------------------------------------------
+        # VERIFY USER SESSION
+        # -----------------------------------------------------
+
+        if not user_id:
+
+            flash(
+                "Please login to access Communities.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("login")
+            )
 
         conn = get_db()
 
@@ -2754,7 +2737,7 @@ def communities():
                     RETURNING id
                     """,
                     (
-                        session["user_id"],
+                        user_id,
                         name,
                         description,
                         category,
@@ -2762,8 +2745,18 @@ def communities():
                     )
                 )
 
-                community_id = cursor.fetchone()[0]
+                result = cursor.fetchone()
 
+                if not result:
+
+                    raise RuntimeError(
+                        "Community was not created."
+                    )
+
+                community_id = result[0]
+
+                # Automatically make the creator
+                # the first member.
                 cursor.execute(
                     """
                     INSERT INTO community_members
@@ -2773,11 +2766,12 @@ def communities():
                         joined_at
                     )
                     VALUES (%s, %s, %s)
-                    ON CONFLICT DO NOTHING
+                    ON CONFLICT (community_id, user_id)
+                    DO NOTHING
                     """,
                     (
                         community_id,
-                        session["user_id"],
+                        user_id,
                         datetime.utcnow()
                     )
                 )
@@ -2794,7 +2788,7 @@ def communities():
             )
 
         # =====================================================
-        # LOAD COMMUNITIES
+        # LOAD ALL COMMUNITIES
         # =====================================================
 
         with conn.cursor(
@@ -2804,55 +2798,176 @@ def communities():
             cursor.execute(
                 """
                 SELECT
-                    communities.*,
-                    users.name AS owner_name
-                FROM communities
-                JOIN users
-                    ON communities.owner_id = users.id
-                ORDER BY communities.id DESC
+                    c.id,
+                    c.owner_id,
+                    c.name,
+                    c.description,
+                    c.category,
+                    c.created_at,
+                    u.name AS owner_name
+                FROM communities AS c
+                LEFT JOIN users AS u
+                    ON c.owner_id = u.id
+                ORDER BY c.id DESC
                 """
             )
 
             all_communities = cursor.fetchall()
 
+            # =================================================
+            # LOAD MY COMMUNITIES
+            # =================================================
+
             cursor.execute(
                 """
-                SELECT communities.*
-                FROM communities
-                JOIN community_members
-                    ON communities.id =
-                       community_members.community_id
-                WHERE community_members.user_id = %s
-                ORDER BY communities.id DESC
+                SELECT
+                    c.id,
+                    c.owner_id,
+                    c.name,
+                    c.description,
+                    c.category,
+                    c.created_at
+                FROM communities AS c
+                INNER JOIN community_members AS cm
+                    ON c.id = cm.community_id
+                WHERE cm.user_id = %s
+                ORDER BY c.id DESC
                 """,
-                (session["user_id"],)
+                (user_id,)
             )
 
             my_communities = cursor.fetchall()
+
+        # =====================================================
+        # COMMUNITY IDs USER HAS JOINED
+        # =====================================================
+
+        joined_community_ids = {
+            community["id"]
+            for community in my_communities
+        }
+
+        # =====================================================
+        # RENDER COMMUNITIES PAGE
+        # =====================================================
 
         return render_template(
             "communities.html",
             communities=all_communities,
             my_communities=my_communities,
+            joined_community_ids=joined_community_ids,
             user_name=session.get("user_name")
         )
 
-    except Exception:
+    except Exception as error:
 
         if conn:
             conn.rollback()
 
+        # IMPORTANT:
+        # Do NOT redirect to Workspace here.
+        # We want Render to show/log the real problem.
+
         app.logger.exception(
-            "Communities error."
+            "COMMUNITIES PAGE FAILED | user_id=%s | error=%s",
+            user_id,
+            error
         )
 
-        flash(
-            "Unable to load Communities.",
-            "danger"
-        )
+        return (
+            """
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport"
+                      content="width=device-width, initial-scale=1.0">
 
-        return redirect(
-            url_for("workspace")
+                <title>
+                    Communities Error | NijaWebbies
+                </title>
+
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background: #f5f7fb;
+                        margin: 0;
+                        padding: 30px 20px;
+                        color: #111827;
+                    }
+
+                    .box {
+                        max-width: 700px;
+                        margin: 50px auto;
+                        background: white;
+                        padding: 30px;
+                        border-radius: 16px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+                    }
+
+                    h1 {
+                        color: #b91c1c;
+                    }
+
+                    .error {
+                        background: #fef2f2;
+                        border: 1px solid #fecaca;
+                        padding: 15px;
+                        border-radius: 10px;
+                        word-break: break-word;
+                    }
+
+                    a {
+                        display: inline-block;
+                        margin-top: 20px;
+                        background: #16a34a;
+                        color: white;
+                        text-decoration: none;
+                        padding: 12px 18px;
+                        border-radius: 8px;
+                    }
+                </style>
+            </head>
+
+            <body>
+
+                <div class="box">
+
+                    <h1>
+                        Communities could not load
+                    </h1>
+
+                    <p>
+                        NijaWebbies reached the Communities
+                        route, but an error occurred.
+                    </p>
+
+                    <p>
+                        The exact error is shown below so
+                        we can identify and fix it.
+                    </p>
+
+                    <div class="error">
+                    """
+            + str(error)
+            + """
+                    </div>
+
+                    <a href="/">
+                        ← Back to NijaWebbies
+                    </a>
+
+                    <a href="/workspace"
+                       style="margin-left:8px;background:#2563eb;">
+                        Workspace
+                    </a>
+
+                </div>
+
+            </body>
+            </html>
+            """,
+            500
         )
 
     finally:
@@ -2876,6 +2991,8 @@ def join_community(community_id):
     try:
 
         conn = get_db()
+
+        user_id = session.get("user_id")
 
         with conn.cursor() as cursor:
 
@@ -2910,11 +3027,12 @@ def join_community(community_id):
                     joined_at
                 )
                 VALUES (%s, %s, %s)
-                ON CONFLICT DO NOTHING
+                ON CONFLICT (community_id, user_id)
+                DO NOTHING
                 """,
                 (
                     community_id,
-                    session["user_id"],
+                    user_id,
                     datetime.utcnow()
                 )
             )
@@ -2941,17 +3059,20 @@ def join_community(community_id):
             url_for("communities")
         )
 
-    except Exception:
+    except Exception as error:
 
         if conn:
             conn.rollback()
 
         app.logger.exception(
-            "Join community error."
+            "JOIN COMMUNITY FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            session.get("user_id"),
+            error
         )
 
         flash(
-            "Unable to join the community.",
+            "Unable to join the community right now.",
             "danger"
         )
 
