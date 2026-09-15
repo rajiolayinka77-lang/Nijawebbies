@@ -1,55 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Explore & Search | NijaWebbies</title>
+    <title>Search | NijaWebbies</title>
 
     <meta name="description"
-          content="Search articles, businesses and communities across NijaWebbies.">
+          content="Search businesses, articles and communities on NijaWebbies.">
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background: #f5f7f6;
-            color: #1f2933;
+            color: #222;
         }
-
-        /* =====================================================
-           HEADER
-        ===================================================== */
 
         header {
             background: #087f3f;
             color: white;
             padding: 16px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
         }
 
         .header-inner {
-            max-width: 1150px;
+            max-width: 1100px;
             margin: auto;
-
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             gap: 20px;
         }
 
@@ -58,496 +41,259 @@
             text-decoration: none;
             font-size: 21px;
             font-weight: bold;
-            white-space: nowrap;
         }
 
         nav {
             display: flex;
-            align-items: center;
-            gap: 18px;
             flex-wrap: wrap;
+            gap: 15px;
         }
 
         nav a {
             color: white;
             text-decoration: none;
             font-size: 14px;
-            font-weight: 600;
         }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        /* =====================================================
-           MAIN
-        ===================================================== */
 
         main {
             max-width: 1100px;
             margin: auto;
-            padding: 45px 20px 70px;
+            padding: 40px 20px 70px;
         }
 
         .hero {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .hero h1 {
-            margin: 0 0 10px;
-            font-size: 34px;
             color: #075c30;
+            margin-bottom: 10px;
         }
 
         .hero p {
-            margin: 0 auto;
-            max-width: 650px;
-            color: #667085;
-            line-height: 1.6;
+            color: #666;
         }
 
-        /* =====================================================
-           SEARCH BOX
-        ===================================================== */
-
-        .search-panel {
+        .search-box {
             background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow:
-                0 5px 20px rgba(0,0,0,0.07);
-
-            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            margin-bottom: 35px;
         }
 
         .search-form {
             display: grid;
-            grid-template-columns:
-                2fr 1fr 1fr auto;
-
-            gap: 12px;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
         }
 
-        .search-form input,
-        .search-form select {
+        input,
+        select {
             width: 100%;
-            padding: 14px 15px;
-
-            border: 1px solid #d7ded9;
-            border-radius: 9px;
-
+            padding: 13px;
+            border: 1px solid #d5ddd8;
+            border-radius: 8px;
             font-size: 15px;
             background: white;
         }
 
-        .search-form input:focus,
-        .search-form select:focus {
-            outline: none;
-            border-color: #087f3f;
-            box-shadow:
-                0 0 0 3px rgba(8,127,63,0.10);
-        }
-
-        .search-button {
+        button {
+            padding: 13px 20px;
             border: none;
-            border-radius: 9px;
-
-            padding: 14px 22px;
-
+            border-radius: 8px;
             background: #087f3f;
             color: white;
-
-            font-size: 15px;
             font-weight: bold;
-
             cursor: pointer;
         }
 
-        .search-button:hover {
+        button:hover {
             background: #066b35;
         }
 
-        .clear-link {
+        .clear {
             display: inline-block;
-            margin-top: 13px;
-
+            margin-top: 12px;
             color: #087f3f;
             text-decoration: none;
-
             font-size: 14px;
-            font-weight: 600;
         }
-
-        /* =====================================================
-           RESULT SUMMARY
-        ===================================================== */
 
         .summary {
             margin-bottom: 30px;
         }
 
         .summary h2 {
-            margin: 0 0 8px;
-            font-size: 23px;
-            color: #1f2933;
+            margin-bottom: 8px;
         }
 
         .summary p {
-            margin: 0;
-            color: #667085;
+            color: #666;
         }
 
         .count {
-            font-weight: bold;
             color: #087f3f;
+            font-weight: bold;
         }
 
-        /* =====================================================
-           RESULT SECTIONS
-        ===================================================== */
-
-        .result-section {
-            margin-bottom: 38px;
+        .section {
+            margin-bottom: 35px;
         }
 
-        .section-heading {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            gap: 15px;
-
+        .section-title {
+            color: #075c30;
             margin-bottom: 15px;
         }
 
-        .section-heading h3 {
-            margin: 0;
-
-            font-size: 21px;
-            color: #075c30;
-        }
-
-        .section-count {
-            background: #e8f6ee;
-            color: #087f3f;
-
-            padding: 5px 10px;
-
-            border-radius: 20px;
-
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        /* =====================================================
-           CARDS
-        ===================================================== */
-
-        .results-grid {
+        .grid {
             display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
+            grid-template-columns: repeat(3, 1fr);
             gap: 18px;
         }
 
         .card {
             background: white;
-
-            border-radius: 14px;
-
             padding: 20px;
-
-            border: 1px solid #e5e9e6;
-
-            box-shadow:
-                0 3px 12px rgba(0,0,0,0.04);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
+            border-radius: 13px;
+            border: 1px solid #e2e7e4;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
         }
 
-        .card:hover {
-            transform: translateY(-3px);
-
-            box-shadow:
-                0 8px 22px rgba(0,0,0,0.08);
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
         }
 
-        .card h4 {
-            margin: 0 0 9px;
-
-            font-size: 18px;
-        }
-
-        .card h4 a {
+        .card h3 a {
             color: #075c30;
             text-decoration: none;
         }
 
-        .card h4 a:hover {
-            text-decoration: underline;
+        .card p {
+            color: #666;
+            line-height: 1.55;
         }
 
-        .category {
+        .tag {
             display: inline-block;
-
             background: #e8f6ee;
             color: #087f3f;
-
             padding: 5px 9px;
-
             border-radius: 20px;
-
             font-size: 12px;
             font-weight: bold;
-
             margin-bottom: 10px;
         }
 
-        .card p {
-            margin: 7px 0;
-
-            color: #667085;
-
-            line-height: 1.55;
-
-            font-size: 14px;
-        }
-
-        .location {
-            color: #555;
-            font-size: 13px;
-        }
-
-        .view-link {
+        .view {
             display: inline-block;
-
-            margin-top: 12px;
-
+            margin-top: 8px;
             color: #087f3f;
-
             text-decoration: none;
-
-            font-size: 14px;
-
             font-weight: bold;
+            font-size: 14px;
         }
-
-        .view-link:hover {
-            text-decoration: underline;
-        }
-
-        /* =====================================================
-           EMPTY STATE
-        ===================================================== */
 
         .empty {
             background: white;
-
-            border: 1px dashed #cbd5ce;
-
-            border-radius: 14px;
-
             padding: 35px 20px;
-
+            border-radius: 14px;
             text-align: center;
-
-            color: #667085;
-        }
-
-        .empty-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+            border: 1px dashed #cbd5ce;
         }
 
         .empty h3 {
-            margin: 0 0 8px;
             color: #333;
         }
 
         .empty p {
-            margin: 0;
-            line-height: 1.6;
+            color: #666;
         }
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
 
         footer {
             background: #075c30;
             color: white;
-
             text-align: center;
-
             padding: 25px 20px;
-
             font-size: 14px;
         }
 
-        footer p {
-            margin: 5px 0;
-        }
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
-
         @media (max-width: 850px) {
-
             .search-form {
                 grid-template-columns: 1fr 1fr;
             }
 
-            .search-button {
-                width: 100%;
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-
-            .results-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
-
         }
 
         @media (max-width: 600px) {
-
-            header {
-                padding: 14px 15px;
-            }
-
             .header-inner {
-                align-items: flex-start;
                 flex-direction: column;
-            }
-
-            nav {
-                gap: 12px;
-            }
-
-            main {
-                padding:
-                    35px 15px 55px;
-            }
-
-            .hero h1 {
-                font-size: 28px;
-            }
-
-            .search-panel {
-                padding: 18px;
+                align-items: flex-start;
             }
 
             .search-form {
                 grid-template-columns: 1fr;
             }
 
-            .results-grid {
+            .grid {
                 grid-template-columns: 1fr;
             }
 
-            .section-heading {
-                align-items: flex-start;
-                flex-direction: column;
+            main {
+                padding: 30px 15px 50px;
             }
-
         }
-
     </style>
-
 </head>
 
 <body>
 
-<!-- =========================================================
-     HEADER
-========================================================= -->
-
 <header>
-
     <div class="header-inner">
 
-        <a href="{{ url_for('home') }}"
-           class="brand">
+        <a href="{{ url_for('home') }}" class="brand">
             🇳🇬 NijaWebbies
         </a>
 
         <nav>
-
-            <a href="{{ url_for('home') }}">
-                Home
-            </a>
-
-            <a href="{{ url_for('search') }}">
-                Explore
-            </a>
-
-            <a href="{{ url_for('businesses') }}">
-                Businesses
-            </a>
-
-            <a href="{{ url_for('communities') }}">
-                Communities
-            </a>
-
-            <a href="{{ url_for('tools') }}">
-                Tools
-            </a>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('search') }}">Explore</a>
+            <a href="{{ url_for('businesses') }}">Businesses</a>
+            <a href="{{ url_for('communities') }}">Communities</a>
+            <a href="{{ url_for('tools') }}">Tools</a>
 
             {% if session.get("user_id") %}
-
-                <a href="{{ url_for('workspace') }}">
-                    Workspace
-                </a>
-
-                <a href="{{ url_for('logout') }}">
-                    Logout
-                </a>
-
+                <a href="{{ url_for('workspace') }}">Workspace</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
             {% else %}
-
-                <a href="{{ url_for('login') }}">
-                    Login
-                </a>
-
+                <a href="{{ url_for('login') }}">Login</a>
             {% endif %}
-
         </nav>
 
     </div>
-
 </header>
 
-
-<!-- =========================================================
-     MAIN
-========================================================= -->
 
 <main>
 
     <section class="hero">
 
-        <h1>
-            🔎 Explore NijaWebbies
-        </h1>
+        <h1>🔎 Explore NijaWebbies</h1>
 
         <p>
-            Discover articles, businesses and communities
+            Discover businesses, articles and communities
             across the NijaWebbies digital ecosystem.
         </p>
 
     </section>
 
 
-    <!-- =====================================================
-         SEARCH PANEL
-    ====================================================== -->
-
-    <section class="search-panel">
+    <section class="search-box">
 
         <form
             class="search-form"
@@ -558,7 +304,7 @@
             <input
                 type="text"
                 name="q"
-                value="{{ query }}"
+                value="{{ query or '' }}"
                 placeholder="Search NijaWebbies..."
             >
 
@@ -583,30 +329,24 @@
 
             </select>
 
-
             <input
                 type="text"
                 name="location"
-                value="{{ location }}"
+                value="{{ location or '' }}"
                 placeholder="Location e.g. Lagos"
             >
 
-
-            <button
-                type="submit"
-                class="search-button"
-            >
+            <button type="submit">
                 🔎 Search
             </button>
 
         </form>
 
-
         {% if query or selected_category or location %}
 
             <a
                 href="{{ url_for('search') }}"
-                class="clear-link"
+                class="clear"
             >
                 ✕ Clear Search
             </a>
@@ -616,20 +356,13 @@
     </section>
 
 
-    <!-- =====================================================
-         SUMMARY
-    ====================================================== -->
-
     {% if query or selected_category or location %}
 
         <section class="summary">
 
-            <h2>
-                Search Results
-            </h2>
+            <h2>Search Results</h2>
 
             <p>
-
                 <span class="count">
                     {{ total_results }}
                 </span>
@@ -638,53 +371,32 @@
                 found
 
                 {% if query %}
-                    for
-                    <strong>
-                        "{{ query }}"
-                    </strong>
+                    for <strong>"{{ query }}"</strong>
                 {% endif %}
 
                 {% if selected_category %}
-                    in
-                    <strong>
-                        {{ selected_category }}
-                    </strong>
+                    in <strong>{{ selected_category }}</strong>
                 {% endif %}
 
                 {% if location %}
-                    near
-                    <strong>
-                        {{ location }}
-                    </strong>
+                    near <strong>{{ location }}</strong>
                 {% endif %}
-
             </p>
 
         </section>
 
 
-        <!-- =================================================
-             BUSINESSES
-        ================================================== -->
+        <!-- BUSINESSES -->
 
         {% if businesses %}
 
-            <section class="result-section">
+            <section class="section">
 
-                <div class="section-heading">
+                <h2 class="section-title">
+                    🏪 Businesses
+                </h2>
 
-                    <h3>
-                        🏪 Businesses
-                    </h3>
-
-                    <span class="section-count">
-                        {{ businesses|length }}
-                    </span>
-
-                </div>
-
-
-                <div class="results-grid">
+                <div class="grid">
 
                     {% for business in businesses %}
 
@@ -692,14 +404,13 @@
 
                             {% if business.category %}
 
-                                <span class="category">
+                                <span class="tag">
                                     {{ business.category }}
                                 </span>
 
                             {% endif %}
 
-
-                            <h4>
+                            <h3>
 
                                 <a
                                     href="{{ url_for(
@@ -710,17 +421,15 @@
                                     {{ business.business_name }}
                                 </a>
 
-                            </h4>
-
+                            </h3>
 
                             {% if business.location %}
 
-                                <p class="location">
+                                <p>
                                     📍 {{ business.location }}
                                 </p>
 
                             {% endif %}
-
 
                             {% if business.description %}
 
@@ -734,9 +443,8 @@
 
                             {% endif %}
 
-
                             <a
-                                class="view-link"
+                                class="view"
                                 href="{{ url_for(
                                     'public_business_profile',
                                     business_id=business.id
@@ -756,34 +464,23 @@
         {% endif %}
 
 
-        <!-- =================================================
-             ARTICLES
-        ================================================== -->
+        <!-- ARTICLES -->
 
         {% if posts %}
 
-            <section class="result-section">
+            <section class="section">
 
-                <div class="section-heading">
+                <h2 class="section-title">
+                    📝 Articles
+                </h2>
 
-                    <h3>
-                        📝 Articles
-                    </h3>
-
-                    <span class="section-count">
-                        {{ posts|length }}
-                    </span>
-
-                </div>
-
-
-                <div class="results-grid">
+                <div class="grid">
 
                     {% for post in posts %}
 
                         <article class="card">
 
-                            <h4>
+                            <h3>
 
                                 <a
                                     href="{{ url_for(
@@ -794,8 +491,7 @@
                                     {{ post.title }}
                                 </a>
 
-                            </h4>
-
+                            </h3>
 
                             {% if post.name %}
 
@@ -804,7 +500,6 @@
                                 </p>
 
                             {% endif %}
-
 
                             {% if post.content %}
 
@@ -818,9 +513,8 @@
 
                             {% endif %}
 
-
                             <a
-                                class="view-link"
+                                class="view"
                                 href="{{ url_for(
                                     'view_post',
                                     post_id=post.id
@@ -840,14 +534,119 @@
         {% endif %}
 
 
-        <!-- =================================================
-             COMMUNITIES
-        ================================================== -->
+        <!-- COMMUNITIES -->
 
         {% if communities %}
 
-            <section class="result-section">
+            <section class="section">
 
-                <div class="section-heading">
+                <h2 class="section-title">
+                    👥 Communities
+                </h2>
 
-                    <h3
+                <div class="grid">
+
+                    {% for community in communities %}
+
+                        <article class="card">
+
+                            {% if community.category %}
+
+                                <span class="tag">
+                                    {{ community.category }}
+                                </span>
+
+                            {% endif %}
+
+                            <h3>
+                                {{ community.name }}
+                            </h3>
+
+                            {% if community.description %}
+
+                                <p>
+                                    {{ community.description[:180] }}
+
+                                    {% if community.description|length > 180 %}
+                                        ...
+                                    {% endif %}
+                                </p>
+
+                            {% endif %}
+
+                            <a
+                                class="view"
+                                href="{{ url_for('communities') }}"
+                            >
+                                Explore Communities →
+                            </a>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- NO RESULTS -->
+
+        {% if total_results == 0 %}
+
+            <section class="empty">
+
+                <h3>
+                    🔍 No results found
+                </h3>
+
+                <p>
+                    We couldn't find anything matching
+                    your search.
+                </p>
+
+                <p>
+                    Try another keyword, category or location.
+                </p>
+
+            </section>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <section class="empty">
+
+            <h3>
+                🌍 Discover NijaWebbies
+            </h3>
+
+            <p>
+                Search for businesses, articles and communities
+                across the NijaWebbies ecosystem.
+            </p>
+
+        </section>
+
+    {% endif %}
+
+</main>
+
+
+<footer>
+
+    <p>
+        🇳🇬 NijaWebbies — Built for Nigeria & Africa
+    </p>
+
+    <p>
+        © 2026 NijaWebbies. All rights reserved.
+    </p>
+
+</footer>
+
+</body>
+</html>
