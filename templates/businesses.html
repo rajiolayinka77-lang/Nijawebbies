@@ -296,7 +296,10 @@
 
 <header>
     <div class="header-inner">
-        <div class="brand">🇳🇬 NijaWebbies</div>
+
+        <div class="brand">
+            🇳🇬 NijaWebbies
+        </div>
 
         <nav>
             <a href="{{ url_for('workspace') }}">Workspace</a>
@@ -310,17 +313,20 @@
                 <a href="{{ url_for('login') }}">Login</a>
             {% endif %}
         </nav>
+
     </div>
 </header>
 
 
 <section class="hero">
+
     <h1>🏪 Discover Businesses</h1>
 
     <p>
         Find businesses, entrepreneurs, creators and services
         across Nigeria on NijaWebbies.
     </p>
+
 </section>
 
 
@@ -337,21 +343,37 @@
             >
 
             <select id="categoryFilter">
-                <option value="">🏷️ All Categories</option>
+
+                <option value="">
+                    🏷️ All Categories
+                </option>
+
+                {% set categories = [] %}
 
                 {% for business in businesses %}
-                    {% if business.category %}
-                        <option value="{{ business.category }}">
-                            {{ business.category }}
-                        </option>
+
+                    {% if business.category and business.category not in categories %}
+
+                        {% set _ = categories.append(business.category) %}
+
                     {% endif %}
+
                 {% endfor %}
+
+                {% for category in categories|sort %}
+
+                    <option value="{{ category }}">
+                        {{ category }}
+                    </option>
+
+                {% endfor %}
+
             </select>
 
             <input
                 type="search"
                 id="locationFilter"
-                placeholder="📍 Location"
+                placeholder="📍 Search location..."
             >
 
         </div>
@@ -360,118 +382,169 @@
 
 
     <div class="directory-title">
-        <h2>🏪 Business Directory</h2>
+
+        <h2>
+            🏪 Business Directory
+        </h2>
 
         <div class="count">
-            Showing <strong id="businessCount">{{ businesses|length }}</strong>
+
+            Showing
+            <strong id="businessCount">
+                {{ businesses|length }}
+            </strong>
+
             business{% if businesses|length != 1 %}es{% endif %}
+
         </div>
+
     </div>
 
 
     {% if businesses %}
 
-    <div class="business-grid" id="businessGrid">
+        <div class="business-grid" id="businessGrid">
 
-        {% for business in businesses %}
+            {% for business in businesses %}
 
-        <article
-            class="business-card"
-            data-name="{{ business.business_name or '' }}"
-            data-description="{{ business.description or '' }}"
-            data-category="{{ business.category or '' }}"
-            data-location="{{ business.location or '' }}"
+                <article
+                    class="business-card"
+                    data-name="{{ business.business_name or '' }}"
+                    data-description="{{ business.description or '' }}"
+                    data-category="{{ business.category or '' }}"
+                    data-location="{{ business.location or '' }}"
+                >
+
+                    <div class="business-icon">
+                        🏪
+                    </div>
+
+
+                    <h3>
+                        {{ business.business_name or "Business" }}
+                    </h3>
+
+
+                    {% if business.category %}
+
+                        <span class="category">
+                            {{ business.category }}
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if business.description %}
+
+                        <p class="description">
+                            {{ business.description }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="description">
+                            Discover this business on NijaWebbies.
+                        </p>
+
+                    {% endif %}
+
+
+                    {% if business.location %}
+
+                        <div class="location">
+                            📍 {{ business.location }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="actions">
+
+                        <a
+                            class="btn btn-primary"
+                            href="{{ url_for(
+                                'public_business_profile',
+                                business_id=business.id
+                            ) }}"
+                        >
+                            👀 View Profile
+                        </a>
+
+
+                        {% if business.phone_link %}
+
+                            <a
+                                class="btn btn-call"
+                                href="{{ business.phone_link }}"
+                            >
+                                📞 Call
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if business.whatsapp_link %}
+
+                            {% set whatsapp = business.whatsapp_link|string|trim %}
+
+                            <a
+                                class="btn btn-whatsapp"
+                                href="{% if whatsapp.startswith('http://') or whatsapp.startswith('https://') %}{{ whatsapp }}{% else %}https://wa.me/{{ whatsapp }}{% endif %}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                💬 WhatsApp
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div
+            class="empty"
+            id="noResults"
+            style="display: none;"
         >
 
-            <div class="business-icon">
+            <div class="empty-icon">
+                🔎
+            </div>
+
+            <h3>
+                No businesses found
+            </h3>
+
+            <p>
+                Try another business name, category or location.
+            </p>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+
+            <div class="empty-icon">
                 🏪
             </div>
 
             <h3>
-                {{ business.business_name or "Business" }}
+                No businesses yet
             </h3>
 
-            {% if business.category %}
-                <span class="category">
-                    {{ business.category }}
-                </span>
-            {% endif %}
+            <p>
+                Business profiles will appear here when businesses
+                join NijaWebbies.
+            </p>
 
-            {% if business.description %}
-                <p class="description">
-                    {{ business.description }}
-                </p>
-            {% else %}
-                <p class="description">
-                    Discover this business on NijaWebbies.
-                </p>
-            {% endif %}
-
-            {% if business.location %}
-                <div class="location">
-                    📍 {{ business.location }}
-                </div>
-            {% endif %}
-
-            <div class="actions">
-
-                <a
-                    class="btn btn-primary"
-                    href="{{ url_for('public_business_profile', business_id=business.id) }}"
-                >
-                    👀 View Profile
-                </a>
-
-                {% if business.phone_link %}
-                    <a
-                        class="btn btn-call"
-                        href="{{ business.phone_link }}"
-                    >
-                        📞 Call
-                    </a>
-                {% endif %}
-
-                {% if business.whatsapp_link %}
-                    <a
-                        class="btn btn-whatsapp"
-                        href="https://wa.me/{{ business.whatsapp_link }}"
-                        target="_blank"
-                        rel="noopener"
-                    >
-                        💬 WhatsApp
-                    </a>
-                {% endif %}
-
-            </div>
-
-        </article>
-
-        {% endfor %}
-
-    </div>
-
-    <div class="empty" id="noResults" style="display:none;">
-        <div class="empty-icon">🔎</div>
-
-        <h3>No businesses found</h3>
-
-        <p>
-            Try another business name, category or location.
-        </p>
-    </div>
-
-    {% else %}
-
-    <div class="empty">
-        <div class="empty-icon">🏪</div>
-
-        <h3>No businesses yet</h3>
-
-        <p>
-            Business profiles will appear here when businesses
-            join NijaWebbies.
-        </p>
-    </div>
+        </div>
 
     {% endif %}
 
@@ -479,7 +552,10 @@
 
 
 <footer>
-    <div>🇳🇬 <strong>NijaWebbies</strong></div>
+
+    <div>
+        🇳🇬 <strong>NijaWebbies</strong>
+    </div>
 
     <p>
         A digital ecosystem for Nigeria, Africa and the world.
@@ -488,92 +564,158 @@
     <a href="{{ url_for('workspace') }}">
         ← Back to Workspace
     </a>
+
 </footer>
 
 
 <script>
-    const searchInput = document.getElementById("searchInput");
-    const categoryFilter = document.getElementById("categoryFilter");
-    const locationFilter = document.getElementById("locationFilter");
 
-    const cards = document.querySelectorAll(".business-card");
-    const countElement = document.getElementById("businessCount");
-    const noResults = document.getElementById("noResults");
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const categoryFilter =
+        document.getElementById("categoryFilter");
+
+    const locationFilter =
+        document.getElementById("locationFilter");
+
+    const cards =
+        document.querySelectorAll(".business-card");
+
+    const countElement =
+        document.getElementById("businessCount");
+
+    const noResults =
+        document.getElementById("noResults");
+
 
     function filterBusinesses() {
 
         const search =
-            (searchInput?.value || "").toLowerCase().trim();
+            (searchInput?.value || "")
+            .toLowerCase()
+            .trim();
+
 
         const category =
-            (categoryFilter?.value || "").toLowerCase().trim();
+            (categoryFilter?.value || "")
+            .toLowerCase()
+            .trim();
+
 
         const location =
-            (locationFilter?.value || "").toLowerCase().trim();
+            (locationFilter?.value || "")
+            .toLowerCase()
+            .trim();
+
 
         let visibleCount = 0;
+
 
         cards.forEach(card => {
 
             const name =
-                (card.dataset.name || "").toLowerCase();
+                (card.dataset.name || "")
+                .toLowerCase();
+
 
             const description =
-                (card.dataset.description || "").toLowerCase();
+                (card.dataset.description || "")
+                .toLowerCase();
+
 
             const cardCategory =
-                (card.dataset.category || "").toLowerCase();
+                (card.dataset.category || "")
+                .toLowerCase();
+
 
             const cardLocation =
-                (card.dataset.location || "").toLowerCase();
+                (card.dataset.location || "")
+                .toLowerCase();
+
 
             const matchesSearch =
                 !search ||
                 name.includes(search) ||
                 description.includes(search);
 
+
             const matchesCategory =
                 !category ||
                 cardCategory === category;
 
+
             const matchesLocation =
                 !location ||
                 cardLocation.includes(location);
+
 
             const visible =
                 matchesSearch &&
                 matchesCategory &&
                 matchesLocation;
 
-            card.style.display = visible ? "flex" : "none";
+
+            card.style.display =
+                visible ? "flex" : "none";
+
 
             if (visible) {
                 visibleCount++;
             }
+
         });
 
+
         if (countElement) {
-            countElement.textContent = visibleCount;
+
+            countElement.textContent =
+                visibleCount;
+
         }
 
+
         if (noResults) {
+
             noResults.style.display =
-                visibleCount === 0 ? "block" : "none";
+                visibleCount === 0
+                ? "block"
+                : "none";
+
         }
+
     }
 
 
     if (searchInput) {
-        searchInput.addEventListener("input", filterBusinesses);
+
+        searchInput.addEventListener(
+            "input",
+            filterBusinesses
+        );
+
     }
+
 
     if (categoryFilter) {
-        categoryFilter.addEventListener("change", filterBusinesses);
+
+        categoryFilter.addEventListener(
+            "change",
+            filterBusinesses
+        );
+
     }
 
+
     if (locationFilter) {
-        locationFilter.addEventListener("input", filterBusinesses);
+
+        locationFilter.addEventListener(
+            "input",
+            filterBusinesses
+        );
+
     }
+
 </script>
 
 </body>
