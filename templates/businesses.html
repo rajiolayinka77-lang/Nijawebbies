@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Business Directory | NijaWebbies</title>
+
+    <meta name="description"
+          content="Discover Nigerian businesses, services, creators and entrepreneurs on NijaWebbies.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f5;
+            color: #17251d;
+        }
+
+        header {
+            background: #064e3b;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .header-inner {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .hero {
+            background: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e1e8e3;
+        }
+
+        .hero h1 {
+            margin: 0 0 10px;
+            font-size: 34px;
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: auto;
+            color: #5b6b61;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #ccd8d0;
+            border-radius: 9px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #087f5b;
+        }
+
+        .directory-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .directory-title h2 {
+            margin: 0;
+        }
+
+        .count {
+            color: #64746b;
+            font-size: 14px;
+        }
+
+        .business-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .business-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+            border: 1px solid #e4ebe6;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .business-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #e7f5ee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 14px;
+        }
+
+        .business-card h3 {
+            margin: 0 0 7px;
+            font-size: 20px;
+            word-break: break-word;
+        }
+
+        .category {
+            display: inline-block;
+            width: fit-content;
+            background: #e9f7f0;
+            color: #08613f;
+            padding: 6px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #59675f;
+            line-height: 1.5;
+            margin: 0 0 12px;
+        }
+
+        .location {
+            color: #56655c;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: #087f5b;
+            color: white;
+        }
+
+        .btn-call {
+            background: #edf7f1;
+            color: #075c40;
+        }
+
+        .btn-whatsapp {
+            background: #e8f8ee;
+            color: #087443;
+        }
+
+        .btn:hover {
+            opacity: 0.88;
+        }
+
+        .empty {
+            background: white;
+            padding: 45px 20px;
+            border-radius: 14px;
+            text-align: center;
+            color: #617067;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            margin-top: 50px;
+            background: #073b2d;
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        @media (max-width: 850px) {
+            .business-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .business-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .directory-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <div class="brand">🇳🇬 NijaWebbies</div>
+
+        <nav>
+            <a href="{{ url_for('workspace') }}">Workspace</a>
+            <a href="{{ url_for('blog') }}">Blog</a>
+            <a href="{{ url_for('communities') }}">Communities</a>
+            <a href="{{ url_for('businesses') }}">Businesses</a>
+
+            {% if session.get("user_id") %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+
+<section class="hero">
+    <h1>🏪 Discover Businesses</h1>
+
+    <p>
+        Find businesses, entrepreneurs, creators and services
+        across Nigeria on NijaWebbies.
+    </p>
+</section>
+
+
+<main class="container">
+
+    <section class="filters">
+
+        <div class="filter-grid">
+
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="🔎 Search business name or description..."
+            >
+
+            <select id="categoryFilter">
+                <option value="">🏷️ All Categories</option>
+
+                {% for business in businesses %}
+                    {% if business.category %}
+                        <option value="{{ business.category }}">
+                            {{ business.category }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+            <input
+                type="search"
+                id="locationFilter"
+                placeholder="📍 Location"
+            >
+
+        </div>
+
+    </section>
+
+
+    <div class="directory-title">
+        <h2>🏪 Business Directory</h2>
+
+        <div class="count">
+            Showing <strong id="businessCount">{{ businesses|length }}</strong>
+            business{% if businesses|length != 1 %}es{% endif %}
+        </div>
+    </div>
+
+
+    {% if businesses %}
+
+    <div class="business-grid" id="businessGrid">
+
+        {% for business in businesses %}
+
+        <article
+            class="business-card"
+            data-name="{{ business.business_name or '' }}"
+            data-description="{{ business.description or '' }}"
+            data-category="{{ business.category or '' }}"
+            data-location="{{ business.location or '' }}"
+        >
+
+            <div class="business-icon">
+                🏪
+            </div>
+
+            <h3>
+                {{ business.business_name or "Business" }}
+            </h3>
+
+            {% if business.category %}
+                <span class="category">
+                    {{ business.category }}
+                </span>
+            {% endif %}
+
+            {% if business.description %}
+                <p class="description">
+                    {{ business.description }}
+                </p>
+            {% else %}
+                <p class="description">
+                    Discover this business on NijaWebbies.
+                </p>
+            {% endif %}
+
+            {% if business.location %}
+                <div class="location">
+                    📍 {{ business.location }}
+                </div>
+            {% endif %}
+
+            <div class="actions">
+
+                <a
+                    class="btn btn-primary"
+                    href="{{ url_for('public_business_profile', business_id=business.id) }}"
+                >
+                    👀 View Profile
+                </a>
+
+                {% if business.phone_link %}
+                    <a
+                        class="btn btn-call"
+                        href="{{ business.phone_link }}"
+                    >
+                        📞 Call
+                    </a>
+                {% endif %}
+
+                {% if business.whatsapp_link %}
+                    <a
+                        class="btn btn-whatsapp"
+                        href="https://wa.me/{{ business.whatsapp_link }}"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        💬 WhatsApp
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="empty" id="noResults" style="display:none;">
+        <div class="empty-icon">🔎</div>
+
+        <h3>No businesses found</h3>
+
+        <p>
+            Try another business name, category or location.
+        </p>
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        <div class="empty-icon">🏪</div>
+
+        <h3>No businesses yet</h3>
+
+        <p>
+            Business profiles will appear here when businesses
+            join NijaWebbies.
+        </p>
+    </div>
+
+    {% endif %}
+
+</main>
+
+
+<footer>
+    <div>🇳🇬 <strong>NijaWebbies</strong></div>
+
+    <p>
+        A digital ecosystem for Nigeria, Africa and the world.
+    </p>
+
+    <a href="{{ url_for('workspace') }}">
+        ← Back to Workspace
+    </a>
+</footer>
+
+
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const locationFilter = document.getElementById("locationFilter");
+
+    const cards = document.querySelectorAll(".business-card");
+    const countElement = document.getElementById("businessCount");
+    const noResults = document.getElementById("noResults");
+
+    function filterBusinesses() {
+
+        const search =
+            (searchInput?.value || "").toLowerCase().trim();
+
+        const category =
+            (categoryFilter?.value || "").toLowerCase().trim();
+
+        const location =
+            (locationFilter?.value || "").toLowerCase().trim();
+
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+
+            const name =
+                (card.dataset.name || "").toLowerCase();
+
+            const description =
+                (card.dataset.description || "").toLowerCase();
+
+            const cardCategory =
+                (card.dataset.category || "").toLowerCase();
+
+            const cardLocation =
+                (card.dataset.location || "").toLowerCase();
+
+            const matchesSearch =
+                !search ||
+                name.includes(search) ||
+                description.includes(search);
+
+            const matchesCategory =
+                !category ||
+                cardCategory === category;
+
+            const matchesLocation =
+                !location ||
+                cardLocation.includes(location);
+
+            const visible =
+                matchesSearch &&
+                matchesCategory &&
+                matchesLocation;
+
+            card.style.display = visible ? "flex" : "none";
+
+            if (visible) {
+                visibleCount++;
+            }
+        });
+
+        if (countElement) {
+            countElement.textContent = visibleCount;
+        }
+
+        if (noResults) {
+            noResults.style.display =
+                visibleCount === 0 ? "block" : "none";
+        }
+    }
+
+
+    if (searchInput) {
+        searchInput.addEventListener("input", filterBusinesses);
+    }
+
+    if (categoryFilter) {
+        categoryFilter.addEventListener("change", filterBusinesses);
+    }
+
+    if (locationFilter) {
+        locationFilter.addEventListener("input", filterBusinesses);
+    }
+</script>
+
+</body>
+</html>
