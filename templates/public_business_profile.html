@@ -9,6 +9,8 @@
     <meta name="description"
           content="{{ business.description or 'Business profile on NijaWebbies' }}">
 
+    <meta name="theme-color" content="#111827">
+
     <style>
         * {
             box-sizing: border-box;
@@ -69,6 +71,7 @@
         .category {
             color: #6b7280;
             font-size: 16px;
+            margin-top: 5px;
         }
 
         .verified {
@@ -121,6 +124,11 @@
             word-break: break-word;
         }
 
+        .info-value a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
         .actions {
             display: flex;
             flex-wrap: wrap;
@@ -136,6 +144,9 @@
             border-radius: 10px;
             font-weight: bold;
             text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
         }
 
         .btn-phone {
@@ -153,6 +164,16 @@
             color: white;
         }
 
+        .btn-location {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-share {
+            background: #111827;
+            color: white;
+        }
+
         .footer {
             text-align: center;
             color: #6b7280;
@@ -165,7 +186,23 @@
             text-decoration: none;
         }
 
+        .location-note {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .share-message {
+            display: none;
+            text-align: center;
+            margin-top: 12px;
+            color: #15803d;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         @media (max-width: 600px) {
+
             .container {
                 margin: 15px auto;
             }
@@ -195,37 +232,55 @@
     <div class="brand">🇳🇬 NijaWebbies</div>
 </div>
 
+
 <div class="container">
 
     <div class="card">
 
+        <!-- BUSINESS HEADER -->
+
         <div class="business-header">
 
             {% if business.logo_url %}
+
                 <img
                     src="{{ business.logo_url }}"
                     alt="{{ business.business_name or 'Business Logo' }}"
                     class="business-logo"
                 >
+
             {% else %}
+
                 <div
                     class="business-logo"
-                    style="display:flex;align-items:center;justify-content:center;
-                           font-size:45px;margin-left:auto;margin-right:auto;"
+                    style="
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-size:45px;
+                        margin-left:auto;
+                        margin-right:auto;
+                    "
                 >
                     🏪
                 </div>
+
             {% endif %}
+
 
             <h1 class="business-name">
                 {{ business.business_name or "Business Profile" }}
             </h1>
 
+
             {% if business.category %}
+
                 <div class="category">
                     {{ business.category }}
                 </div>
+
             {% endif %}
+
 
             <div class="verified">
                 ✓ NijaWebbies Business Profile
@@ -234,91 +289,168 @@
         </div>
 
 
+        <!-- ABOUT -->
+
         {% if business.description %}
+
         <div class="section">
+
             <h2>About the Business</h2>
 
             <div class="description">
                 {{ business.description }}
             </div>
+
         </div>
+
         {% endif %}
 
 
+        <!-- BUSINESS INFORMATION -->
+
         <div class="section">
+
             <h2>Business Information</h2>
 
             <div class="info">
 
-                {% if business.address %}
+
+                <!-- LOCATION -->
+
+                {% if business.location %}
+
                 <div class="info-row">
-                    <div class="info-label">📍 Address</div>
-                    <div class="info-value">
-                        {{ business.address }}
+
+                    <div class="info-label">
+                        📍 Location
                     </div>
+
+                    <div class="info-value">
+                        {{ business.location }}
+                    </div>
+
                 </div>
+
                 {% endif %}
 
 
+                <!-- PHONE -->
+
                 {% if business.phone %}
+
                 <div class="info-row">
-                    <div class="info-label">📞 Phone</div>
+
+                    <div class="info-label">
+                        📞 Phone
+                    </div>
+
                     <div class="info-value">
                         {{ business.phone }}
                     </div>
+
                 </div>
+
                 {% endif %}
 
 
-                {% if business.email %}
+                <!-- WHATSAPP -->
+
+                {% if business.whatsapp %}
+
                 <div class="info-row">
-                    <div class="info-label">✉️ Email</div>
-                    <div class="info-value">
-                        {{ business.email }}
+
+                    <div class="info-label">
+                        💬 WhatsApp
                     </div>
+
+                    <div class="info-value">
+                        Available for WhatsApp chat
+                    </div>
+
                 </div>
+
                 {% endif %}
 
+
+                <!-- WEBSITE -->
 
                 {% if business.website %}
+
                 <div class="info-row">
-                    <div class="info-label">🌐 Website</div>
-                    <div class="info-value">
-                        {{ business.website }}
+
+                    <div class="info-label">
+                        🌐 Website
                     </div>
+
+                    <div class="info-value">
+
+                        <a
+                            href="{{ business.website }}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            {{ business.website }}
+                        </a>
+
+                    </div>
+
                 </div>
+
                 {% endif %}
 
             </div>
+
         </div>
 
 
+        <!-- ACTION BUTTONS -->
+
         <div class="actions">
 
+
+            <!-- CALL -->
+
             {% if phone_link %}
-            <a href="{{ phone_link }}" class="btn btn-phone">
+
+            <a
+                href="{{ phone_link }}"
+                class="btn btn-phone"
+            >
                 📞 Call Business
             </a>
+
             {% elif business.phone %}
-            <a href="tel:{{ business.phone }}" class="btn btn-phone">
+
+            <a
+                href="tel:{{ business.phone }}"
+                class="btn btn-phone"
+            >
                 📞 Call Business
             </a>
+
             {% endif %}
 
 
-            {% if business.phone %}
+            <!-- WHATSAPP -->
+
+            {% if whatsapp_link %}
+
             <a
-                href="https://wa.me/{{ business.phone|replace('+','')|replace(' ','')|replace('-','') }}"
+                href="https://wa.me/{{ whatsapp_link }}"
                 class="btn btn-whatsapp"
                 target="_blank"
                 rel="noopener"
             >
-                💬 WhatsApp
+                💬 Chat on WhatsApp
             </a>
+
             {% endif %}
 
 
+            <!-- WEBSITE -->
+
             {% if business.website %}
+
             <a
                 href="{{ business.website }}"
                 class="btn btn-website"
@@ -327,20 +459,135 @@
             >
                 🌐 Visit Website
             </a>
+
             {% endif %}
 
+
+            <!-- LOCATION -->
+
+            {% if business.location %}
+
+            <a
+                href="https://www.google.com/maps/search/?api=1&query={{ business.location|urlencode }}"
+                class="btn btn-location"
+                target="_blank"
+                rel="noopener"
+            >
+                📍 View Location
+            </a>
+
+            {% endif %}
+
+
+            <!-- SHARE -->
+
+            <button
+                type="button"
+                class="btn btn-share"
+                onclick="shareBusiness()"
+            >
+                📤 Share Profile
+            </button>
+
+        </div>
+
+
+        <!-- SHARE MESSAGE -->
+
+        <div
+            id="shareMessage"
+            class="share-message"
+        >
+            ✓ Profile link copied!
         </div>
 
     </div>
 
 
+    <!-- FOOTER -->
+
     <div class="footer">
+
         Powered by
-        <a href="{{ url_for('home') }}">NijaWebbies</a>
+
+        <a href="{{ url_for('home') }}">
+            NijaWebbies
+        </a>
+
         🇳🇬
+
     </div>
 
 </div>
+
+
+<script>
+
+function shareBusiness() {
+
+    const shareData = {
+        title: "{{ business.business_name|e }} | NijaWebbies",
+        text: "Check out {{ business.business_name|e }} on NijaWebbies.",
+        url: window.location.href
+    };
+
+
+    if (navigator.share) {
+
+        navigator.share(shareData)
+            .catch(function(error) {
+
+                if (error.name !== "AbortError") {
+                    copyProfileLink();
+                }
+
+            });
+
+    } else {
+
+        copyProfileLink();
+
+    }
+
+}
+
+
+function copyProfileLink() {
+
+    const url = window.location.href;
+
+    if (navigator.clipboard) {
+
+        navigator.clipboard.writeText(url)
+            .then(function() {
+
+                const message =
+                    document.getElementById("shareMessage");
+
+                message.style.display = "block";
+
+                setTimeout(function() {
+
+                    message.style.display = "none";
+
+                }, 3000);
+
+            })
+            .catch(function() {
+
+                alert("Copy this profile link: " + url);
+
+            });
+
+    } else {
+
+        alert("Copy this profile link: " + url);
+
+    }
+
+}
+
+</script>
 
 </body>
 </html>
