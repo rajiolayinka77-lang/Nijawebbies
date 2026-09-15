@@ -1175,16 +1175,16 @@ def view_post(post_id):
 @app.route("/search")
 def search():
 
-    query = request.args.get(
-        "q",
-        ""
-    ).strip()
+    query = request.args.get("q", "").strip()
+    category = request.args.get("category", "").strip()
+    location = request.args.get("location", "").strip()
 
     conn = None
 
     posts = []
     businesses = []
     communities = []
+    categories = []
 
     try:
 
@@ -1194,14 +1194,29 @@ def search():
             cursor_factory=RealDictCursor
         ) as cursor:
 
+            # =====================================================
+            # GET BUSINESS CATEGORIES
+            # =====================================================
+
+            cursor.execute(
+                """
+                SELECT DISTINCT category
+                FROM business_profiles
+                WHERE category IS NOT NULL
+                  AND TRIM(category) <> ''
+                ORDER BY category ASC
+                """
+            )
+
+            categories = cursor.fetchall()
+
+            # =====================================================
+            # SEARCH BLOG POSTS
+            # =====================================================
+
             if query:
 
                 search_term = f"%{query}%"
-
-
-                # ==========================================
-                # SEARCH BLOG ARTICLES
-                # ==========================================
 
                 cursor.execute(
                     """
@@ -1224,46 +1239,90 @@ def search():
 
                 posts = cursor.fetchall()
 
+            # =====================================================
+            # SEARCH BUSINESSES
+            # =====================================================
 
-                # ==========================================
-                # SEARCH BUSINESS PROFILES
-                # ==========================================
+            business_query = """
+                SELECT
+                    id,
+                    user_id,
+                    business_name,
+                    description,
+                    category,
+                    phone,
+                    whatsapp,
+                    location,
+                    website,
+                    created_at
+                FROM business_profiles
+                WHERE 1=1
+            """
 
-                cursor.execute(
-                    """
-                    SELECT
-                        id,
-                        user_id,
-                        business_name,
-                        description,
-                        category,
-                        phone,
-                        whatsapp,
-                        location,
-                        website,
-                        created_at
-                    FROM business_profiles
-                    WHERE
+            business_params = []
+
+            if query:
+
+                search_term = f"%{query}%"
+
+                business_query += """
+                    AND (
                         business_name ILIKE %s
                         OR description ILIKE %s
                         OR category ILIKE %s
                         OR location ILIKE %s
-                    ORDER BY id DESC
-                    """,
-                    (
-                        search_term,
-                        search_term,
-                        search_term,
-                        search_term
                     )
+                """
+
+                business_params.extend([
+                    search_term,
+                    search_term,
+                    search_term,
+                    search_term
+                ])
+
+            if category:
+
+                business_query += """
+                    AND category ILIKE %s
+                """
+
+                business_params.append(
+                    f"%{category}%"
+                )
+
+            if location:
+
+                business_query += """
+                    AND location ILIKE %s
+                """
+
+                business_params.append(
+                    f"%{location}%"
+                )
+
+            # Only show businesses when there is
+            # a search/filter request.
+            if query or category or location:
+
+                business_query += """
+                    ORDER BY id DESC
+                """
+
+                cursor.execute(
+                    business_query,
+                    business_params
                 )
 
                 businesses = cursor.fetchall()
 
+            # =====================================================
+            # SEARCH COMMUNITIES
+            # =====================================================
 
-                # ==========================================
-                # SEARCH COMMUNITIES
-                # ==========================================
+            if query:
+
+                search_term = f"%{query}%"
 
                 cursor.execute(
                     """
@@ -1290,18 +1349,114 @@ def search():
 
                 communities = cursor.fetchall()
 
+        # =========================================================
+        # PREPARE BUSINESS LINKS
+        # =========================================================
+
+        for business in businesses:
+
+            # Phone link
+            phone = business.get("phone") or ""
+
+            clean_phone = "".join(
+                character
+                for character in phone
+                if character.isdigit()
+                or character == "+"
+            )
+
+            if clean_phone:
+
+                business["phone_link"] = (
+                    f"tel:{clean_phone}"
+                )
+
+            else:
+
+                business["phone_link"] = None
+
+            # WhatsApp link
+            whatsapp = business.get("whatsapp") or ""
+
+            if whatsapp:
+
+                whatsapp_digits = "".join(
+                    character
+                    for character in whatsapp
+                    if character.isdigit()
+                )
+
+                if whatsapp_digits:
+
+                    if whatsapp_digits.startswith("0"):
+
+                        whatsapp_digits = (
+                            "234"
+                            + whatsapp_digits[1:]
+                        )
+
+                    elif not whatsapp_digits.startswith("234"):
+
+                        whatsapp_digits = (
+                            "234"
+                            + whatsapp_digits
+                        )
+
+                    business["whatsapp_link"] = (
+                        f"https://wa.me/{whatsapp_digits}"
+                    )
+
+                else:
+
+                    business["whatsapp_link"] = None
+
+            else:
+
+                business["whatsapp_link"] = None
+
+            # Website link
+            website = business.get("website") or ""
+
+            if website:
+
+                if not website.startswith(
+                    ("http://", "https://")
+                ):
+
+                    website = (
+                        "https://"
+                        + website
+                    )
+
+                business["website_link"] = website
+
+            else:
+
+                business["website_link"] = None
+
+        # =========================================================
+        # RESULT COUNT
+        # =========================================================
+
         total_results = (
             len(posts)
             + len(businesses)
             + len(communities)
         )
 
+        # =========================================================
+        # RENDER SEARCH PAGE
+        # =========================================================
+
         return render_template(
             "search.html",
             posts=posts,
             businesses=businesses,
             communities=communities,
+            categories=categories,
             query=query,
+            selected_category=category,
+            location=location,
             total_results=total_results
         )
 
@@ -1316,7 +1471,10 @@ def search():
             posts=[],
             businesses=[],
             communities=[],
+            categories=[],
             query=query,
+            selected_category=category,
+            location=location,
             total_results=0
         )
 
