@@ -65,6 +65,7 @@ def init_db():
     conn = None
 
     try:
+
         conn = get_db()
 
         with conn.cursor() as cursor:
@@ -196,6 +197,44 @@ def init_db():
                 )
             """)
 
+            # =================================================
+            # COMMUNITY DISCUSSIONS
+            # =================================================
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS community_posts (
+                    id SERIAL PRIMARY KEY,
+                    community_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
+                    content TEXT NOT NULL,
+                    created_at TIMESTAMP NOT NULL,
+
+                    FOREIGN KEY (community_id)
+                    REFERENCES communities(id)
+                    ON DELETE CASCADE,
+
+                    FOREIGN KEY (user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+                )
+            """)
+
+            # =================================================
+            # COMMUNITY DISCUSSION INDEXES
+            # =================================================
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_community_posts_community
+                ON community_posts(community_id)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_community_posts_user
+                ON community_posts(user_id)
+            """)
+
         conn.commit()
 
         app.logger.info(
@@ -203,6 +242,7 @@ def init_db():
         )
 
     except Exception:
+
         if conn:
             conn.rollback()
 
@@ -221,9 +261,11 @@ def init_db():
 # =========================================================
 
 try:
+
     init_db()
 
 except Exception:
+
     app.logger.exception(
         "Database startup failed."
     )
@@ -239,6 +281,7 @@ def is_safe_url(target):
         return False
 
     try:
+
         parsed = urlparse(target)
 
         return (
@@ -249,6 +292,7 @@ def is_safe_url(target):
         )
 
     except Exception:
+
         return False
 
 
@@ -267,9 +311,11 @@ def make_whatsapp_link(number):
         return None
 
     if digits.startswith("0"):
+
         digits = "234" + digits[1:]
 
     elif not digits.startswith("234"):
+
         digits = "234" + digits
 
     return f"https://wa.me/{digits}"
@@ -303,6 +349,7 @@ def make_website_link(website):
         return None
 
     if not website.startswith(("http://", "https://")):
+
         website = "https://" + website
 
     return website
@@ -327,6 +374,7 @@ def login_required(view):
             next_page = request.full_path
 
             if next_page.endswith("?"):
+
                 next_page = next_page[:-1]
 
             return redirect(
@@ -364,6 +412,7 @@ def home():
 def register():
 
     if session.get("user_id"):
+
         return redirect(
             url_for("workspace")
         )
@@ -524,6 +573,7 @@ def register():
             )
 
         finally:
+
             close_db(conn)
 
     return render_template(
@@ -542,6 +592,7 @@ def register():
 def login():
 
     if session.get("user_id"):
+
         return redirect(
             url_for("workspace")
         )
@@ -632,6 +683,7 @@ def login():
             )
 
         finally:
+
             close_db(conn)
 
         password_valid = False
@@ -673,6 +725,7 @@ def login():
         session.permanent = bool(remember)
 
         if is_safe_url(next_page):
+
             return redirect(next_page)
 
         return redirect(
@@ -802,6 +855,7 @@ def workspace():
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -896,6 +950,7 @@ def create_post():
             )
 
         finally:
+
             close_db(conn)
 
     return render_template(
@@ -1022,6 +1077,7 @@ def edit_post(post_id):
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -1101,6 +1157,7 @@ def delete_post(post_id):
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -1152,6 +1209,7 @@ def blog():
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -1189,6 +1247,7 @@ def view_post(post_id):
             post = cursor.fetchone()
 
         if not post:
+
             return "Post not found", 404
 
         return render_template(
@@ -1205,6 +1264,7 @@ def view_post(post_id):
         return "Unable to load post.", 500
 
     finally:
+
         close_db(conn)
 
 
@@ -1215,9 +1275,20 @@ def view_post(post_id):
 @app.route("/search")
 def search():
 
-    query = request.args.get("q", "").strip()
-    category = request.args.get("category", "").strip()
-    location = request.args.get("location", "").strip()
+    query = request.args.get(
+        "q",
+        ""
+    ).strip()
+
+    category = request.args.get(
+        "category",
+        ""
+    ).strip()
+
+    location = request.args.get(
+        "location",
+        ""
+    ).strip()
 
     conn = None
 
@@ -1426,6 +1497,7 @@ def search():
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -1495,9 +1567,11 @@ def creator_studio():
             ).strip()
 
             if project_type not in ALLOWED_PROJECT_TYPES:
+
                 project_type = "General"
 
             if status not in ALLOWED_PROJECT_STATUSES:
+
                 status = "Idea"
 
             if not title:
@@ -1588,6 +1662,7 @@ def creator_studio():
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -1595,7 +1670,9 @@ def creator_studio():
 # VIEW CREATOR PROJECT
 # =========================================================
 
-@app.route("/creator-project/<int:project_id>")
+@app.route(
+    "/creator-project/<int:project_id>"
+)
 @login_required
 def view_creator_project(project_id):
 
@@ -1665,6 +1742,7 @@ def view_creator_project(project_id):
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -1672,7 +1750,9 @@ def view_creator_project(project_id):
 # PROJECT URL ALIAS
 # =========================================================
 
-@app.route("/project/<int:project_id>")
+@app.route(
+    "/project/<int:project_id>"
+)
 @login_required
 def view_project(project_id):
 
@@ -1761,9 +1841,11 @@ def edit_creator_project(project_id):
         ).strip()
 
         if project_type not in ALLOWED_PROJECT_TYPES:
+
             project_type = "General"
 
         if status not in ALLOWED_PROJECT_STATUSES:
+
             status = "Idea"
 
         if not title:
@@ -1860,6 +1942,7 @@ def edit_creator_project(project_id):
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -1939,6 +2022,7 @@ def delete_creator_project(project_id):
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -2226,6 +2310,7 @@ def business_space():
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -2236,9 +2321,20 @@ def business_space():
 @app.route("/businesses")
 def businesses():
 
-    q = request.args.get("q", "").strip()
-    category = request.args.get("category", "").strip()
-    location = request.args.get("location", "").strip()
+    q = request.args.get(
+        "q",
+        ""
+    ).strip()
+
+    category = request.args.get(
+        "category",
+        ""
+    ).strip()
+
+    location = request.args.get(
+        "location",
+        ""
+    ).strip()
 
     conn = None
 
@@ -2373,6 +2469,7 @@ def businesses():
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -2380,7 +2477,9 @@ def businesses():
 # PUBLIC BUSINESS PROFILE
 # =========================================================
 
-@app.route("/business/<int:business_id>")
+@app.route(
+    "/business/<int:business_id>"
+)
 def public_business_profile(business_id):
 
     conn = None
@@ -2452,6 +2551,7 @@ def public_business_profile(business_id):
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -2494,7 +2594,10 @@ def upgrade():
 def communities():
 
     conn = None
-    user_id = session.get("user_id")
+
+    user_id = session.get(
+        "user_id"
+    )
 
     try:
 
@@ -2689,9 +2792,12 @@ def communities():
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0">
 
-                <title>Communities Error | NijaWebbies</title>
+                <title>
+                    Communities Error | NijaWebbies
+                </title>
 
                 <style>
+
                     body {
                         font-family: Arial, sans-serif;
                         background: #f5f7fb;
@@ -2730,6 +2836,7 @@ def communities():
                         padding: 12px 18px;
                         border-radius: 8px;
                     }
+
                 </style>
 
             </head>
@@ -2738,7 +2845,9 @@ def communities():
 
                 <div class="box">
 
-                    <h1>Communities could not load</h1>
+                    <h1>
+                        Communities could not load
+                    </h1>
 
                     <p>
                         NijaWebbies reached the Communities
@@ -2746,7 +2855,7 @@ def communities():
                     </p>
 
                     <div class="error">
-                    """
+            """
             + str(error)
             + """
                     </div>
@@ -2770,6 +2879,7 @@ def communities():
         )
 
     finally:
+
         close_db(conn)
 
 
@@ -2777,12 +2887,17 @@ def communities():
 # COMMUNITY DETAILS
 # =========================================================
 
-@app.route("/community/<int:community_id>")
+@app.route(
+    "/community/<int:community_id>"
+)
 @login_required
 def community_detail(community_id):
 
     conn = None
-    user_id = session.get("user_id")
+
+    user_id = session.get(
+        "user_id"
+    )
 
     try:
 
@@ -2855,7 +2970,9 @@ def community_detail(community_id):
 
             cursor.execute(
                 """
-                SELECT id, joined_at
+                SELECT
+                    id,
+                    joined_at
                 FROM community_members
                 WHERE community_id = %s
                   AND user_id = %s
@@ -2892,6 +3009,30 @@ def community_detail(community_id):
 
             members = cursor.fetchall()
 
+            # =================================================
+            # LOAD COMMUNITY DISCUSSIONS
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    cp.id,
+                    cp.community_id,
+                    cp.user_id,
+                    cp.content,
+                    cp.created_at,
+                    u.name AS author_name
+                FROM community_posts AS cp
+                INNER JOIN users AS u
+                    ON cp.user_id = u.id
+                WHERE cp.community_id = %s
+                ORDER BY cp.id DESC
+                """,
+                (community_id,)
+            )
+
+            discussions = cursor.fetchall()
+
         return render_template(
             "community_detail.html",
             community=community,
@@ -2899,6 +3040,7 @@ def community_detail(community_id):
             is_member=is_member,
             membership=membership,
             members=members,
+            discussions=discussions,
             user_name=session.get("user_name")
         )
 
@@ -2926,7 +3068,9 @@ def community_detail(community_id):
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0">
 
-                <title>Community Error | NijaWebbies</title>
+                <title>
+                    Community Error | NijaWebbies
+                </title>
 
                 <style>
 
@@ -2987,7 +3131,7 @@ def community_detail(community_id):
                     </p>
 
                     <div class="error">
-                    """
+            """
             + str(error)
             + """
                     </div>
@@ -3011,6 +3155,321 @@ def community_detail(community_id):
         )
 
     finally:
+
+        close_db(conn)
+
+
+# =========================================================
+# CREATE COMMUNITY DISCUSSION
+# =========================================================
+
+@app.route(
+    "/community/<int:community_id>/post",
+    methods=["POST"]
+)
+@login_required
+def create_community_post(community_id):
+
+    conn = None
+
+    user_id = session.get(
+        "user_id"
+    )
+
+    try:
+
+        content = request.form.get(
+            "content",
+            ""
+        ).strip()
+
+        if not content:
+
+            flash(
+                "Please write something before posting.",
+                "danger"
+            )
+
+            return redirect(
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
+            )
+
+        if len(content) > 5000:
+
+            flash(
+                "Community discussion cannot exceed 5,000 characters.",
+                "danger"
+            )
+
+            return redirect(
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
+            )
+
+        conn = get_db()
+
+        with conn.cursor() as cursor:
+
+            # =================================================
+            # CHECK COMMUNITY
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    owner_id
+                FROM communities
+                WHERE id = %s
+                LIMIT 1
+                """,
+                (community_id,)
+            )
+
+            community = cursor.fetchone()
+
+            if not community:
+
+                flash(
+                    "Community not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            # =================================================
+            # CHECK MEMBERSHIP
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                LIMIT 1
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            membership = cursor.fetchone()
+
+            if not membership:
+
+                flash(
+                    "You must join this community before starting a discussion.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # CREATE DISCUSSION
+            # =================================================
+
+            cursor.execute(
+                """
+                INSERT INTO community_posts
+                (
+                    community_id,
+                    user_id,
+                    content,
+                    created_at
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    community_id,
+                    user_id,
+                    content,
+                    datetime.utcnow()
+                )
+            )
+
+        conn.commit()
+
+        flash(
+            "Your discussion has been posted.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "CREATE COMMUNITY POST FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to publish your discussion right now.",
+            "danger"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    finally:
+
+        close_db(conn)
+
+
+# =========================================================
+# DELETE COMMUNITY DISCUSSION
+# =========================================================
+
+@app.route(
+    "/community-post/<int:post_id>/delete",
+    methods=["POST"]
+)
+@login_required
+def delete_community_post(post_id):
+
+    conn = None
+
+    user_id = session.get(
+        "user_id"
+    )
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            # =================================================
+            # GET POST + COMMUNITY OWNER
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    cp.id,
+                    cp.community_id,
+                    cp.user_id,
+                    c.owner_id
+                FROM community_posts AS cp
+                INNER JOIN communities AS c
+                    ON cp.community_id = c.id
+                WHERE cp.id = %s
+                LIMIT 1
+                """,
+                (post_id,)
+            )
+
+            post = cursor.fetchone()
+
+            if not post:
+
+                flash(
+                    "Discussion not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            community_id = post["community_id"]
+
+            # =================================================
+            # ONLY AUTHOR OR COMMUNITY OWNER CAN DELETE
+            # =================================================
+
+            if (
+                post["user_id"] != user_id
+                and post["owner_id"] != user_id
+            ):
+
+                flash(
+                    "You do not have permission to delete this discussion.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            cursor.execute(
+                """
+                DELETE FROM community_posts
+                WHERE id = %s
+                """,
+                (post_id,)
+            )
+
+        conn.commit()
+
+        flash(
+            "Discussion deleted successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "DELETE COMMUNITY POST FAILED | post_id=%s | user_id=%s | error=%s",
+            post_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to delete the discussion.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("communities")
+        )
+
+    finally:
+
         close_db(conn)
 
 
@@ -3031,7 +3490,9 @@ def join_community(community_id):
 
         conn = get_db()
 
-        user_id = session.get("user_id")
+        user_id = session.get(
+            "user_id"
+        )
 
         with conn.cursor() as cursor:
 
@@ -3124,6 +3585,141 @@ def join_community(community_id):
         )
 
     finally:
+
+        close_db(conn)
+
+
+# =========================================================
+# LEAVE COMMUNITY
+# =========================================================
+
+@app.route(
+    "/leave-community/<int:community_id>",
+    methods=["POST"]
+)
+@login_required
+def leave_community(community_id):
+
+    conn = None
+
+    user_id = session.get(
+        "user_id"
+    )
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    owner_id
+                FROM communities
+                WHERE id = %s
+                LIMIT 1
+                """,
+                (community_id,)
+            )
+
+            community = cursor.fetchone()
+
+            if not community:
+
+                flash(
+                    "Community not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            # =================================================
+            # OWNER CANNOT LEAVE
+            # =================================================
+
+            if community["owner_id"] == user_id:
+
+                flash(
+                    "The community owner cannot leave the community.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            cursor.execute(
+                """
+                DELETE FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            removed = cursor.rowcount
+
+        conn.commit()
+
+        if removed:
+
+            flash(
+                "You have left the community.",
+                "success"
+            )
+
+        else:
+
+            flash(
+                "You are not a member of this community.",
+                "warning"
+            )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "LEAVE COMMUNITY FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to leave the community right now.",
+            "danger"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    finally:
+
         close_db(conn)
 
 
@@ -3155,7 +3751,9 @@ def page_not_found(error):
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
 
-    <title>Page Not Found - NijaWebbies</title>
+    <title>
+        Page Not Found - NijaWebbies
+    </title>
 
 </head>
 
@@ -3174,7 +3772,9 @@ def page_not_found(error):
         404
     </h1>
 
-    <h2>Page not found</h2>
+    <h2>
+        Page not found
+    </h2>
 
     <p style="color:#6b7280;">
         The page you are looking for does not exist.
@@ -3217,7 +3817,9 @@ def internal_server_error(error):
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
 
-    <title>NijaWebbies - Error</title>
+    <title>
+        NijaWebbies - Error
+    </title>
 
 </head>
 
@@ -3229,7 +3831,9 @@ def internal_server_error(error):
     color:#111827;
 ">
 
-    <h1>Something went wrong</h1>
+    <h1>
+        Something went wrong
+    </h1>
 
     <p style="color:#6b7280;">
         NijaWebbies encountered an unexpected error.
