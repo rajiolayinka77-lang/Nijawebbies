@@ -165,10 +165,11 @@
             display: inline-block;
             border: none;
             border-radius: 9px;
-            padding: 11px 16px;
+            padding: 10px 14px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 700;
+            text-align: center;
         }
 
         .btn-primary {
@@ -194,6 +195,16 @@
             background: #e8f5ed;
             color: #087443;
             cursor: default;
+        }
+
+        .btn-view {
+            background: #eef5ff;
+            color: #1d4f91;
+            border: 1px solid #cfe0f8;
+        }
+
+        .btn-view:hover {
+            background: #dfeeff;
         }
 
         .section {
@@ -278,6 +289,8 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 6px;
         }
 
         .empty {
@@ -403,6 +416,14 @@
 
             .card {
                 padding: 18px;
+            }
+
+            .community-actions {
+                align-items: stretch;
+            }
+
+            .community-actions .btn {
+                width: 100%;
             }
         }
     </style>
@@ -652,7 +673,16 @@
 
                                 <div class="community-actions">
 
-                                    <span class="tag">
+                                    <a
+                                        href="{{ url_for(
+                                            'community_detail',
+                                            community_id=community.id
+                                        ) }}"
+                                        class="btn btn-view">
+                                        View Community
+                                    </a>
+
+                                    <span class="btn btn-joined">
                                         ✓ Joined
                                     </span>
 
@@ -763,6 +793,16 @@
 
                                 <div class="community-actions">
 
+                                    <a
+                                        href="{{ url_for(
+                                            'community_detail',
+                                            community_id=community.id
+                                        ) }}"
+                                        class="btn btn-view">
+                                        View Community
+                                    </a>
+
+
                                     {% if ns.joined %}
 
                                         <span class="btn btn-joined">
@@ -773,7 +813,10 @@
 
                                         <form
                                             method="POST"
-                                            action="{{ url_for('join_community', community_id=community.id) }}"
+                                            action="{{ url_for(
+                                                'join_community',
+                                                community_id=community.id
+                                            ) }}"
                                             style="margin:0;">
 
                                             <button
