@@ -106,6 +106,17 @@
             font-weight: 700;
         }
 
+        .visitor-note {
+            margin-top: 16px;
+            background: #eef8f2;
+            border: 1px solid #cce7d5;
+            color: #275b3b;
+            padding: 13px 15px;
+            border-radius: 10px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
         .layout {
             display: grid;
             grid-template-columns: 330px 1fr;
@@ -123,6 +134,23 @@
         .card h2 {
             margin: 0 0 16px;
             font-size: 21px;
+        }
+
+        .login-card {
+            background: #ffffff;
+        }
+
+        .login-card p {
+            color: #5c675f;
+            line-height: 1.6;
+            font-size: 14px;
+            margin: 0 0 17px;
+        }
+
+        .login-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .form-group {
@@ -189,6 +217,25 @@
 
         .btn-join:hover {
             background: #065d36;
+        }
+
+        .btn-login {
+            background: #087443;
+            color: white;
+        }
+
+        .btn-login:hover {
+            background: #065d36;
+        }
+
+        .btn-register {
+            background: #eef5ff;
+            color: #1d4f91;
+            border: 1px solid #cfe0f8;
+        }
+
+        .btn-register:hover {
+            background: #dfeeff;
         }
 
         .btn-joined {
@@ -293,6 +340,10 @@
             margin-top: 6px;
         }
 
+        .community-actions form {
+            margin: 0;
+        }
+
         .empty {
             background: white;
             border: 1px dashed #cbd6ce;
@@ -300,6 +351,10 @@
             padding: 25px;
             text-align: center;
             color: #69736d;
+        }
+
+        .empty p {
+            margin-bottom: 0;
         }
 
         .flash-container {
@@ -425,6 +480,10 @@
             .community-actions .btn {
                 width: 100%;
             }
+
+            .community-actions form {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -439,13 +498,49 @@
         </a>
 
         <nav class="nav-links">
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('search') }}">Search</a>
-            <a href="{{ url_for('businesses') }}">Businesses</a>
-            <a href="{{ url_for('communities') }}" class="active">Communities</a>
-            <a href="{{ url_for('tools') }}">Tools</a>
-            <a href="{{ url_for('workspace') }}">Workspace</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('search') }}">
+                Search
+            </a>
+
+            <a href="{{ url_for('businesses') }}">
+                Businesses
+            </a>
+
+            <a href="{{ url_for('communities') }}" class="active">
+                Communities
+            </a>
+
+            <a href="{{ url_for('tools') }}">
+                Tools
+            </a>
+
+            {% if is_logged_in %}
+
+                <a href="{{ url_for('workspace') }}">
+                    Workspace
+                </a>
+
+                <a href="{{ url_for('logout') }}">
+                    Logout
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('login') }}">
+                    Login
+                </a>
+
+                <a href="{{ url_for('register') }}">
+                    Join Free
+                </a>
+
+            {% endif %}
+
         </nav>
 
     </div>
@@ -463,10 +558,20 @@
             and build meaningful connections on NijaWebbies.
         </p>
 
-        {% if user_name %}
+        {% if is_logged_in and user_name %}
+
             <div class="welcome">
                 Welcome, {{ user_name }} 👋
             </div>
+
+        {% else %}
+
+            <div class="visitor-note">
+                🌍 Explore communities freely. You can read community
+                discussions and discover people without an account.
+                Login or register when you want to create, join or post.
+            </div>
+
         {% endif %}
 
     </section>
@@ -495,149 +600,317 @@
 
     <div class="layout">
 
-        <!-- CREATE COMMUNITY -->
+
+        <!-- LEFT SIDE -->
+
         <aside>
 
-            <div class="card">
+            {% if is_logged_in %}
 
-                <h2>➕ Create a Community</h2>
+                <!-- CREATE COMMUNITY -->
 
-                <form method="POST"
-                      action="{{ url_for('communities') }}">
+                <div class="card">
 
-                    <div class="form-group">
+                    <h2>➕ Create a Community</h2>
 
-                        <label for="name">
-                            Community Name
-                        </label>
+                    <form method="POST"
+                          action="{{ url_for('communities') }}">
 
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="e.g. Epe Entrepreneurs"
-                            maxlength="150"
-                            required
-                        >
+                        <div class="form-group">
+
+                            <label for="name">
+                                Community Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="e.g. Epe Entrepreneurs"
+                                maxlength="150"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="category">
+                                Category
+                            </label>
+
+                            <select id="category" name="category">
+
+                                <option value="">
+                                    Select a category
+                                </option>
+
+                                <option value="Business">
+                                    Business
+                                </option>
+
+                                <option value="Entrepreneurship">
+                                    Entrepreneurship
+                                </option>
+
+                                <option value="Education">
+                                    Education
+                                </option>
+
+                                <option value="Technology">
+                                    Technology
+                                </option>
+
+                                <option value="Agriculture">
+                                    Agriculture
+                                </option>
+
+                                <option value="Creative">
+                                    Creative
+                                </option>
+
+                                <option value="Entertainment">
+                                    Entertainment
+                                </option>
+
+                                <option value="Community">
+                                    Community
+                                </option>
+
+                                <option value="Lifestyle">
+                                    Lifestyle
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                placeholder="Tell people what your community is about..."
+                                maxlength="1000"
+                            ></textarea>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+                            Create Community
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% else %}
+
+                <!-- LOGIN / REGISTER -->
+
+                <div class="card login-card">
+
+                    <h2>🔐 Join the Community</h2>
+
+                    <p>
+                        You can explore and read communities without
+                        an account. Create a free account when you want
+                        to create a community, join one or participate
+                        in discussions.
+                    </p>
+
+                    <div class="login-actions">
+
+                        <a
+                            href="{{ url_for('login', next=request.path) }}"
+                            class="btn btn-login">
+                            Login to Continue
+                        </a>
+
+                        <a
+                            href="{{ url_for('register') }}"
+                            class="btn btn-register">
+                            Create Free Account
+                        </a>
 
                     </div>
 
+                </div>
 
-                    <div class="form-group">
-
-                        <label for="category">
-                            Category
-                        </label>
-
-                        <select id="category" name="category">
-
-                            <option value="">
-                                Select a category
-                            </option>
-
-                            <option value="Business">
-                                Business
-                            </option>
-
-                            <option value="Entrepreneurship">
-                                Entrepreneurship
-                            </option>
-
-                            <option value="Education">
-                                Education
-                            </option>
-
-                            <option value="Technology">
-                                Technology
-                            </option>
-
-                            <option value="Agriculture">
-                                Agriculture
-                            </option>
-
-                            <option value="Creative">
-                                Creative
-                            </option>
-
-                            <option value="Entertainment">
-                                Entertainment
-                            </option>
-
-                            <option value="Community">
-                                Community
-                            </option>
-
-                            <option value="Lifestyle">
-                                Lifestyle
-                            </option>
-
-                            <option value="Other">
-                                Other
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="description">
-                            Description
-                        </label>
-
-                        <textarea
-                            id="description"
-                            name="description"
-                            placeholder="Tell people what your community is about..."
-                            maxlength="1000"
-                        ></textarea>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary">
-                        Create Community
-                    </button>
-
-                </form>
-
-            </div>
+            {% endif %}
 
         </aside>
 
 
-        <!-- COMMUNITIES -->
+        <!-- RIGHT SIDE -->
+
         <section>
 
+
             <!-- MY COMMUNITIES -->
+
+            {% if is_logged_in %}
+
+                <div class="section">
+
+                    <div class="section-title">
+
+                        <h2>My Communities</h2>
+
+                        <span class="count">
+                            {{ my_communities|length }}
+                        </span>
+
+                    </div>
+
+
+                    {% if my_communities %}
+
+                        <div class="community-grid">
+
+                            {% for community in my_communities %}
+
+                                <article class="community">
+
+                                    <h3>
+                                        {{ community.name }}
+                                    </h3>
+
+
+                                    {% if community.description %}
+
+                                        <div class="community-description">
+                                            {{ community.description }}
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="community-description">
+                                            No description provided.
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <div class="meta">
+
+                                        {% if community.category %}
+
+                                            <span class="tag">
+                                                {{ community.category }}
+                                            </span>
+
+                                        {% endif %}
+
+                                        <span class="tag">
+                                            Member
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="community-actions">
+
+                                        <a
+                                            href="{{ url_for(
+                                                'community_detail',
+                                                community_id=community.id
+                                            ) }}"
+                                            class="btn btn-view">
+                                            View Community
+                                        </a>
+
+                                        <span class="btn btn-joined">
+                                            ✓ Joined
+                                        </span>
+
+                                    </div>
+
+                                </article>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty">
+
+                            <strong>
+                                You have not joined any communities yet.
+                            </strong>
+
+                            <p>
+                                Discover a community below or create your own.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- DISCOVER COMMUNITIES -->
 
             <div class="section">
 
                 <div class="section-title">
 
-                    <h2>My Communities</h2>
+                    <h2>Discover Communities</h2>
 
                     <span class="count">
-                        {{ my_communities|length }}
+                        {{ communities|length }}
                     </span>
 
                 </div>
 
 
-                {% if my_communities %}
+                {% if communities %}
 
                     <div class="community-grid">
 
-                        {% for community in my_communities %}
+                        {% for community in communities %}
+
+                            {% set ns = namespace(joined=false) %}
+
+
+                            {% if is_logged_in %}
+
+                                {% for mine in my_communities %}
+
+                                    {% if mine.id == community.id %}
+
+                                        {% set ns.joined = true %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            {% endif %}
+
 
                             <article class="community">
 
                                 <h3>
                                     {{ community.name }}
                                 </h3>
+
 
                                 {% if community.description %}
 
@@ -665,119 +938,8 @@
                                     {% endif %}
 
                                     <span class="tag">
-                                        Member
+                                        👤 {{ community.member_count or 0 }} member{% if (community.member_count or 0) != 1 %}s{% endif %}
                                     </span>
-
-                                </div>
-
-
-                                <div class="community-actions">
-
-                                    <a
-                                        href="{{ url_for(
-                                            'community_detail',
-                                            community_id=community.id
-                                        ) }}"
-                                        class="btn btn-view">
-                                        View Community
-                                    </a>
-
-                                    <span class="btn btn-joined">
-                                        ✓ Joined
-                                    </span>
-
-                                </div>
-
-                            </article>
-
-                        {% endfor %}
-
-                    </div>
-
-                {% else %}
-
-                    <div class="empty">
-
-                        <strong>
-                            You have not joined any communities yet.
-                        </strong>
-
-                        <p>
-                            Discover a community below or create your own.
-                        </p>
-
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-
-            <!-- DISCOVER COMMUNITIES -->
-
-            <div class="section">
-
-                <div class="section-title">
-
-                    <h2>Discover Communities</h2>
-
-                    <span class="count">
-                        {{ communities|length }}
-                    </span>
-
-                </div>
-
-
-                {% if communities %}
-
-                    <div class="community-grid">
-
-                        {% for community in communities %}
-
-                            {% set ns = namespace(joined=false) %}
-
-                            {% for mine in my_communities %}
-
-                                {% if mine.id == community.id %}
-
-                                    {% set ns.joined = true %}
-
-                                {% endif %}
-
-                            {% endfor %}
-
-
-                            <article class="community">
-
-                                <h3>
-                                    {{ community.name }}
-                                </h3>
-
-
-                                {% if community.description %}
-
-                                    <div class="community-description">
-                                        {{ community.description }}
-                                    </div>
-
-                                {% else %}
-
-                                    <div class="community-description">
-                                        No description provided.
-                                    </div>
-
-                                {% endif %}
-
-
-                                <div class="meta">
-
-                                    {% if community.category %}
-
-                                        <span class="tag">
-                                            {{ community.category }}
-                                        </span>
-
-                                    {% endif %}
 
                                 </div>
 
@@ -785,7 +947,6 @@
                                 <div class="owner">
 
                                     👤 Created by
-
                                     {{ community.owner_name or "NijaWebbies member" }}
 
                                 </div>
@@ -803,29 +964,46 @@
                                     </a>
 
 
-                                    {% if ns.joined %}
+                                    {% if is_logged_in %}
 
-                                        <span class="btn btn-joined">
-                                            ✓ Joined
-                                        </span>
+                                        {% if ns.joined %}
+
+                                            <span class="btn btn-joined">
+                                                ✓ Joined
+                                            </span>
+
+                                        {% else %}
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for(
+                                                    'join_community',
+                                                    community_id=community.id
+                                                ) }}">
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-join">
+                                                    Join Community
+                                                </button>
+
+                                            </form>
+
+                                        {% endif %}
 
                                     {% else %}
 
-                                        <form
-                                            method="POST"
-                                            action="{{ url_for(
-                                                'join_community',
-                                                community_id=community.id
+                                        <a
+                                            href="{{ url_for(
+                                                'login',
+                                                next=url_for(
+                                                    'community_detail',
+                                                    community_id=community.id
+                                                )
                                             ) }}"
-                                            style="margin:0;">
-
-                                            <button
-                                                type="submit"
-                                                class="btn btn-join">
-                                                Join Community
-                                            </button>
-
-                                        </form>
+                                            class="btn btn-join">
+                                            Login to Join
+                                        </a>
 
                                     {% endif %}
 
@@ -901,9 +1079,23 @@
                 Free Tools
             </a>
 
-            <a href="{{ url_for('workspace') }}">
-                Workspace
-            </a>
+            {% if is_logged_in %}
+
+                <a href="{{ url_for('workspace') }}">
+                    Workspace
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('login') }}">
+                    Login
+                </a>
+
+                <a href="{{ url_for('register') }}">
+                    Join Free
+                </a>
+
+            {% endif %}
 
         </div>
 
