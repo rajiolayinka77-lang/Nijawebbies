@@ -23,7 +23,6 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-
 app.config["SESSION_COOKIE_SECURE"] = bool(
     os.environ.get("RENDER_EXTERNAL_URL")
     or os.environ.get("RENDER")
@@ -253,6 +252,62 @@ def is_safe_url(target):
         return False
 
 
+def make_whatsapp_link(number):
+
+    if not number:
+        return None
+
+    digits = "".join(
+        character
+        for character in str(number)
+        if character.isdigit()
+    )
+
+    if not digits:
+        return None
+
+    if digits.startswith("0"):
+        digits = "234" + digits[1:]
+
+    elif not digits.startswith("234"):
+        digits = "234" + digits
+
+    return f"https://wa.me/{digits}"
+
+
+def make_phone_link(number):
+
+    if not number:
+        return None
+
+    clean_phone = "".join(
+        character
+        for character in str(number)
+        if character.isdigit() or character == "+"
+    )
+
+    if not clean_phone:
+        return None
+
+    return f"tel:{clean_phone}"
+
+
+def make_website_link(website):
+
+    if not website:
+        return None
+
+    website = str(website).strip()
+
+    if not website:
+        return None
+
+    if not website.startswith(("http://", "https://")):
+        website = "https://" + website
+
+    return website
+
+
 # =========================================================
 # LOGIN REQUIRED
 # =========================================================
@@ -309,7 +364,6 @@ def home():
 def register():
 
     if session.get("user_id"):
-
         return redirect(
             url_for("workspace")
         )
@@ -470,7 +524,6 @@ def register():
             )
 
         finally:
-
             close_db(conn)
 
     return render_template(
@@ -489,7 +542,6 @@ def register():
 def login():
 
     if session.get("user_id"):
-
         return redirect(
             url_for("workspace")
         )
@@ -580,7 +632,6 @@ def login():
             )
 
         finally:
-
             close_db(conn)
 
         password_valid = False
@@ -622,7 +673,6 @@ def login():
         session.permanent = bool(remember)
 
         if is_safe_url(next_page):
-
             return redirect(next_page)
 
         return redirect(
@@ -752,7 +802,6 @@ def workspace():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -847,7 +896,6 @@ def create_post():
             )
 
         finally:
-
             close_db(conn)
 
     return render_template(
@@ -974,7 +1022,6 @@ def edit_post(post_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1054,7 +1101,6 @@ def delete_post(post_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1106,7 +1152,6 @@ def blog():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1144,7 +1189,6 @@ def view_post(post_id):
             post = cursor.fetchone()
 
         if not post:
-
             return "Post not found", 404
 
         return render_template(
@@ -1161,7 +1205,6 @@ def view_post(post_id):
         return "Unable to load post.", 500
 
     finally:
-
         close_db(conn)
 
 
@@ -1332,82 +1375,19 @@ def search():
 
                 communities = cursor.fetchall()
 
-        # =====================================================
-        # PREPARE BUSINESS LINKS
-        # =====================================================
-
         for business in businesses:
 
-            phone = business.get("phone") or ""
-
-            clean_phone = "".join(
-                character
-                for character in phone
-                if character.isdigit()
-                or character == "+"
+            business["phone_link"] = make_phone_link(
+                business.get("phone")
             )
 
-            if clean_phone:
-                business["phone_link"] = f"tel:{clean_phone}"
-            else:
-                business["phone_link"] = None
+            business["whatsapp_link"] = make_whatsapp_link(
+                business.get("whatsapp")
+            )
 
-            whatsapp = business.get("whatsapp") or ""
-
-            if whatsapp:
-
-                whatsapp_digits = "".join(
-                    character
-                    for character in whatsapp
-                    if character.isdigit()
-                )
-
-                if whatsapp_digits:
-
-                    if whatsapp_digits.startswith("0"):
-
-                        whatsapp_digits = (
-                            "234"
-                            + whatsapp_digits[1:]
-                        )
-
-                    elif not whatsapp_digits.startswith("234"):
-
-                        whatsapp_digits = (
-                            "234"
-                            + whatsapp_digits
-                        )
-
-                    business["whatsapp_link"] = (
-                        f"https://wa.me/{whatsapp_digits}"
-                    )
-
-                else:
-
-                    business["whatsapp_link"] = None
-
-            else:
-
-                business["whatsapp_link"] = None
-
-            website = business.get("website") or ""
-
-            if website:
-
-                if not website.startswith(
-                    ("http://", "https://")
-                ):
-
-                    website = (
-                        "https://"
-                        + website
-                    )
-
-                business["website_link"] = website
-
-            else:
-
-                business["website_link"] = None
+            business["website_link"] = make_website_link(
+                business.get("website")
+            )
 
         total_results = (
             len(posts)
@@ -1446,7 +1426,6 @@ def search():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1609,7 +1588,6 @@ def creator_studio():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1687,7 +1665,6 @@ def view_creator_project(project_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1883,7 +1860,6 @@ def edit_creator_project(project_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1963,7 +1939,6 @@ def delete_creator_project(project_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2202,36 +2177,11 @@ def business_space():
 
             business = cursor.fetchone()
 
-        whatsapp_link = None
-
-        if business and business.get("whatsapp"):
-
-            whatsapp_link = str(
-                business["whatsapp"]
-            ).strip()
-
-            whatsapp_link = (
-                whatsapp_link
-                .replace("+", "")
-                .replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "")
-            )
-
-            if whatsapp_link.startswith("0"):
-
-                whatsapp_link = (
-                    "234" +
-                    whatsapp_link[1:]
-                )
-
-            elif not whatsapp_link.startswith("234"):
-
-                whatsapp_link = (
-                    "234" +
-                    whatsapp_link
-                )
+        whatsapp_link = make_whatsapp_link(
+            business.get("whatsapp")
+            if business
+            else None
+        )
 
         business_upgrade = {
             "available": True,
@@ -2276,7 +2226,6 @@ def business_space():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2367,81 +2316,17 @@ def businesses():
 
         for business in businesses_list:
 
-            phone = business.get("phone") or ""
-
-            clean_phone = "".join(
-                character
-                for character in phone
-                if character.isdigit()
-                or character == "+"
+            business["phone_link"] = make_phone_link(
+                business.get("phone")
             )
 
-            if clean_phone:
+            business["whatsapp_link"] = make_whatsapp_link(
+                business.get("whatsapp")
+            )
 
-                business["phone_link"] = (
-                    f"tel:{clean_phone}"
-                )
-
-            else:
-
-                business["phone_link"] = None
-
-            whatsapp = business.get("whatsapp") or ""
-
-            if whatsapp:
-
-                whatsapp_digits = "".join(
-                    character
-                    for character in whatsapp
-                    if character.isdigit()
-                )
-
-                if whatsapp_digits:
-
-                    if whatsapp_digits.startswith("0"):
-
-                        whatsapp_digits = (
-                            "234"
-                            + whatsapp_digits[1:]
-                        )
-
-                    elif not whatsapp_digits.startswith("234"):
-
-                        whatsapp_digits = (
-                            "234"
-                            + whatsapp_digits
-                        )
-
-                    business["whatsapp_link"] = (
-                        f"https://wa.me/{whatsapp_digits}"
-                    )
-
-                else:
-
-                    business["whatsapp_link"] = None
-
-            else:
-
-                business["whatsapp_link"] = None
-
-            website = business.get("website") or ""
-
-            if website:
-
-                if not website.startswith(
-                    ("http://", "https://")
-                ):
-
-                    website = (
-                        "https://"
-                        + website
-                    )
-
-                business["website_link"] = website
-
-            else:
-
-                business["website_link"] = None
+            business["website_link"] = make_website_link(
+                business.get("website")
+            )
 
         with conn.cursor(
             cursor_factory=RealDictCursor
@@ -2488,7 +2373,6 @@ def businesses():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2535,71 +2419,17 @@ def public_business_profile(business_id):
 
             return "Business profile not found.", 404
 
-        whatsapp_link = None
+        whatsapp_link = make_whatsapp_link(
+            business.get("whatsapp")
+        )
 
-        if business.get("whatsapp"):
+        phone_link = make_phone_link(
+            business.get("phone")
+        )
 
-            whatsapp_link = str(
-                business["whatsapp"]
-            ).strip()
-
-            whatsapp_link = (
-                whatsapp_link
-                .replace("+", "")
-                .replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "")
-            )
-
-            if whatsapp_link.startswith("0"):
-
-                whatsapp_link = (
-                    "234" +
-                    whatsapp_link[1:]
-                )
-
-            elif not whatsapp_link.startswith("234"):
-
-                whatsapp_link = (
-                    "234" +
-                    whatsapp_link
-                )
-
-        phone_link = None
-
-        if business.get("phone"):
-
-            phone_number = str(
-                business["phone"]
-            ).strip()
-
-            phone_number = (
-                phone_number
-                .replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "")
-            )
-
-            phone_link = "tel:" + phone_number
-
-        website = business.get("website")
-
-        if website:
-
-            website = str(
-                website
-            ).strip()
-
-            if website and not (
-                website.startswith("http://")
-                or website.startswith("https://")
-            ):
-
-                website = "https://" + website
-
-            business["website"] = website
+        business["website"] = make_website_link(
+            business.get("website")
+        )
 
         return render_template(
             "public_business_profile.html",
@@ -2622,7 +2452,6 @@ def public_business_profile(business_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2668,17 +2497,6 @@ def communities():
     user_id = session.get("user_id")
 
     try:
-
-        if not user_id:
-
-            flash(
-                "Please login to access Communities.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("login")
-            )
 
         conn = get_db()
 
@@ -2748,8 +2566,6 @@ def communities():
 
                 community_id = result[0]
 
-                # Creator automatically becomes
-                # the first community member.
                 cursor.execute(
                     """
                     INSERT INTO community_members
@@ -2837,18 +2653,10 @@ def communities():
 
             my_communities = cursor.fetchall()
 
-        # =====================================================
-        # COMMUNITY IDs USER HAS JOINED
-        # =====================================================
-
         joined_community_ids = {
             community["id"]
             for community in my_communities
         }
-
-        # =====================================================
-        # RENDER COMMUNITIES PAGE
-        # =====================================================
 
         return render_template(
             "communities.html",
@@ -2881,12 +2689,9 @@ def communities():
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0">
 
-                <title>
-                    Communities Error | NijaWebbies
-                </title>
+                <title>Communities Error | NijaWebbies</title>
 
                 <style>
-
                     body {
                         font-family: Arial, sans-serif;
                         background: #f5f7fb;
@@ -2925,7 +2730,6 @@ def communities():
                         padding: 12px 18px;
                         border-radius: 8px;
                     }
-
                 </style>
 
             </head>
@@ -2934,18 +2738,11 @@ def communities():
 
                 <div class="box">
 
-                    <h1>
-                        Communities could not load
-                    </h1>
+                    <h1>Communities could not load</h1>
 
                     <p>
                         NijaWebbies reached the Communities
                         route, but an error occurred.
-                    </p>
-
-                    <p>
-                        The exact error is shown below so
-                        we can identify and fix it.
                     </p>
 
                     <div class="error">
@@ -2973,7 +2770,6 @@ def communities():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2981,9 +2777,7 @@ def communities():
 # COMMUNITY DETAILS
 # =========================================================
 
-@app.route(
-    "/community/<int:community_id>"
-)
+@app.route("/community/<int:community_id>")
 @login_required
 def community_detail(community_id):
 
@@ -2992,17 +2786,6 @@ def community_detail(community_id):
 
     try:
 
-        if not user_id:
-
-            flash(
-                "Please login to view this community.",
-                "warning"
-            )
-
-            return redirect(
-                url_for("login")
-            )
-
         conn = get_db()
 
         with conn.cursor(
@@ -3010,7 +2793,7 @@ def community_detail(community_id):
         ) as cursor:
 
             # =================================================
-            # LOAD COMMUNITY
+            # COMMUNITY
             # =================================================
 
             cursor.execute(
@@ -3051,8 +2834,7 @@ def community_detail(community_id):
 
             cursor.execute(
                 """
-                SELECT
-                    COUNT(*) AS member_count
+                SELECT COUNT(*) AS member_count
                 FROM community_members
                 WHERE community_id = %s
                 """,
@@ -3061,20 +2843,19 @@ def community_detail(community_id):
 
             member_result = cursor.fetchone()
 
-            member_count = (
+            member_count = int(
                 member_result["member_count"]
                 if member_result
                 else 0
             )
 
             # =================================================
-            # CHECK CURRENT USER MEMBERSHIP
+            # CURRENT USER MEMBERSHIP
             # =================================================
 
             cursor.execute(
                 """
-                SELECT
-                    id
+                SELECT id, joined_at
                 FROM community_members
                 WHERE community_id = %s
                   AND user_id = %s
@@ -3090,11 +2871,34 @@ def community_detail(community_id):
 
             is_member = membership is not None
 
+            # =================================================
+            # LOAD MEMBERS
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    u.id,
+                    u.name,
+                    cm.joined_at
+                FROM community_members AS cm
+                INNER JOIN users AS u
+                    ON cm.user_id = u.id
+                WHERE cm.community_id = %s
+                ORDER BY cm.joined_at ASC
+                """,
+                (community_id,)
+            )
+
+            members = cursor.fetchall()
+
         return render_template(
             "community_detail.html",
             community=community,
             member_count=member_count,
             is_member=is_member,
+            membership=membership,
+            members=members,
             user_name=session.get("user_name")
         )
 
@@ -3122,9 +2926,7 @@ def community_detail(community_id):
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0">
 
-                <title>
-                    Community Error | NijaWebbies
-                </title>
+                <title>Community Error | NijaWebbies</title>
 
                 <style>
 
@@ -3209,7 +3011,6 @@ def community_detail(community_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -3234,14 +3035,9 @@ def join_community(community_id):
 
         with conn.cursor() as cursor:
 
-            # =================================================
-            # VERIFY COMMUNITY
-            # =================================================
-
             cursor.execute(
                 """
-                SELECT
-                    id
+                SELECT id
                 FROM communities
                 WHERE id = %s
                 LIMIT 1
@@ -3261,10 +3057,6 @@ def join_community(community_id):
                 return redirect(
                     url_for("communities")
                 )
-
-            # =================================================
-            # ADD MEMBER
-            # =================================================
 
             cursor.execute(
                 """
@@ -3332,7 +3124,6 @@ def join_community(community_id):
         )
 
     finally:
-
         close_db(conn)
 
 
