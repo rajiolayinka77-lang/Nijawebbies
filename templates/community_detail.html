@@ -279,6 +279,118 @@
             overflow-wrap: anywhere;
         }
 
+        /* =====================================================
+           COMMENTS
+           ===================================================== */
+
+        .comments-section {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid #eef0f2;
+        }
+
+        .comments-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        .comment {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 11px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .comment-author {
+            font-size: 13px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .comment-date {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .comment-content {
+            margin-top: 7px;
+            color: #374151;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .comment-actions {
+            margin-top: 8px;
+        }
+
+        .delete-comment {
+            border: none;
+            background: transparent;
+            color: #dc2626;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 0;
+            cursor: pointer;
+        }
+
+        .delete-comment:hover {
+            color: #991b1b;
+            text-decoration: underline;
+        }
+
+        .comment-form {
+            margin-top: 14px;
+        }
+
+        .comment-form textarea {
+            min-height: 85px;
+            font-size: 14px;
+        }
+
+        .comment-form .btn {
+            margin-top: 8px;
+        }
+
+        .comment-login {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .comment-login a {
+            color: #0f766e;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .comment-login a:hover {
+            text-decoration: underline;
+        }
+
+        .no-comments {
+            color: #9ca3af;
+            font-size: 13px;
+            margin: 5px 0 12px;
+        }
+
         .empty {
             background: #f9fafb;
             border-radius: 10px;
@@ -393,6 +505,12 @@
 
             .login-actions .btn {
                 width: 100%;
+            }
+
+            .comment-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 3px;
             }
         }
     </style>
@@ -779,6 +897,161 @@
 
                             <div class="post-content">
                                 {{ post.content }}
+                            </div>
+
+
+                            <!-- COMMENTS -->
+
+                            <div class="comments-section">
+
+                                <div class="comments-title">
+                                    💬
+                                    {{ comments_by_post.get(
+                                        post.id, []
+                                    )|length }}
+                                    Comment{% if comments_by_post.get(
+                                        post.id, []
+                                    )|length != 1 %}s{% endif %}
+                                </div>
+
+
+                                {% if comments_by_post.get(
+                                    post.id, []
+                                ) %}
+
+
+                                    {% for comment in comments_by_post.get(
+                                        post.id, []
+                                    ) %}
+
+                                        <div class="comment">
+
+                                            <div class="comment-header">
+
+                                                <span class="comment-author">
+                                                    {{ comment.author_name }}
+                                                </span>
+
+                                                <span class="comment-date">
+                                                    {{ comment.created_at.strftime(
+                                                        '%d %b %Y, %I:%M %p'
+                                                    ) }}
+                                                </span>
+
+                                            </div>
+
+
+                                            <div class="comment-content">
+                                                {{ comment.content }}
+                                            </div>
+
+
+                                            {% if current_user_id == comment.user_id
+                                                  or current_user_id == community.owner_id %}
+
+                                                <div class="comment-actions">
+
+                                                    <form
+                                                        method="POST"
+                                                        action="{{ url_for(
+                                                            'delete_community_comment',
+                                                            comment_id=comment.id
+                                                        ) }}"
+                                                        onsubmit="return confirm(
+                                                            'Delete this comment?'
+                                                        );">
+
+                                                        <button
+                                                            type="submit"
+                                                            class="delete-comment">
+
+                                                            Delete comment
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endfor %}
+
+
+                                {% else %}
+
+                                    <div class="no-comments">
+                                        No comments yet. Be the first to reply.
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- COMMENT FORM -->
+
+                                {% if is_logged_in and is_member %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'create_community_comment',
+                                            post_id=post.id
+                                        ) }}"
+                                        class="comment-form">
+
+                                        <textarea
+                                            name="content"
+                                            maxlength="2000"
+                                            required
+                                            placeholder="Write a comment or reply..."></textarea>
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary">
+
+                                            Post Comment
+
+                                        </button>
+
+                                    </form>
+
+
+                                {% elif is_logged_in %}
+
+                                    <div class="comment-login">
+
+                                        🔒 Join this community to comment
+                                        on discussions.
+
+                                    </div>
+
+
+                                {% else %}
+
+                                    <div class="comment-login">
+
+                                        🔒
+                                        <a
+                                            href="{{ url_for(
+                                                'login',
+                                                next=url_for(
+                                                    'community_detail',
+                                                    community_id=community.id
+                                                )
+                                            ) }}">
+
+                                            Login
+
+                                        </a>
+
+                                        to comment on this discussion.
+
+                                    </div>
+
+                                {% endif %}
+
                             </div>
 
                         </article>
