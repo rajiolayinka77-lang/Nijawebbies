@@ -240,6 +240,19 @@ def init_db():
             """)
 
             # =================================================
+            # ADD REPLY SUPPORT TO EXISTING COMMENTS
+            # =================================================
+            # Existing comments automatically remain top-level
+            # comments because their parent_comment_id will be NULL.
+
+            cursor.execute("""
+                ALTER TABLE community_comments
+                ADD COLUMN IF NOT EXISTS parent_comment_id INTEGER
+                REFERENCES community_comments(id)
+                ON DELETE CASCADE
+            """)
+
+            # =================================================
             # COMMUNITY INDEXES
             # =================================================
 
@@ -277,6 +290,12 @@ def init_db():
                 CREATE INDEX IF NOT EXISTS
                 idx_community_comments_user
                 ON community_comments(user_id)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_community_comments_parent
+                ON community_comments(parent_comment_id)
             """)
 
         conn.commit()
@@ -2947,7 +2966,7 @@ def community_detail(community_id):
             discussions = cursor.fetchall()
 
             # =================================================
-            # COMMUNITY COMMENTS
+            # COMMUNITY COMMENTS AND REPLIES
             # =================================================
 
             cursor.execute(
@@ -2958,6 +2977,7 @@ def community_detail(community_id):
                     cc.user_id,
                     cc.content,
                     cc.created_at,
+                    cc.parent_comment_id,
                     u.name AS author_name
                 FROM community_comments AS cc
                 INNER JOIN users AS u
@@ -2973,17 +2993,32 @@ def community_detail(community_id):
             comments = cursor.fetchall()
 
         # =====================================================
-        # GROUP COMMENTS BY DISCUSSION
+        # GROUP TOP-LEVEL COMMENTS BY DISCUSSION
         # =====================================================
 
         comments_by_post = {}
 
+        # =====================================================
+        # GROUP REPLIES BY PARENT COMMENT
+        # =====================================================
+
+        replies_by_comment = {}
+
         for comment in comments:
 
-            comments_by_post.setdefault(
-                comment["community_post_id"],
-                []
-            ).append(comment)
+            if comment["parent_comment_id"] is None:
+
+                comments_by_post.setdefault(
+                    comment["community_post_id"],
+                    []
+                ).append(comment)
+
+            else:
+
+                replies_by_comment.setdefault(
+                    comment["parent_comment_id"],
+                    []
+                ).append(comment)
 
         return render_template(
             "community_detail.html",
@@ -2994,6 +3029,7 @@ def community_detail(community_id):
             members=members,
             discussions=discussions,
             comments_by_post=comments_by_post,
+            replies_by_comment=replies_by_comment,
             current_user_id=user_id,
             user_name=session.get("user_name"),
             is_logged_in=bool(user_id)
@@ -3534,7 +3570,7 @@ def create_community_comment(post_id):
                 )
 
             # =================================================
-            # CREATE COMMENT
+            # CREATE TOP-LEVEL COMMENT
             # =================================================
 
             cursor.execute(
@@ -3544,15 +3580,17 @@ def create_community_comment(post_id):
                     community_post_id,
                     user_id,
                     content,
-                    created_at
+                    created_at,
+                    parent_comment_id
                 )
-                VALUES (%s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s)
                 """,
                 (
                     post_id,
                     user_id,
                     content,
-                    datetime.utcnow()
+                    datetime.utcnow(),
+                    None
                 )
             )
 
@@ -3584,6 +3622,230 @@ def create_community_comment(post_id):
 
         flash(
             "Unable to post your comment right now.",
+            "danger"
+        )
+
+        if community_id:
+
+            return redirect(
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
+            )
+
+        return redirect(
+            url_for("communities")
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# CREATE COMMUNITY COMMENT REPLY
+# =========================================================
+
+@app.route(
+    "/community-comment/<int:comment_id>/reply",
+    methods=["POST"]
+)
+@login_required
+def create_community_comment_reply(comment_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+    community_id = None
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            # =================================================
+            # FIND PARENT COMMENT
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    cc.id,
+                    cc.community_post_id,
+                    cc.parent_comment_id,
+                    cp.community_id,
+                    c.owner_id
+                FROM community_comments AS cc
+                INNER JOIN community_posts AS cp
+                    ON cc.community_post_id = cp.id
+                INNER JOIN communities AS c
+                    ON cp.community_id = c.id
+                WHERE cc.id = %s
+                LIMIT 1
+                """,
+                (comment_id,)
+            )
+
+            parent_comment = cursor.fetchone()
+
+            if not parent_comment:
+
+                flash(
+                    "Comment not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            community_id = parent_comment["community_id"]
+
+            # =================================================
+            # ONLY TOP-LEVEL COMMENTS CAN RECEIVE REPLIES
+            # =================================================
+
+            if parent_comment["parent_comment_id"] is not None:
+
+                flash(
+                    "Replies can only be made to a main comment.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # GET REPLY
+            # =================================================
+
+            content = request.form.get(
+                "content",
+                ""
+            ).strip()
+
+            if not content:
+
+                flash(
+                    "Please write a reply before posting.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            if len(content) > 2000:
+
+                flash(
+                    "Reply cannot exceed 2,000 characters.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # CHECK MEMBERSHIP
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                LIMIT 1
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            membership = cursor.fetchone()
+
+            if not membership:
+
+                flash(
+                    "You must join this community before replying.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # CREATE REPLY
+            # =================================================
+
+            cursor.execute(
+                """
+                INSERT INTO community_comments
+                (
+                    community_post_id,
+                    user_id,
+                    content,
+                    created_at,
+                    parent_comment_id
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (
+                    parent_comment["community_post_id"],
+                    user_id,
+                    content,
+                    datetime.utcnow(),
+                    comment_id
+                )
+            )
+
+        conn.commit()
+
+        flash(
+            "Your reply has been posted.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "CREATE COMMUNITY REPLY FAILED | comment_id=%s | user_id=%s | error=%s",
+            comment_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to post your reply right now.",
             "danger"
         )
 
@@ -3638,6 +3900,7 @@ def delete_community_comment(comment_id):
                     cc.id,
                     cc.community_post_id,
                     cc.user_id,
+                    cc.parent_comment_id,
                     cp.community_id,
                     c.owner_id
                 FROM community_comments AS cc
@@ -3690,6 +3953,9 @@ def delete_community_comment(comment_id):
             # =================================================
             # DELETE COMMENT
             # =================================================
+            # If this is a parent comment, PostgreSQL will also
+            # delete its replies because parent_comment_id uses
+            # ON DELETE CASCADE.
 
             cursor.execute(
                 """
