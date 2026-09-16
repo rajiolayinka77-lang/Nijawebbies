@@ -3152,4 +3152,985 @@ def create_community_post(community_id):
         if len(content) > 5000:
 
             flash(
-                "Community discussion cannot exceed
+                "Community discussion cannot exceed 5,000 characters.",
+                "danger"
+            )
+
+            return redirect(
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
+            )
+
+        conn = get_db()
+
+        with conn.cursor() as cursor:
+
+            # =================================================
+            # CHECK COMMUNITY
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    owner_id
+                FROM communities
+                WHERE id = %s
+                LIMIT 1
+                """,
+                (community_id,)
+            )
+
+            community = cursor.fetchone()
+
+            if not community:
+
+                flash(
+                    "Community not found.",
+                    "danger"
+                )
+
+                return redirect(url_for("communities"))
+
+            # =================================================
+            # CHECK MEMBERSHIP
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                LIMIT 1
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            membership = cursor.fetchone()
+
+            if not membership:
+
+                flash(
+                    "You must join this community before starting a discussion.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # CREATE DISCUSSION
+            # =================================================
+
+            cursor.execute(
+                """
+                INSERT INTO community_posts
+                (
+                    community_id,
+                    user_id,
+                    content,
+                    created_at
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    community_id,
+                    user_id,
+                    content,
+                    datetime.utcnow()
+                )
+            )
+
+        conn.commit()
+
+        flash(
+            "Your discussion has been posted.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "CREATE COMMUNITY POST FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to publish your discussion right now.",
+            "danger"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# DELETE COMMUNITY DISCUSSION
+# =========================================================
+
+@app.route(
+    "/community-post/<int:post_id>/delete",
+    methods=["POST"]
+)
+@login_required
+def delete_community_post(post_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    cp.id,
+                    cp.community_id,
+                    cp.user_id,
+                    c.owner_id
+                FROM community_posts AS cp
+                INNER JOIN communities AS c
+                    ON cp.community_id = c.id
+                WHERE cp.id = %s
+                LIMIT 1
+                """,
+                (post_id,)
+            )
+
+            post = cursor.fetchone()
+
+            if not post:
+
+                flash(
+                    "Discussion not found.",
+                    "danger"
+                )
+
+                return redirect(url_for("communities"))
+
+            community_id = post["community_id"]
+
+            if (
+                post["user_id"] != user_id
+                and post["owner_id"] != user_id
+            ):
+
+                flash(
+                    "You do not have permission to delete this discussion.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            cursor.execute(
+                """
+                DELETE FROM community_posts
+                WHERE id = %s
+                """,
+                (post_id,)
+            )
+
+        conn.commit()
+
+        flash(
+            "Discussion deleted successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "DELETE COMMUNITY POST FAILED | post_id=%s | user_id=%s | error=%s",
+            post_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to delete the discussion.",
+            "danger"
+        )
+
+        return redirect(url_for("communities"))
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# CREATE COMMUNITY COMMENT
+# =========================================================
+
+@app.route(
+    "/community-post/<int:post_id>/comment",
+    methods=["POST"]
+)
+@login_required
+def create_community_comment(post_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+    community_id = None
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            # =================================================
+            # FIND DISCUSSION
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    cp.id,
+                    cp.community_id
+                FROM community_posts AS cp
+                WHERE cp.id = %s
+                LIMIT 1
+                """,
+                (post_id,)
+            )
+
+            post = cursor.fetchone()
+
+            if not post:
+
+                flash(
+                    "Discussion not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            community_id = post["community_id"]
+
+            # =================================================
+            # GET COMMENT
+            # =================================================
+
+            content = request.form.get(
+                "content",
+                ""
+            ).strip()
+
+            if not content:
+
+                flash(
+                    "Please write a comment before posting.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            if len(content) > 2000:
+
+                flash(
+                    "Comment cannot exceed 2,000 characters.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # CHECK MEMBERSHIP
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                LIMIT 1
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            membership = cursor.fetchone()
+
+            if not membership:
+
+                flash(
+                    "You must join this community before commenting.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # CREATE COMMENT
+            # =================================================
+
+            cursor.execute(
+                """
+                INSERT INTO community_comments
+                (
+                    community_post_id,
+                    user_id,
+                    content,
+                    created_at
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    post_id,
+                    user_id,
+                    content,
+                    datetime.utcnow()
+                )
+            )
+
+        conn.commit()
+
+        flash(
+            "Your comment has been posted.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "CREATE COMMUNITY COMMENT FAILED | post_id=%s | user_id=%s | error=%s",
+            post_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to post your comment right now.",
+            "danger"
+        )
+
+        if community_id:
+
+            return redirect(
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
+            )
+
+        return redirect(
+            url_for("communities")
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# DELETE COMMUNITY COMMENT
+# =========================================================
+
+@app.route(
+    "/community-comment/<int:comment_id>/delete",
+    methods=["POST"]
+)
+@login_required
+def delete_community_comment(comment_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+    community_id = None
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            # =================================================
+            # FIND COMMENT AND COMMUNITY
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    cc.id,
+                    cc.community_post_id,
+                    cc.user_id,
+                    cp.community_id,
+                    c.owner_id
+                FROM community_comments AS cc
+                INNER JOIN community_posts AS cp
+                    ON cc.community_post_id = cp.id
+                INNER JOIN communities AS c
+                    ON cp.community_id = c.id
+                WHERE cc.id = %s
+                LIMIT 1
+                """,
+                (comment_id,)
+            )
+
+            comment = cursor.fetchone()
+
+            if not comment:
+
+                flash(
+                    "Comment not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            community_id = comment["community_id"]
+
+            # =================================================
+            # CHECK PERMISSION
+            # =================================================
+
+            if (
+                comment["user_id"] != user_id
+                and comment["owner_id"] != user_id
+            ):
+
+                flash(
+                    "You do not have permission to delete this comment.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # DELETE COMMENT
+            # =================================================
+
+            cursor.execute(
+                """
+                DELETE FROM community_comments
+                WHERE id = %s
+                """,
+                (comment_id,)
+            )
+
+        conn.commit()
+
+        flash(
+            "Comment deleted successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "DELETE COMMUNITY COMMENT FAILED | comment_id=%s | user_id=%s | error=%s",
+            comment_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to delete the comment.",
+            "danger"
+        )
+
+        if community_id:
+
+            return redirect(
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
+            )
+
+        return redirect(
+            url_for("communities")
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# JOIN COMMUNITY
+# =========================================================
+
+@app.route(
+    "/join-community/<int:community_id>",
+    methods=["POST"]
+)
+@login_required
+def join_community(community_id):
+
+    conn = None
+
+    try:
+
+        conn = get_db()
+
+        user_id = session.get("user_id")
+
+        with conn.cursor() as cursor:
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM communities
+                WHERE id = %s
+                LIMIT 1
+                """,
+                (community_id,)
+            )
+
+            community = cursor.fetchone()
+
+            if not community:
+
+                flash(
+                    "Community not found.",
+                    "danger"
+                )
+
+                return redirect(url_for("communities"))
+
+            cursor.execute(
+                """
+                INSERT INTO community_members
+                (
+                    community_id,
+                    user_id,
+                    joined_at
+                )
+                VALUES (%s, %s, %s)
+                ON CONFLICT (community_id, user_id)
+                DO NOTHING
+                """,
+                (
+                    community_id,
+                    user_id,
+                    datetime.utcnow()
+                )
+            )
+
+            added = cursor.rowcount
+
+        conn.commit()
+
+        if added:
+
+            flash(
+                "You joined the community.",
+                "success"
+            )
+
+        else:
+
+            flash(
+                "You are already a member of this community.",
+                "warning"
+            )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "JOIN COMMUNITY FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            session.get("user_id"),
+            error
+        )
+
+        flash(
+            "Unable to join the community right now.",
+            "danger"
+        )
+
+        return redirect(url_for("communities"))
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# LEAVE COMMUNITY
+# =========================================================
+
+@app.route(
+    "/leave-community/<int:community_id>",
+    methods=["POST"]
+)
+@login_required
+def leave_community(community_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    owner_id
+                FROM communities
+                WHERE id = %s
+                LIMIT 1
+                """,
+                (community_id,)
+            )
+
+            community = cursor.fetchone()
+
+            if not community:
+
+                flash(
+                    "Community not found.",
+                    "danger"
+                )
+
+                return redirect(url_for("communities"))
+
+            # Owner cannot leave their own community.
+            if community["owner_id"] == user_id:
+
+                flash(
+                    "The community owner cannot leave the community.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            cursor.execute(
+                """
+                DELETE FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            removed = cursor.rowcount
+
+        conn.commit()
+
+        if removed:
+
+            flash(
+                "You have left the community.",
+                "success"
+            )
+
+        else:
+
+            flash(
+                "You are not a member of this community.",
+                "warning"
+            )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "LEAVE COMMUNITY FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to leave the community right now.",
+            "danger"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# FREE ONLINE TOOLS
+# =========================================================
+
+@app.route("/tools")
+def tools():
+
+    return render_template("tools.html")
+
+
+# =========================================================
+# 404 ERROR
+# =========================================================
+
+@app.errorhandler(404)
+def page_not_found(error):
+
+    return """
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>
+        Page Not Found - NijaWebbies
+    </title>
+
+</head>
+
+<body style="
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:50px 20px;
+    background:#f5f7fb;
+    color:#111827;
+">
+
+    <h1 style="
+        font-size:60px;
+        margin-bottom:10px;
+    ">
+        404
+    </h1>
+
+    <h2>
+        Page not found
+    </h2>
+
+    <p style="color:#6b7280;">
+        The page you are looking for does not exist.
+    </p>
+
+    <br>
+
+    <a href="/" style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    ">
+        ← Back to NijaWebbies
+    </a>
+
+</body>
+
+</html>
+""", 404
+
+
+# =========================================================
+# 500 ERROR
+# =========================================================
+
+@app.errorhandler(500)
+def internal_server_error(error):
+
+    app.logger.error(
+        "NijaWebbies Internal Server Error: %s",
+        error
+    )
+
+    return """
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>
+        NijaWebbies - Error
+    </title>
+
+</head>
+
+<body style="
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:50px 20px;
+    background:#f5f7fb;
+    color:#111827;
+">
+
+    <h1>
+        Something went wrong
+    </h1>
+
+    <p style="color:#6b7280;">
+        NijaWebbies encountered an unexpected error.
+    </p>
+
+    <p style="color:#6b7280;">
+        Please try again.
+    </p>
+
+    <br>
+
+    <a href="/" style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    ">
+        ← Back to NijaWebbies
+    </a>
+
+</body>
+
+</html>
+""", 500
+
+
+# =========================================================
+# START SERVER
+# =========================================================
+
+if __name__ == "__main__":
+
+    port = int(
+        os.environ.get(
+            "PORT",
+            5000
+        )
+    )
+
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False
+    )
