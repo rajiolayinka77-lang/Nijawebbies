@@ -446,6 +446,7 @@
         }
 
         @media (max-width: 650px) {
+
             .navbar {
                 align-items: flex-start;
             }
@@ -709,8 +710,6 @@
 
                 <article class="discussion">
 
-                    <!-- DISCUSSION HEADER -->
-
                     <div class="discussion-header">
 
                         <h3 class="discussion-title">
@@ -735,8 +734,6 @@
 
                     </div>
 
-
-                    <!-- DISCUSSION CONTENT -->
 
                     <div class="discussion-content">
                         {{ post.content }}
@@ -889,30 +886,20 @@
                                                             required
                                                         ></textarea>
 
-                                                        <div
-                                                            style="
-                                                                display:flex;
-                                                                gap:8px;
-                                                                flex-wrap:wrap;
-                                                            "
+                                                        <button
+                                                            type="submit"
+                                                            class="button button-primary button-small"
                                                         >
+                                                            Post Reply
+                                                        </button>
 
-                                                            <button
-                                                                type="submit"
-                                                                class="button button-primary button-small"
-                                                            >
-                                                                Post Reply
-                                                            </button>
-
-                                                            <button
-                                                                type="button"
-                                                                class="button button-secondary button-small"
-                                                                onclick="toggleReplyForm({{ comment.id }})"
-                                                            >
-                                                                Cancel
-                                                            </button>
-
-                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            class="button button-secondary button-small"
+                                                            onclick="toggleReplyForm({{ comment.id }})"
+                                                        >
+                                                            Cancel
+                                                        </button>
 
                                                     </form>
 
@@ -960,8 +947,6 @@
                                                                 </div>
 
 
-                                                                <!-- REPLY DELETE -->
-
                                                                 {% if is_logged_in and
                                                                       (current_user_id == reply.user_id
                                                                       or current_user_id == community.owner_id) %}
@@ -1008,10 +993,7 @@
                         {% else %}
 
                             <div class="empty-state">
-
-                                No comments yet.
-                                Be the first to comment.
-
+                                No comments yet. Be the first to comment.
                             </div>
 
                         {% endif %}
@@ -1101,7 +1083,7 @@
     </section>
 
 
-    <!-- MEMBERS -->
+    <!-- COMMUNITY MEMBERS -->
 
     <section class="card">
 
@@ -1116,29 +1098,35 @@
 
                 {% for member in members %}
 
-                    <div
-                        class="member {% if member.user_id == community.owner_id %}owner-member{% endif %}"
-                    >
+                    {% if member.id == community.owner_id %}
 
-                        <div class="member-name">
-                            {{ member.name }}
-                        </div>
+                        <div class="member owner-member">
 
-                        <div class="member-role">
+                            <div class="member-name">
+                                {{ member.name }}
+                            </div>
 
-                            {% if member.user_id == community.owner_id %}
-
+                            <div class="member-role">
                                 👑 Community Owner
-
-                            {% else %}
-
-                                👤 Community Member
-
-                            {% endif %}
+                            </div>
 
                         </div>
 
-                    </div>
+                    {% else %}
+
+                        <div class="member">
+
+                            <div class="member-name">
+                                {{ member.name }}
+                            </div>
+
+                            <div class="member-role">
+                                👤 Community Member
+                            </div>
+
+                        </div>
+
+                    {% endif %}
 
                 {% endfor %}
 
