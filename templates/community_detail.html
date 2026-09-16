@@ -125,6 +125,7 @@
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
+            text-align: center;
         }
 
         .btn-primary {
@@ -143,6 +144,25 @@
 
         .btn-danger:hover {
             background: #b91c1c;
+        }
+
+        .btn-login {
+            background: #0f766e;
+            color: #ffffff;
+        }
+
+        .btn-login:hover {
+            background: #115e59;
+        }
+
+        .btn-register {
+            background: #eef2ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+
+        .btn-register:hover {
+            background: #e0e7ff;
         }
 
         .member-badge {
@@ -183,6 +203,31 @@
             margin-bottom: 16px;
             color: #111827;
             font-size: 21px;
+        }
+
+        .login-message {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .login-message h2 {
+            margin-bottom: 10px;
+        }
+
+        .login-message p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .login-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         textarea {
@@ -312,6 +357,7 @@
         }
 
         @media (max-width: 760px) {
+
             nav {
                 align-items: flex-start;
             }
@@ -340,6 +386,14 @@
             .card {
                 padding: 18px;
             }
+
+            .login-actions {
+                flex-direction: column;
+            }
+
+            .login-actions .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -347,18 +401,59 @@
 <body>
 
 <nav>
-    <a href="{{ url_for('home') }}" class="brand">🇳🇬 NijaWebbies</a>
+
+    <a href="{{ url_for('home') }}" class="brand">
+        🇳🇬 NijaWebbies
+    </a>
 
     <div class="nav-links">
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('search') }}">Search</a>
-        <a href="{{ url_for('businesses') }}">Businesses</a>
-        <a href="{{ url_for('communities') }}">Communities</a>
-        <a href="{{ url_for('tools') }}">Tools</a>
-        <a href="{{ url_for('workspace') }}">Workspace</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('search') }}">
+            Search
+        </a>
+
+        <a href="{{ url_for('businesses') }}">
+            Businesses
+        </a>
+
+        <a href="{{ url_for('communities') }}">
+            Communities
+        </a>
+
+        <a href="{{ url_for('tools') }}">
+            Tools
+        </a>
+
+        {% if is_logged_in %}
+
+            <a href="{{ url_for('workspace') }}">
+                Workspace
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+            <a href="{{ url_for('register') }}">
+                Join Free
+            </a>
+
+        {% endif %}
+
     </div>
+
 </nav>
+
 
 <div class="container">
 
@@ -366,30 +461,50 @@
         ← Back to Communities
     </a>
 
+
     {% with messages = get_flashed_messages() %}
+
         {% if messages %}
+
             {% for message in messages %}
-                <div class="flash">{{ message }}</div>
+
+                <div class="flash">
+                    {{ message }}
+                </div>
+
             {% endfor %}
+
         {% endif %}
+
     {% endwith %}
 
+
     <!-- COMMUNITY HEADER -->
+
     <section class="hero">
 
         {% if community.category %}
+
             <span class="category">
                 {{ community.category }}
             </span>
+
         {% endif %}
 
-        <h1>👥 {{ community.name }}</h1>
+
+        <h1>
+            👥 {{ community.name }}
+        </h1>
+
 
         <div class="description">
-            {{ community.description or "Welcome to this NijaWebbies community." }}
+            {{ community.description or
+               "Welcome to this NijaWebbies community." }}
         </div>
 
+
         <div class="community-meta">
+
             <span>
                 👤 {{ member_count }}
                 member{% if member_count != 1 %}s{% endif %}
@@ -402,30 +517,63 @@
             <span>
                 {{ community.created_at.strftime('%d %b %Y') }}
             </span>
+
         </div>
+
+
+        <!-- MEMBERSHIP STATUS -->
 
         <div class="status-row">
 
-            {% if is_member %}
+            {% if is_logged_in %}
 
-                {% if community.owner_id == session.get('user_id') %}
+                {% if is_member %}
 
-                    <span class="owner-badge">
-                        👑 You are the owner
-                    </span>
+                    {% if community.owner_id == session.get('user_id') %}
+
+                        <span class="owner-badge">
+                            👑 You are the owner
+                        </span>
+
+                    {% else %}
+
+                        <span class="member-badge">
+                            ✓ You are a member
+                        </span>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'leave_community',
+                                community_id=community.id
+                            ) }}"
+                            onsubmit="return confirm(
+                                'Are you sure you want to leave this community?'
+                            );">
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger">
+                                Leave Community
+                            </button>
+
+                        </form>
+
+                    {% endif %}
 
                 {% else %}
 
-                    <span class="member-badge">
-                        ✓ You are a member
-                    </span>
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'join_community',
+                            community_id=community.id
+                        ) }}">
 
-                    <form method="POST"
-                          action="{{ url_for('leave_community', community_id=community.id) }}"
-                          onsubmit="return confirm('Are you sure you want to leave this community?');">
-
-                        <button type="submit" class="btn btn-danger">
-                            Leave Community
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+                            Join Community
                         </button>
 
                     </form>
@@ -434,14 +582,27 @@
 
             {% else %}
 
-                <form method="POST"
-                      action="{{ url_for('join_community', community_id=community.id) }}">
+                <a
+                    href="{{ url_for(
+                        'login',
+                        next=url_for(
+                            'community_detail',
+                            community_id=community.id
+                        )
+                    ) }}"
+                    class="btn btn-primary">
 
-                    <button type="submit" class="btn btn-primary">
-                        Join Community
-                    </button>
+                    Login to Join
 
-                </form>
+                </a>
+
+                <a
+                    href="{{ url_for('register') }}"
+                    class="btn btn-register">
+
+                    Join Free
+
+                </a>
 
             {% endif %}
 
@@ -451,102 +612,179 @@
 
 
     <!-- MAIN CONTENT -->
+
     <div class="grid">
 
+
         <!-- DISCUSSION AREA -->
+
         <main>
 
-            {% if is_member %}
 
-            <section class="card">
+            <!-- POST / LOGIN AREA -->
 
-                <h2>📝 Start a Discussion</h2>
+            {% if is_logged_in and is_member %}
 
-                <form method="POST"
-                      action="{{ url_for('create_community_post', community_id=community.id) }}">
+                <section class="card">
 
-                    <textarea
-                        name="content"
-                        placeholder="Share an idea, question, opportunity or useful information with the community..."
-                        maxlength="5000"
-                        required></textarea>
+                    <h2>
+                        📝 Start a Discussion
+                    </h2>
 
-                    <div class="form-actions">
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'create_community_post',
+                            community_id=community.id
+                        ) }}">
 
-                        <button type="submit" class="btn btn-primary">
-                            Publish Post
-                        </button>
+                        <textarea
+                            name="content"
+                            placeholder="Share an idea, question, opportunity or useful information with the community..."
+                            maxlength="5000"
+                            required></textarea>
 
-                    </div>
+                        <div class="form-actions">
 
-                </form>
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
 
-            </section>
+                                Publish Post
 
-            {% else %}
+                            </button>
 
-            <section class="card">
-
-                <div class="empty">
-
-                    <h2>🔒 Join the community</h2>
-
-                    <p>
-                        Join this community to participate in discussions
-                        and share posts with other members.
-                    </p>
-
-                    <form method="POST"
-                          action="{{ url_for('join_community', community_id=community.id) }}">
-
-                        <button type="submit" class="btn btn-primary">
-                            Join Community
-                        </button>
+                        </div>
 
                     </form>
 
-                </div>
+                </section>
 
-            </section>
+
+            {% elif is_logged_in %}
+
+                <section class="card">
+
+                    <div class="login-message">
+
+                        <h2>
+                            🔒 Join the community
+                        </h2>
+
+                        <p>
+                            You need to join this community before you
+                            can participate in discussions and share posts.
+                        </p>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'join_community',
+                                community_id=community.id
+                            ) }}">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                Join Community
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </section>
+
+
+            {% else %}
+
+                <section class="card">
+
+                    <div class="login-message">
+
+                        <h2>
+                            🔒 Join the conversation
+                        </h2>
+
+                        <p>
+                            You can read the discussions freely.
+                            Login or create a free NijaWebbies account
+                            to join this community and share posts.
+                        </p>
+
+                        <div class="login-actions">
+
+                            <a
+                                href="{{ url_for(
+                                    'login',
+                                    next=url_for(
+                                        'community_detail',
+                                        community_id=community.id
+                                    )
+                                ) }}"
+                                class="btn btn-login">
+
+                                Login to Participate
+
+                            </a>
+
+                            <a
+                                href="{{ url_for('register') }}"
+                                class="btn btn-register">
+
+                                Create Free Account
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
 
             {% endif %}
 
 
             <!-- DISCUSSIONS -->
+
             <section class="card">
 
-                <h2>💬 Community Discussions</h2>
+                <h2>
+                    💬 Community Discussions
+                </h2>
 
-                <!-- IMPORTANT:
-                     app.py sends the posts as "discussions".
-                     Therefore this template must use "discussions".
-                -->
 
                 {% if discussions %}
 
                     {% for post in discussions %}
 
-                    <article class="post">
+                        <article class="post">
 
-                        <div>
+                            <div>
 
-                            <span class="post-author">
-                                {{ post.author_name }}
-                            </span>
+                                <span class="post-author">
+                                    {{ post.author_name }}
+                                </span>
 
-                            <span class="post-date">
-                                {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
-                            </span>
+                                <span class="post-date">
+                                    {{ post.created_at.strftime(
+                                        '%d %b %Y, %I:%M %p'
+                                    ) }}
+                                </span>
 
-                        </div>
+                            </div>
 
-                        <div class="post-content">
-                            {{ post.content }}
-                        </div>
 
-                    </article>
+                            <div class="post-content">
+                                {{ post.content }}
+                            </div>
+
+                        </article>
 
                     {% endfor %}
+
 
                 {% else %}
 
@@ -560,7 +798,8 @@
                             No discussions yet.
                         </p>
 
-                        {% if is_member %}
+
+                        {% if is_logged_in and is_member %}
 
                             <p>
                                 Be the first member to start a discussion.
@@ -584,12 +823,18 @@
 
 
         <!-- SIDEBAR -->
+
         <aside>
 
+
             <!-- MEMBERS -->
+
             <section class="card">
 
-                <h2>👥 Members</h2>
+                <h2>
+                    👥 Members
+                </h2>
+
 
                 {% if members %}
 
@@ -597,32 +842,36 @@
 
                         {% for member in members %}
 
-                        <li class="member-item">
+                            <li class="member-item">
 
-                            <span class="member-name">
-                                {{ member.name }}
-                            </span>
-
-                            {% if member.id == community.owner_id %}
-
-                                <span class="member-role">
-                                    👑 Community Owner
+                                <span class="member-name">
+                                    {{ member.name }}
                                 </span>
 
-                            {% else %}
 
-                                <span class="member-role">
-                                    Joined
-                                    {{ member.joined_at.strftime('%d %b %Y') }}
-                                </span>
+                                {% if member.id == community.owner_id %}
 
-                            {% endif %}
+                                    <span class="member-role">
+                                        👑 Community Owner
+                                    </span>
 
-                        </li>
+                                {% else %}
+
+                                    <span class="member-role">
+                                        Joined
+                                        {{ member.joined_at.strftime(
+                                            '%d %b %Y'
+                                        ) }}
+                                    </span>
+
+                                {% endif %}
+
+                            </li>
 
                         {% endfor %}
 
                     </ul>
+
 
                 {% else %}
 
@@ -636,9 +885,13 @@
 
 
             <!-- COMMUNITY INFORMATION -->
+
             <section class="card">
 
-                <h2>ℹ️ Information</h2>
+                <h2>
+                    ℹ️ Information
+                </h2>
+
 
                 <div class="info-row">
 
@@ -652,6 +905,7 @@
 
                 </div>
 
+
                 <div class="info-row">
 
                     <span class="info-label">
@@ -663,6 +917,7 @@
                     </span>
 
                 </div>
+
 
                 <div class="info-row">
 
@@ -676,6 +931,7 @@
 
                 </div>
 
+
                 <div class="info-row">
 
                     <span class="info-label">
@@ -688,6 +944,7 @@
 
                 </div>
 
+
                 <div class="info-row">
 
                     <span class="info-label">
@@ -695,7 +952,9 @@
                     </span>
 
                     <span class="info-value">
-                        {{ community.created_at.strftime('%d %b %Y') }}
+                        {{ community.created_at.strftime(
+                            '%d %b %Y'
+                        ) }}
                     </span>
 
                 </div>
@@ -711,7 +970,9 @@
 
 <footer>
 
-    <strong>🇳🇬 NijaWebbies</strong>
+    <strong>
+        🇳🇬 NijaWebbies
+    </strong>
 
     <br>
 
@@ -722,31 +983,54 @@
     <a href="{{ url_for('home') }}">
         Home
     </a>
+
     ·
 
     <a href="{{ url_for('search') }}">
         Search
     </a>
+
     ·
 
     <a href="{{ url_for('businesses') }}">
         Businesses
     </a>
+
     ·
 
     <a href="{{ url_for('communities') }}">
         Communities
     </a>
+
     ·
 
     <a href="{{ url_for('tools') }}">
         Free Tools
     </a>
-    ·
 
-    <a href="{{ url_for('workspace') }}">
-        Workspace
-    </a>
+    {% if is_logged_in %}
+
+        ·
+
+        <a href="{{ url_for('workspace') }}">
+            Workspace
+        </a>
+
+    {% else %}
+
+        ·
+
+        <a href="{{ url_for('login') }}">
+            Login
+        </a>
+
+        ·
+
+        <a href="{{ url_for('register') }}">
+            Join Free
+        </a>
+
+    {% endif %}
 
 </footer>
 
