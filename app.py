@@ -1299,9 +1299,9 @@ def search():
 
                 businesses = cursor.fetchall()
 
-            # =====================================================
+            # =================================================
             # SEARCH COMMUNITIES
-            # =====================================================
+            # =================================================
 
             if query:
 
@@ -2776,7 +2776,6 @@ def communities():
                 "success"
             )
 
-            # Open the newly-created community.
             return redirect(
                 url_for(
                     "community_detail",
@@ -2823,10 +2822,13 @@ def communities():
                     c.name,
                     c.description,
                     c.category,
-                    c.created_at
+                    c.created_at,
+                    u.name AS owner_name
                 FROM communities AS c
                 INNER JOIN community_members AS cm
                     ON c.id = cm.community_id
+                LEFT JOIN users AS u
+                    ON c.owner_id = u.id
                 WHERE cm.user_id = %s
                 ORDER BY c.id DESC
                 """,
@@ -2873,7 +2875,9 @@ def communities():
             <html lang="en">
 
             <head>
+
                 <meta charset="UTF-8">
+
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0">
 
@@ -3230,6 +3234,10 @@ def join_community(community_id):
 
         with conn.cursor() as cursor:
 
+            # =================================================
+            # VERIFY COMMUNITY
+            # =================================================
+
             cursor.execute(
                 """
                 SELECT
@@ -3253,6 +3261,10 @@ def join_community(community_id):
                 return redirect(
                     url_for("communities")
                 )
+
+            # =================================================
+            # ADD MEMBER
+            # =================================================
 
             cursor.execute(
                 """
@@ -3291,7 +3303,6 @@ def join_community(community_id):
                 "warning"
             )
 
-        # Go directly to the community page.
         return redirect(
             url_for(
                 "community_detail",
