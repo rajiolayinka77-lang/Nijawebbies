@@ -2656,8 +2656,6 @@ def upgrade():
 # =========================================================
 # COMMUNITIES
 # =========================================================
-# FIXED VERSION
-# =========================================================
 
 @app.route(
     "/communities",
@@ -2667,14 +2665,9 @@ def upgrade():
 def communities():
 
     conn = None
-
     user_id = session.get("user_id")
 
     try:
-
-        # -----------------------------------------------------
-        # VERIFY USER SESSION
-        # -----------------------------------------------------
 
         if not user_id:
 
@@ -2755,8 +2748,8 @@ def communities():
 
                 community_id = result[0]
 
-                # Automatically make the creator
-                # the first member.
+                # Creator automatically becomes
+                # the first community member.
                 cursor.execute(
                     """
                     INSERT INTO community_members
@@ -2783,8 +2776,12 @@ def communities():
                 "success"
             )
 
+            # Open the newly-created community.
             return redirect(
-                url_for("communities")
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
             )
 
         # =====================================================
@@ -2864,10 +2861,6 @@ def communities():
         if conn:
             conn.rollback()
 
-        # IMPORTANT:
-        # Do NOT redirect to Workspace here.
-        # We want Render to show/log the real problem.
-
         app.logger.exception(
             "COMMUNITIES PAGE FAILED | user_id=%s | error=%s",
             user_id,
@@ -2878,6 +2871,7 @@ def communities():
             """
             <!DOCTYPE html>
             <html lang="en">
+
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport"
@@ -2888,6 +2882,7 @@ def communities():
                 </title>
 
                 <style>
+
                     body {
                         font-family: Arial, sans-serif;
                         background: #f5f7fb;
@@ -2926,7 +2921,9 @@ def communities():
                         padding: 12px 18px;
                         border-radius: 8px;
                     }
+
                 </style>
+
             </head>
 
             <body>
@@ -2965,6 +2962,243 @@ def communities():
                 </div>
 
             </body>
+
+            </html>
+            """,
+            500
+        )
+
+    finally:
+
+        close_db(conn)
+
+
+# =========================================================
+# COMMUNITY DETAILS
+# =========================================================
+
+@app.route(
+    "/community/<int:community_id>"
+)
+@login_required
+def community_detail(community_id):
+
+    conn = None
+    user_id = session.get("user_id")
+
+    try:
+
+        if not user_id:
+
+            flash(
+                "Please login to view this community.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("login")
+            )
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            # =================================================
+            # LOAD COMMUNITY
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    c.id,
+                    c.owner_id,
+                    c.name,
+                    c.description,
+                    c.category,
+                    c.created_at,
+                    u.name AS owner_name
+                FROM communities AS c
+                LEFT JOIN users AS u
+                    ON c.owner_id = u.id
+                WHERE c.id = %s
+                LIMIT 1
+                """,
+                (community_id,)
+            )
+
+            community = cursor.fetchone()
+
+            if not community:
+
+                flash(
+                    "Community not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            # =================================================
+            # MEMBER COUNT
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    COUNT(*) AS member_count
+                FROM community_members
+                WHERE community_id = %s
+                """,
+                (community_id,)
+            )
+
+            member_result = cursor.fetchone()
+
+            member_count = (
+                member_result["member_count"]
+                if member_result
+                else 0
+            )
+
+            # =================================================
+            # CHECK CURRENT USER MEMBERSHIP
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    id
+                FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                LIMIT 1
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            membership = cursor.fetchone()
+
+            is_member = membership is not None
+
+        return render_template(
+            "community_detail.html",
+            community=community,
+            member_count=member_count,
+            is_member=is_member,
+            user_name=session.get("user_name")
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "COMMUNITY DETAIL FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            user_id,
+            error
+        )
+
+        return (
+            """
+            <!DOCTYPE html>
+            <html lang="en">
+
+            <head>
+
+                <meta charset="UTF-8">
+
+                <meta name="viewport"
+                      content="width=device-width, initial-scale=1.0">
+
+                <title>
+                    Community Error | NijaWebbies
+                </title>
+
+                <style>
+
+                    body {
+                        font-family: Arial, sans-serif;
+                        background: #f5f7fb;
+                        margin: 0;
+                        padding: 30px 20px;
+                        color: #111827;
+                    }
+
+                    .box {
+                        max-width: 700px;
+                        margin: 50px auto;
+                        background: white;
+                        padding: 30px;
+                        border-radius: 16px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+                    }
+
+                    h1 {
+                        color: #b91c1c;
+                    }
+
+                    .error {
+                        background: #fef2f2;
+                        border: 1px solid #fecaca;
+                        padding: 15px;
+                        border-radius: 10px;
+                        word-break: break-word;
+                    }
+
+                    a {
+                        display: inline-block;
+                        margin-top: 20px;
+                        background: #16a34a;
+                        color: white;
+                        text-decoration: none;
+                        padding: 12px 18px;
+                        border-radius: 8px;
+                    }
+
+                </style>
+
+            </head>
+
+            <body>
+
+                <div class="box">
+
+                    <h1>
+                        Community could not load
+                    </h1>
+
+                    <p>
+                        NijaWebbies found the community route,
+                        but an error occurred while loading it.
+                    </p>
+
+                    <div class="error">
+                    """
+            + str(error)
+            + """
+                    </div>
+
+                    <a href="/communities">
+                        ← Back to Communities
+                    </a>
+
+                    <a href="/workspace"
+                       style="margin-left:8px;background:#2563eb;">
+                        Workspace
+                    </a>
+
+                </div>
+
+            </body>
+
             </html>
             """,
             500
@@ -2998,9 +3232,11 @@ def join_community(community_id):
 
             cursor.execute(
                 """
-                SELECT id
+                SELECT
+                    id
                 FROM communities
                 WHERE id = %s
+                LIMIT 1
                 """,
                 (community_id,)
             )
@@ -3055,8 +3291,12 @@ def join_community(community_id):
                 "warning"
             )
 
+        # Go directly to the community page.
         return redirect(
-            url_for("communities")
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
         )
 
     except Exception as error:
