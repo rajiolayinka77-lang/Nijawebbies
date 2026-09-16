@@ -1,22 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>
-        {{ community.name }} | NijaWebbies
-    </title>
+    <title>{{ community.name }} | NijaWebbies</title>
 
     <meta name="description"
           content="{{ community.description or 'Community on NijaWebbies' }}">
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -24,602 +17,659 @@
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background: #f5f7fb;
-            color: #111827;
+            background: #f5f7fa;
+            color: #1f2937;
         }
 
-        .navbar {
+        nav {
             background: #ffffff;
             border-bottom: 1px solid #e5e7eb;
             padding: 14px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .nav-inner {
-            max-width: 1100px;
-            margin: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .brand {
-            text-decoration: none;
+            font-size: 21px;
+            font-weight: bold;
             color: #111827;
-            font-size: 20px;
-            font-weight: 800;
+            text-decoration: none;
         }
 
         .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 16px;
             flex-wrap: wrap;
         }
 
         .nav-links a {
-            text-decoration: none;
             color: #374151;
-            padding: 8px 10px;
-            border-radius: 8px;
+            text-decoration: none;
             font-size: 14px;
         }
 
         .nav-links a:hover {
-            background: #f3f4f6;
+            color: #0f766e;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 18px 50px;
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 25px 18px 50px;
         }
 
         .back-link {
             display: inline-block;
             margin-bottom: 18px;
-            color: #2563eb;
+            color: #0f766e;
             text-decoration: none;
             font-weight: 600;
         }
 
         .hero {
-            background: linear-gradient(
-                135deg,
-                #166534,
-                #15803d
-            );
-            color: white;
-            padding: 32px 24px;
-            border-radius: 20px;
-            box-shadow: 0 12px 30px rgba(0,0,0,.10);
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid #e5e7eb;
             margin-bottom: 20px;
-        }
-
-        .hero h1 {
-            margin: 0 0 10px;
-            font-size: 34px;
-            line-height: 1.15;
-        }
-
-        .hero p {
-            margin: 0;
-            line-height: 1.7;
-            opacity: .95;
         }
 
         .category {
             display: inline-block;
-            margin-bottom: 15px;
-            padding: 7px 12px;
-            border-radius: 999px;
-            background: rgba(255,255,255,.18);
+            background: #ecfdf5;
+            color: #047857;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 32px;
+            color: #111827;
+        }
+
+        .description {
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .community-meta {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .status-row {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 9px;
+            padding: 11px 17px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #0f766e;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #115e59;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .member-badge {
+            background: #ecfdf5;
+            color: #047857;
+            padding: 9px 13px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .owner-badge {
+            background: #fff7ed;
+            color: #c2410c;
+            padding: 9px 13px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: 1.6fr .9fr;
+            grid-template-columns: 2fr 1fr;
             gap: 20px;
+            align-items: start;
         }
 
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 8px 25px rgba(0,0,0,.06);
+            background: #ffffff;
             border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 22px;
             margin-bottom: 20px;
         }
 
         .card h2 {
             margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 22px;
+            margin-bottom: 16px;
+            color: #111827;
+            font-size: 21px;
         }
 
-        .description {
-            line-height: 1.8;
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #0f766e;
+        }
+
+        .form-actions {
+            margin-top: 10px;
+        }
+
+        .post {
+            border-top: 1px solid #e5e7eb;
+            padding: 17px 0;
+        }
+
+        .post:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .post-author {
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .post-date {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+
+        .post-content {
+            margin-top: 8px;
             color: #374151;
-            white-space: pre-line;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .empty {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .member-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .member-item {
+            padding: 13px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .member-item:last-child {
+            border-bottom: none;
+        }
+
+        .member-name {
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .member-role {
+            display: block;
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 4px;
         }
 
         .info-row {
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 11px 0;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .info-row:last-child {
             border-bottom: none;
         }
 
-        .label {
+        .info-label {
+            display: block;
             color: #6b7280;
-            font-size: 13px;
+            font-size: 12px;
             margin-bottom: 4px;
         }
 
-        .value {
-            font-weight: 700;
+        .info-value {
+            font-weight: 600;
             color: #111827;
         }
 
-        .member-count {
-            font-size: 32px;
-            font-weight: 800;
-            color: #166534;
-            margin-bottom: 5px;
-        }
-
-        .member-label {
-            color: #6b7280;
-        }
-
-        .join-button {
-            width: 100%;
-            border: none;
-            background: #16a34a;
-            color: white;
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .join-button:hover {
-            background: #15803d;
-        }
-
-        .member-status {
+        .flash {
+            padding: 12px 15px;
+            border-radius: 9px;
+            margin-bottom: 15px;
             background: #ecfdf5;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: 700;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        footer {
             text-align: center;
-        }
-
-        .owner-badge {
-            display: inline-block;
-            margin-left: 6px;
-            padding: 3px 8px;
-            background: #dcfce7;
-            color: #166534;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .members-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .member {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 13px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .member:last-child {
-            border-bottom: none;
-        }
-
-        .member-name {
-            font-weight: 700;
-        }
-
-        .member-date {
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        .empty {
+            padding: 30px 15px;
             color: #6b7280;
-            text-align: center;
-            padding: 20px 0;
+            font-size: 14px;
         }
 
-        .footer {
-            text-align: center;
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 30px;
+        footer a {
+            color: #0f766e;
+            text-decoration: none;
         }
 
         @media (max-width: 760px) {
-
-            .nav-inner {
+            nav {
                 align-items: flex-start;
-                flex-direction: column;
+            }
+
+            .nav-links {
+                width: 100%;
+                gap: 11px;
+            }
+
+            .container {
+                padding: 18px 12px 40px;
+            }
+
+            .hero {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 26px;
             }
 
             .grid {
                 grid-template-columns: 1fr;
             }
 
-            .hero h1 {
-                font-size: 28px;
+            .card {
+                padding: 18px;
             }
-
-            .container {
-                margin-top: 20px;
-            }
-
         }
-
     </style>
-
 </head>
 
 <body>
 
-    <!-- =====================================================
-         NAVIGATION
-         ===================================================== -->
+<nav>
+    <a href="{{ url_for('home') }}" class="brand">🇳🇬 NijaWebbies</a>
 
-    <nav class="navbar">
+    <div class="nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('search') }}">Search</a>
+        <a href="{{ url_for('businesses') }}">Businesses</a>
+        <a href="{{ url_for('communities') }}">Communities</a>
+        <a href="{{ url_for('tools') }}">Tools</a>
+        <a href="{{ url_for('workspace') }}">Workspace</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</nav>
 
-        <div class="nav-inner">
+<div class="container">
 
-            <a href="/" class="brand">
-                🇳🇬 NijaWebbies
-            </a>
+    <a href="{{ url_for('communities') }}" class="back-link">
+        ← Back to Communities
+    </a>
 
-            <div class="nav-links">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-                <a href="/">
-                    Home
-                </a>
+    <!-- COMMUNITY HEADER -->
+    <section class="hero">
 
-                <a href="/search">
-                    Search
-                </a>
+        {% if community.category %}
+            <span class="category">
+                {{ community.category }}
+            </span>
+        {% endif %}
 
-                <a href="/businesses">
-                    Businesses
-                </a>
+        <h1>👥 {{ community.name }}</h1>
 
-                <a href="/communities">
-                    Communities
-                </a>
-
-                <a href="/tools">
-                    Tools
-                </a>
-
-                <a href="/workspace">
-                    Workspace
-                </a>
-
-            </div>
-
+        <div class="description">
+            {{ community.description or "Welcome to this NijaWebbies community." }}
         </div>
 
-    </nav>
+        <div class="community-meta">
+            <span>👤 {{ member_count }} member{% if member_count != 1 %}s{% endif %}</span>
 
+            <span>
+                Created by {{ community.owner_name }}
+            </span>
 
-    <!-- =====================================================
-         MAIN
-         ===================================================== -->
+            <span>
+                {{ community.created_at.strftime('%d %b %Y') }}
+            </span>
+        </div>
 
-    <main class="container">
+        <div class="status-row">
 
-        <a href="/communities"
-           class="back-link">
-            ← Back to Communities
-        </a>
+            {% if is_member %}
 
+                {% if community.owner_id == session.get('user_id') %}
+                    <span class="owner-badge">
+                        👑 You are the owner
+                    </span>
+                {% else %}
+                    <span class="member-badge">
+                        ✓ You are a member
+                    </span>
 
-        <!-- =================================================
-             COMMUNITY HERO
-             ================================================= -->
+                    <form method="POST"
+                          action="{{ url_for('leave_community', community_id=community.id) }}"
+                          onsubmit="return confirm('Are you sure you want to leave this community?');">
 
-        <section class="hero">
+                        <button type="submit" class="btn btn-danger">
+                            Leave Community
+                        </button>
 
-            {% if community.category %}
-
-                <div class="category">
-                    {{ community.category }}
-                </div>
-
-            {% endif %}
-
-            <h1>
-                {{ community.name }}
-            </h1>
-
-            {% if community.description %}
-
-                <p>
-                    {{ community.description }}
-                </p>
+                    </form>
+                {% endif %}
 
             {% else %}
 
-                <p>
-                    Welcome to this NijaWebbies community.
-                </p>
+                <form method="POST"
+                      action="{{ url_for('join_community', community_id=community.id) }}">
+
+                    <button type="submit" class="btn btn-primary">
+                        Join Community
+                    </button>
+
+                </form>
 
             {% endif %}
 
-        </section>
+        </div>
+
+    </section>
 
 
-        <!-- =================================================
-             CONTENT GRID
-             ================================================= -->
+    <!-- MAIN CONTENT -->
+    <div class="grid">
 
-        <div class="grid">
+        <!-- DISCUSSION AREA -->
+        <main>
+
+            {% if is_member %}
+
+            <section class="card">
+
+                <h2>📝 Start a Discussion</h2>
+
+                <form method="POST"
+                      action="{{ url_for('create_community_post', community_id=community.id) }}">
+
+                    <textarea
+                        name="content"
+                        placeholder="Share an idea, question, opportunity or useful information with the community..."
+                        maxlength="5000"
+                        required></textarea>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            Publish Post
+                        </button>
+                    </div>
+
+                </form>
+
+            </section>
+
+            {% else %}
+
+            <section class="card">
+
+                <div class="empty">
+                    <h2>🔒 Join the community</h2>
+
+                    <p>
+                        Join this community to participate in discussions
+                        and share posts with other members.
+                    </p>
+
+                    <form method="POST"
+                          action="{{ url_for('join_community', community_id=community.id) }}">
+
+                        <button type="submit" class="btn btn-primary">
+                            Join Community
+                        </button>
+
+                    </form>
+                </div>
+
+            </section>
+
+            {% endif %}
 
 
-            <!-- =============================================
-                 LEFT COLUMN
-                 ============================================= -->
+            <!-- DISCUSSIONS -->
+            <section class="card">
 
-            <div>
+                <h2>💬 Community Discussions</h2>
 
+                {% if community_posts %}
 
-                <!-- =========================================
-                     ABOUT
-                     ========================================= -->
+                    {% for post in community_posts %}
 
-                <section class="card">
+                    <article class="post">
 
-                    <h2>
-                        About this community
-                    </h2>
+                        <div>
+                            <span class="post-author">
+                                {{ post.author_name }}
+                            </span>
 
-                    {% if community.description %}
-
-                        <div class="description">
-                            {{ community.description }}
+                            <span class="post-date">
+                                {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                            </span>
                         </div>
 
-                    {% else %}
-
-                        <div class="empty">
-                            No community description has been
-                            added yet.
+                        <div class="post-content">
+                            {{ post.content }}
                         </div>
 
-                    {% endif %}
+                    </article>
 
-                </section>
+                    {% endfor %}
 
+                {% else %}
 
-                <!-- =========================================
-                     MEMBERS
-                     ========================================= -->
+                    <div class="empty">
+                        <div style="font-size: 30px;">💬</div>
 
-                <section class="card">
+                        <p>
+                            No discussions yet.
+                        </p>
 
-                    <h2>
-                        Community Members
-                    </h2>
+                        {% if is_member %}
+                            <p>
+                                Be the first member to start a discussion.
+                            </p>
+                        {% else %}
+                            <p>
+                                Join the community to start participating.
+                            </p>
+                        {% endif %}
+                    </div>
 
-                    {% if members %}
+                {% endif %}
 
-                        <ul class="members-list">
+            </section>
 
-                            {% for member in members %}
-
-                                <li class="member">
-
-                                    <div>
-
-                                        <div class="member-name">
-
-                                            {{ member.name }}
-
-                                            {% if member.id == community.owner_id %}
-
-                                                <span class="owner-badge">
-                                                    Owner
-                                                </span>
-
-                                            {% endif %}
-
-                                        </div>
-
-                                        {% if member.joined_at %}
-
-                                            <div class="member-date">
-
-                                                Joined
-                                                {{ member.joined_at.strftime("%d %b %Y") }}
-
-                                            </div>
-
-                                        {% endif %}
-
-                                    </div>
-
-                                </li>
-
-                            {% endfor %}
-
-                        </ul>
-
-                    {% else %}
-
-                        <div class="empty">
-                            No members found yet.
-                        </div>
-
-                    {% endif %}
-
-                </section>
-
-            </div>
+        </main>
 
 
-            <!-- =============================================
-                 RIGHT COLUMN
-                 ============================================= -->
+        <!-- SIDEBAR -->
+        <aside>
 
-            <aside>
+            <!-- MEMBERS -->
+            <section class="card">
+
+                <h2>👥 Members</h2>
+
+                {% if members %}
+
+                    <ul class="member-list">
+
+                        {% for member in members %}
+
+                        <li class="member-item">
+
+                            <span class="member-name">
+                                {{ member.name }}
+                            </span>
+
+                            {% if member.id == community.owner_id %}
+
+                                <span class="member-role">
+                                    👑 Community Owner
+                                </span>
+
+                            {% else %}
+
+                                <span class="member-role">
+                                    Joined {{ member.joined_at.strftime('%d %b %Y') }}
+                                </span>
+
+                            {% endif %}
+
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <div class="empty">
+                        No members yet.
+                    </div>
+
+                {% endif %}
+
+            </section>
 
 
-                <!-- =========================================
-                     MEMBERSHIP
-                     ========================================= -->
+            <!-- COMMUNITY INFORMATION -->
+            <section class="card">
 
-                <section class="card">
+                <h2>ℹ️ Information</h2>
 
-                    <h2>
-                        Community
-                    </h2>
+                <div class="info-row">
+                    <span class="info-label">Community</span>
+                    <span class="info-value">
+                        {{ community.name }}
+                    </span>
+                </div>
 
-                    <div class="member-count">
+                <div class="info-row">
+                    <span class="info-label">Category</span>
+                    <span class="info-value">
+                        {{ community.category or "General" }}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Created by</span>
+                    <span class="info-value">
+                        {{ community.owner_name }}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Members</span>
+                    <span class="info-value">
                         {{ member_count }}
-                    </div>
+                    </span>
+                </div>
 
-                    <div class="member-label">
-                        {{ "member" if member_count == 1 else "members" }}
-                    </div>
+                <div class="info-row">
+                    <span class="info-label">Created</span>
+                    <span class="info-value">
+                        {{ community.created_at.strftime('%d %b %Y') }}
+                    </span>
+                </div>
 
-                    <br>
+            </section>
 
-                    {% if is_member %}
+        </aside>
 
-                        <div class="member-status">
-                            ✓ You are a member
-                        </div>
+    </div>
 
-                    {% else %}
-
-                        <form method="POST"
-                              action="{{ url_for('join_community', community_id=community.id) }}">
-
-                            <button type="submit"
-                                    class="join-button">
-                                Join Community
-                            </button>
-
-                        </form>
-
-                    {% endif %}
-
-                </section>
+</div>
 
 
-                <!-- =========================================
-                     COMMUNITY INFORMATION
-                     ========================================= -->
+<footer>
+    <strong>🇳🇬 NijaWebbies</strong>
+    <br>
+    Built for Nigeria & Africa.
+    <br><br>
 
-                <section class="card">
-
-                    <h2>
-                        Information
-                    </h2>
-
-                    <div class="info-row">
-
-                        <div class="label">
-                            Community
-                        </div>
-
-                        <div class="value">
-                            {{ community.name }}
-                        </div>
-
-                    </div>
-
-
-                    {% if community.category %}
-
-                        <div class="info-row">
-
-                            <div class="label">
-                                Category
-                            </div>
-
-                            <div class="value">
-                                {{ community.category }}
-                            </div>
-
-                        </div>
-
-                    {% endif %}
-
-
-                    <div class="info-row">
-
-                        <div class="label">
-                            Created by
-                        </div>
-
-                        <div class="value">
-                            {{ community.owner_name or "NijaWebbies User" }}
-                        </div>
-
-                    </div>
-
-
-                    {% if community.created_at %}
-
-                        <div class="info-row">
-
-                            <div class="label">
-                                Created
-                            </div>
-
-                            <div class="value">
-
-                                {{ community.created_at.strftime("%d %B %Y") }}
-
-                            </div>
-
-                        </div>
-
-                    {% endif %}
-
-                </section>
-
-            </aside>
-
-        </div>
-
-
-        <div class="footer">
-
-            🇳🇬 NijaWebbies —
-            Built for Nigeria & Africa
-
-        </div>
-
-    </main>
+    <a href="{{ url_for('home') }}">Home</a> ·
+    <a href="{{ url_for('search') }}">Search</a> ·
+    <a href="{{ url_for('businesses') }}">Businesses</a> ·
+    <a href="{{ url_for('communities') }}">Communities</a> ·
+    <a href="{{ url_for('tools') }}">Free Tools</a> ·
+    <a href="{{ url_for('workspace') }}">Workspace</a>
+</footer>
 
 </body>
-
 </html>
