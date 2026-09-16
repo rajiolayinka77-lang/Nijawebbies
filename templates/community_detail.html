@@ -390,7 +390,10 @@
         </div>
 
         <div class="community-meta">
-            <span>👤 {{ member_count }} member{% if member_count != 1 %}s{% endif %}</span>
+            <span>
+                👤 {{ member_count }}
+                member{% if member_count != 1 %}s{% endif %}
+            </span>
 
             <span>
                 Created by {{ community.owner_name }}
@@ -406,10 +409,13 @@
             {% if is_member %}
 
                 {% if community.owner_id == session.get('user_id') %}
+
                     <span class="owner-badge">
                         👑 You are the owner
                     </span>
+
                 {% else %}
+
                     <span class="member-badge">
                         ✓ You are a member
                     </span>
@@ -423,6 +429,7 @@
                         </button>
 
                     </form>
+
                 {% endif %}
 
             {% else %}
@@ -465,9 +472,11 @@
                         required></textarea>
 
                     <div class="form-actions">
+
                         <button type="submit" class="btn btn-primary">
                             Publish Post
                         </button>
+
                     </div>
 
                 </form>
@@ -479,6 +488,7 @@
             <section class="card">
 
                 <div class="empty">
+
                     <h2>🔒 Join the community</h2>
 
                     <p>
@@ -494,6 +504,7 @@
                         </button>
 
                     </form>
+
                 </div>
 
             </section>
@@ -506,13 +517,19 @@
 
                 <h2>💬 Community Discussions</h2>
 
-                {% if community_posts %}
+                <!-- IMPORTANT:
+                     app.py sends the posts as "discussions".
+                     Therefore this template must use "discussions".
+                -->
 
-                    {% for post in community_posts %}
+                {% if discussions %}
+
+                    {% for post in discussions %}
 
                     <article class="post">
 
                         <div>
+
                             <span class="post-author">
                                 {{ post.author_name }}
                             </span>
@@ -520,6 +537,7 @@
                             <span class="post-date">
                                 {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
                             </span>
+
                         </div>
 
                         <div class="post-content">
@@ -533,21 +551,29 @@
                 {% else %}
 
                     <div class="empty">
-                        <div style="font-size: 30px;">💬</div>
+
+                        <div style="font-size: 30px;">
+                            💬
+                        </div>
 
                         <p>
                             No discussions yet.
                         </p>
 
                         {% if is_member %}
+
                             <p>
                                 Be the first member to start a discussion.
                             </p>
+
                         {% else %}
+
                             <p>
                                 Join the community to start participating.
                             </p>
+
                         {% endif %}
+
                     </div>
 
                 {% endif %}
@@ -586,7 +612,8 @@
                             {% else %}
 
                                 <span class="member-role">
-                                    Joined {{ member.joined_at.strftime('%d %b %Y') }}
+                                    Joined
+                                    {{ member.joined_at.strftime('%d %b %Y') }}
                                 </span>
 
                             {% endif %}
@@ -614,38 +641,63 @@
                 <h2>ℹ️ Information</h2>
 
                 <div class="info-row">
-                    <span class="info-label">Community</span>
+
+                    <span class="info-label">
+                        Community
+                    </span>
+
                     <span class="info-value">
                         {{ community.name }}
                     </span>
+
                 </div>
 
                 <div class="info-row">
-                    <span class="info-label">Category</span>
+
+                    <span class="info-label">
+                        Category
+                    </span>
+
                     <span class="info-value">
                         {{ community.category or "General" }}
                     </span>
+
                 </div>
 
                 <div class="info-row">
-                    <span class="info-label">Created by</span>
+
+                    <span class="info-label">
+                        Created by
+                    </span>
+
                     <span class="info-value">
                         {{ community.owner_name }}
                     </span>
+
                 </div>
 
                 <div class="info-row">
-                    <span class="info-label">Members</span>
+
+                    <span class="info-label">
+                        Members
+                    </span>
+
                     <span class="info-value">
                         {{ member_count }}
                     </span>
+
                 </div>
 
                 <div class="info-row">
-                    <span class="info-label">Created</span>
+
+                    <span class="info-label">
+                        Created
+                    </span>
+
                     <span class="info-value">
                         {{ community.created_at.strftime('%d %b %Y') }}
                     </span>
+
                 </div>
 
             </section>
@@ -658,17 +710,44 @@
 
 
 <footer>
+
     <strong>🇳🇬 NijaWebbies</strong>
+
     <br>
+
     Built for Nigeria & Africa.
+
     <br><br>
 
-    <a href="{{ url_for('home') }}">Home</a> ·
-    <a href="{{ url_for('search') }}">Search</a> ·
-    <a href="{{ url_for('businesses') }}">Businesses</a> ·
-    <a href="{{ url_for('communities') }}">Communities</a> ·
-    <a href="{{ url_for('tools') }}">Free Tools</a> ·
-    <a href="{{ url_for('workspace') }}">Workspace</a>
+    <a href="{{ url_for('home') }}">
+        Home
+    </a>
+    ·
+
+    <a href="{{ url_for('search') }}">
+        Search
+    </a>
+    ·
+
+    <a href="{{ url_for('businesses') }}">
+        Businesses
+    </a>
+    ·
+
+    <a href="{{ url_for('communities') }}">
+        Communities
+    </a>
+    ·
+
+    <a href="{{ url_for('tools') }}">
+        Free Tools
+    </a>
+    ·
+
+    <a href="{{ url_for('workspace') }}">
+        Workspace
+    </a>
+
 </footer>
 
 </body>
