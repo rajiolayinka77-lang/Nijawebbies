@@ -1,6 +1,4 @@
-
-                                                                    </div>
-                 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -482,957 +480,723 @@
 
 <body>
 
-    <nav class="navbar">
+<nav class="navbar">
 
-        <div class="brand">
-            🇳🇬 NijaWebbies
-        </div>
+    <div class="brand">
+        🇳🇬 NijaWebbies
+    </div>
 
-        <div class="nav-links">
+    <div class="nav-links">
 
-            <a href="{{ url_for('home') }}">
-                Home
-            </a>
+        <a href="{{ url_for('home') }}">Home</a>
 
-            <a href="{{ url_for('search') }}">
-                Search
-            </a>
+        <a href="{{ url_for('search') }}">Search</a>
 
-            <a href="{{ url_for('businesses') }}">
-                Businesses
-            </a>
+        <a href="{{ url_for('businesses') }}">Businesses</a>
 
-            <a href="{{ url_for('communities') }}">
-                Communities
-            </a>
+        <a href="{{ url_for('communities') }}">Communities</a>
 
-            <a href="{{ url_for('tools') }}">
-                Tools
-            </a>
+        <a href="{{ url_for('tools') }}">Tools</a>
 
-            {% if is_logged_in %}
+        {% if is_logged_in %}
 
-                <a href="{{ url_for('workspace') }}">
-                    Workspace
-                </a>
+            <a href="{{ url_for('workspace') }}">Workspace</a>
 
-                <a href="{{ url_for('logout') }}">
-                    Logout
-                </a>
-
-            {% else %}
-
-                <a href="{{ url_for('login') }}">
-                    Login
-                </a>
-
-                <a href="{{ url_for('register') }}">
-                    Register
-                </a>
-
-            {% endif %}
-
-        </div>
-
-    </nav>
-
-
-    <main class="container">
-
-        <!-- FLASH MESSAGES -->
-
-        {% with messages = get_flashed_messages() %}
-
-            {% if messages %}
-
-                <div class="flash-messages">
-
-                    {% for message in messages %}
-
-                        <div class="flash">
-                            {{ message }}
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            {% endif %}
-
-        {% endwith %}
-
-
-        <!-- COMMUNITY HEADER -->
-
-        <section class="community-header">
-
-            <h1>
-                👥 {{ community.name }}
-            </h1>
-
-            {% if community.description %}
-
-                <p class="community-description">
-                    {{ community.description }}
-                </p>
-
-            {% endif %}
-
-            <div class="community-meta">
-
-                <span class="badge">
-                    👥 {{ member_count }}
-                    member{% if member_count != 1 %}s{% endif %}
-                </span>
-
-                {% if community.owner_name %}
-
-                    <span class="badge">
-                        👑 Owner: {{ community.owner_name }}
-                    </span>
-
-                {% endif %}
-
-            </div>
-
-
-            {% if is_logged_in and current_user_id == community.owner_id %}
-
-                <div class="owner-badge">
-                    👑 You are the owner
-                </div>
-
-            {% endif %}
-
-
-            {% if is_logged_in %}
-
-                <div class="membership-actions">
-
-                    {% if is_member %}
-
-                        <form
-                            method="POST"
-                            action="{{ url_for('leave_community', community_id=community.id) }}"
-                            onsubmit="return confirm('Are you sure you want to leave this community?');"
-                        >
-
-                            <button
-                                type="submit"
-                                class="button button-secondary"
-                            >
-                                Leave Community
-                            </button>
-
-                        </form>
-
-                    {% else %}
-
-                        <form
-                            method="POST"
-                            action="{{ url_for('join_community', community_id=community.id) }}"
-                        >
-
-                            <button
-                                type="submit"
-                                class="button button-primary"
-                            >
-                                Join Community
-                            </button>
-
-                        </form>
-
-                    {% endif %}
-
-                </div>
-
-            {% endif %}
-
-        </section>
-
-
-        <!-- START DISCUSSION -->
-
-        {% if is_logged_in and is_member %}
-
-            <section class="card">
-
-                <h2 class="section-title">
-                    💬 Start a Discussion
-                </h2>
-
-                <form
-                    method="POST"
-                    action="{{ url_for('create_community_post', community_id=community.id) }}"
-                >
-
-                    <div class="form-group">
-
-                        <label for="content">
-                            Your Message
-                        </label>
-
-                        <textarea
-                            id="content"
-                            name="content"
-                            maxlength="5000"
-                            placeholder="Share your ideas, questions or experience..."
-                            required
-                        ></textarea>
-
-                    </div>
-
-                    <button
-                        type="submit"
-                        class="button button-primary"
-                    >
-                        Post Discussion
-                    </button>
-
-                </form>
-
-            </section>
-
-        {% elif is_logged_in and not is_member %}
-
-            <div class="notice">
-                Join this community to start discussions and participate in conversations.
-            </div>
+            <a href="{{ url_for('logout') }}">Logout</a>
 
         {% else %}
 
-            <div class="login-notice">
+            <a href="{{ url_for('login') }}">Login</a>
 
-                Please
-                <a href="{{ url_for('login') }}">
-                    <strong>login</strong>
-                </a>
-                to join the community and participate in discussions.
+            <a href="{{ url_for('register') }}">Register</a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+<main class="container">
+
+    <!-- FLASH MESSAGES -->
+
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            <div class="flash-messages">
+
+                {% for message in messages %}
+
+                    <div class="flash">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
 
             </div>
 
         {% endif %}
 
+    {% endwith %}
 
-        <!-- DISCUSSIONS -->
+
+    <!-- COMMUNITY HEADER -->
+
+    <section class="community-header">
+
+        <h1>
+            👥 {{ community.name }}
+        </h1>
+
+        {% if community.description %}
+
+            <p class="community-description">
+                {{ community.description }}
+            </p>
+
+        {% endif %}
+
+        <div class="community-meta">
+
+            <span class="badge">
+                👥 {{ member_count }}
+                member{% if member_count != 1 %}s{% endif %}
+            </span>
+
+            {% if community.owner_name %}
+
+                <span class="badge">
+                    👑 Owner: {{ community.owner_name }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if is_logged_in and current_user_id == community.owner_id %}
+
+            <div class="owner-badge">
+                👑 You are the owner
+            </div>
+
+        {% endif %}
+
+
+        {% if is_logged_in %}
+
+            <div class="membership-actions">
+
+                {% if is_member %}
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('leave_community', community_id=community.id) }}"
+                        onsubmit="return confirm('Are you sure you want to leave this community?');"
+                    >
+
+                        <button
+                            type="submit"
+                            class="button button-secondary"
+                        >
+                            Leave Community
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('join_community', community_id=community.id) }}"
+                    >
+
+                        <button
+                            type="submit"
+                            class="button button-primary"
+                        >
+                            Join Community
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- START DISCUSSION -->
+
+    {% if is_logged_in and is_member %}
 
         <section class="card">
 
             <h2 class="section-title">
-                🗣️ Discussions
+                💬 Start a Discussion
             </h2>
 
+            <form
+                method="POST"
+                action="{{ url_for('create_community_post', community_id=community.id) }}"
+            >
 
-            {% if discussions %}
+                <div class="form-group">
 
-                {% for post in discussions %}
+                    <label for="content">
+                        Your Message
+                    </label>
 
-                    <article class="discussion">
+                    <textarea
+                        id="content"
+                        name="content"
+                        maxlength="5000"
+                        placeholder="Share your ideas, questions or experience..."
+                        required
+                    ></textarea>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    Post Discussion
+                </button>
+
+            </form>
+
+        </section>
+
+    {% elif is_logged_in and not is_member %}
+
+        <div class="notice">
+            Join this community to start discussions and participate in conversations.
+        </div>
+
+    {% else %}
+
+        <div class="login-notice">
+
+            Please
+            <a href="{{ url_for('login') }}">
+                <strong>login</strong>
+            </a>
+            to join the community and participate in discussions.
+
+        </div>
+
+    {% endif %}
 
 
-                        <!-- DISCUSSION HEADER -->
+    <!-- DISCUSSIONS -->
 
-                        <div class="discussion-header">
+    <section class="card">
 
-                            <h3 class="discussion-title">
-                                {{ post.title if post.title is defined else "" }}
-                            </h3>
+        <h2 class="section-title">
+            🗣️ Discussions
+        </h2>
 
-                            <div class="discussion-meta">
 
-                                Posted by
-                                <strong>
-                                    {{ post.author_name }}
-                                </strong>
+        {% if discussions %}
 
-                                {% if post.created_at %}
+            {% for post in discussions %}
 
-                                    ·
-                                    {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                <article class="discussion">
 
-                                {% endif %}
+                    <!-- DISCUSSION HEADER -->
 
-                            </div>
+                    <div class="discussion-header">
+
+                        <h3 class="discussion-title">
+                            {{ post.title if post.title is defined else "" }}
+                        </h3>
+
+                        <div class="discussion-meta">
+
+                            Posted by
+                            <strong>
+                                {{ post.author_name }}
+                            </strong>
+
+                            {% if post.created_at %}
+
+                                ·
+                                {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+
+                            {% endif %}
 
                         </div>
 
-
-                        <!-- DISCUSSION CONTENT -->
-
-                        <div class="discussion-content">
-                            {{ post.content }}
-                        </div>
+                    </div>
 
 
-                        <!-- DELETE DISCUSSION -->
+                    <!-- DISCUSSION CONTENT -->
 
-                        {% if is_logged_in and
-                              (current_user_id == post.user_id
-                              or current_user_id == community.owner_id) %}
+                    <div class="discussion-content">
+                        {{ post.content }}
+                    </div>
 
-                            <div class="discussion-actions">
 
-                                <form
-                                    method="POST"
-                                    action="{{ url_for('delete_community_post', post_id=post.id) }}"
-                                    onsubmit="return confirm('Delete this discussion?');"
+                    <!-- DELETE DISCUSSION -->
+
+                    {% if is_logged_in and
+                          (current_user_id == post.user_id
+                          or current_user_id == community.owner_id) %}
+
+                        <div class="discussion-actions">
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('delete_community_post', post_id=post.id) }}"
+                                onsubmit="return confirm('Delete this discussion?');"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="button button-danger button-small"
                                 >
+                                    Delete Discussion
+                                </button>
 
-                                    <button
-                                        type="submit"
-                                        class="button button-danger button-small"
-                                    >
-                                        Delete Discussion
-                                    </button>
+                            </form>
 
-                                </form>
+                        </div>
 
-                            </div>
-
-                        {% endif %}
+                    {% endif %}
 
 
-                        <!-- COMMENTS -->
+                    <!-- COMMENTS -->
 
-                        <div class="comments-area">
+                    <div class="comments-area">
 
-                            <h4 class="comments-title">
+                        <h4 class="comments-title">
 
-                                💬
-                                {{ comments_by_post.get(post.id, [])|length }}
-                                Comment{% if comments_by_post.get(post.id, [])|length != 1 %}s{% endif %}
+                            💬
+                            {{ comments_by_post.get(post.id, [])|length }}
+                            Comment{% if comments_by_post.get(post.id, [])|length != 1 %}s{% endif %}
 
-                            </h4>
-
-
-                            {% if comments_by_post.get(post.id) %}
-
-                                {% for comment in comments_by_post.get(post.id) %}
+                        </h4>
 
 
-                                    <!-- MAIN COMMENT -->
+                        {% if comments_by_post.get(post.id) %}
 
-                                    <div class="comment">
+                            {% for comment in comments_by_post.get(post.id) %}
 
-                                        <div class="comment-main">
+                                <!-- MAIN COMMENT -->
 
-                                            <div class="comment-avatar">
-                                                {{ comment.author_name[:1]|upper }}
+                                <div class="comment">
+
+                                    <div class="comment-main">
+
+                                        <div class="comment-avatar">
+                                            {{ comment.author_name[:1]|upper }}
+                                        </div>
+
+
+                                        <div class="comment-body">
+
+                                            <div class="comment-top">
+
+                                                <div class="comment-author">
+                                                    {{ comment.author_name }}
+                                                </div>
+
+                                                {% if comment.created_at %}
+
+                                                    <div class="comment-date">
+                                                        {{ comment.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                                                    </div>
+
+                                                {% endif %}
+
                                             </div>
 
 
-                                            <div class="comment-body">
+                                            <div class="comment-content">
+                                                {{ comment.content }}
+                                            </div>
 
-                                                <div class="comment-top">
 
-                                                    <div class="comment-author">
-                                                        {{ comment.author_name }}
-                                                    </div>
+                                            <!-- COMMENT ACTIONS -->
 
-                                                    {% if comment.created_at %}
+                                            {% if is_logged_in %}
 
-                                                        <div class="comment-date">
-                                                            {{ comment.created_at.strftime('%d %b %Y, %I:%M %p') }}
-                                                        </div>
+                                                <div class="comment-actions">
+
+                                                    {% if is_member %}
+
+                                                        <button
+                                                            type="button"
+                                                            class="reply-button"
+                                                            onclick="toggleReplyForm({{ comment.id }})"
+                                                        >
+                                                            ↩ Reply
+                                                        </button>
+
+                                                    {% endif %}
+
+
+                                                    {% if current_user_id == comment.user_id
+                                                          or current_user_id == community.owner_id %}
+
+                                                        <form
+                                                            method="POST"
+                                                            action="{{ url_for('delete_community_comment', comment_id=comment.id) }}"
+                                                            onsubmit="return confirm('Delete this comment and its replies?');"
+                                                        >
+
+                                                            <button
+                                                                type="submit"
+                                                                class="delete-button"
+                                                            >
+                                                                Delete
+                                                            </button>
+
+                                                        </form>
 
                                                     {% endif %}
 
                                                 </div>
 
-
-                                                <div class="comment-content">
-                                                    {{ comment.content }}
-                                                </div>
+                                            {% endif %}
 
 
-                                                {% if is_logged_in %}
+                                            <!-- REPLY FORM -->
 
-                                                    <div class="comment-actions">
+                                            {% if is_logged_in and is_member %}
 
+                                                <div
+                                                    id="reply-form-{{ comment.id }}"
+                                                    class="reply-form"
+                                                    style="display:none;"
+                                                >
 
-                                                        {% if is_member %}
+                                                    <form
+                                                        method="POST"
+                                                        action="{{ url_for('create_community_comment_reply', comment_id=comment.id) }}"
+                                                    >
+
+                                                        <textarea
+                                                            name="content"
+                                                            maxlength="2000"
+                                                            placeholder="Write a reply..."
+                                                            required
+                                                        ></textarea>
+
+                                                        <div
+                                                            style="
+                                                                display:flex;
+                                                                gap:8px;
+                                                                flex-wrap:wrap;
+                                                            "
+                                                        >
+
+                                                            <button
+                                                                type="submit"
+                                                                class="button button-primary button-small"
+                                                            >
+                                                                Post Reply
+                                                            </button>
 
                                                             <button
                                                                 type="button"
-                                                                class="reply-button"
+                                                                class="button button-secondary button-small"
                                                                 onclick="toggleReplyForm({{ comment.id }})"
                                                             >
-                                                                ↩ Reply
+                                                                Cancel
                                                             </button>
 
-                                                        {% endif %}
+                                                        </div>
+
+                                                    </form>
+
+                                                </div>
+
+                                            {% endif %}
 
 
-                                                        {% if current_user_id == comment.user_id
-                                                              or current_user_id == community.owner_id %}
+                                            <!-- REPLIES -->
 
-                                                            <form
-                                                                method="POST"
-                                                                action="{{ url_for('delete_community_comment', comment_id=comment.id) }}"
-                                                                onsubmit="return confirm('Delete this comment and its replies?');"
-                                                                style="display:inline;"
-                                                            >
+                                            {% if replies_by_comment is defined and replies_by_comment.get(comment.id) %}
 
-                                                                <button
-                                                                    type="submit"
-                                                                    class="delete-button"
-                                                                >
-                                                                    Delete
-                                                                </button>
+                                                {% for reply in replies_by_comment.get(comment.id) %}
 
-                                                            </form>
+                                                    <div class="reply">
 
-                                                        {% endif %}
+                                                        <div class="comment-main">
 
-                                                    </div>
-
-                                                {% endif %}
-
-
-                                                <!-- REPLY FORM -->
-
-                                                {% if is_logged_in and is_member %}
-
-                                                    <div
-                                                        id="reply-form-{{ comment.id }}"
-                                                        class="reply-form"
-                                                        style="display:none;"
-                                                    >
-
-                                                        <form
-                                                            method="POST"
-                                                            action="{{ url_for('create_community_comment_reply', comment_id=comment.id) }}"
-                                                        >
-
-                                                            <textarea
-                                                                name="content"
-                                                                maxlength="2000"
-                                                                placeholder="Write a reply..."
-                                                                required
-                                                            ></textarea>
-
-
-                                                            <div
-                                                                style="
-                                                                    display:flex;
-                                                                    gap:8px;
-                                                                    flex-wrap:wrap;
-                                                                "
-                                                            >
-
-                                                                <button
-                                                                    type="submit"
-                                                                    class="button button-primary button-small"
-                                                                >
-                                                                    Post Reply
-                                                                </button>
-
-
-                                                                <button
-                                                                    type="button"
-                                                                    class="button button-secondary button-small"
-                                                                    onclick="toggleReplyForm({{ comment.id }})"
-                                                                >
-                                                                    Cancel
-                                                                </button>
-
+                                                            <div class="comment-avatar">
+                                                                {{ reply.author_name[:1]|upper }}
                                                             </div>
 
-                                                        </form>
 
-                                                    </div>
+                                                            <div class="comment-body">
 
-                                                {% endif %}
+                                                                <div class="comment-top">
 
-
-                                                <!-- REPLIES -->
-
-                                                {% if replies_by_comment.get(comment.id) %}
-
-                                                    {% for reply in replies_by_comment.get(comment.id) %}
-
-                                                        <div class="reply">
-
-                                                            <div class="comment-main">
-
-                                                                <div class="comment-avatar">
-                                                                    {{ reply.author_name[:1]|upper }}
-                                                                </div>
-
-
-                                                                <div class="comment-body">
-
-                                                                    <div class="comment-top">
-
-                                                                        <div class="comment-author">
-                                                                            {{ reply.author_name }}
-                                                                        </div>
-
-                                                                        {% if reply.created_at %}
-
-                                                                            <div class="comment-date">
-                                                                                {{ reply.created_at.strftime('%d %b %Y, %I:%M %p') }}
-                                                                            </div>
-
-                                                                        {% endif %}
-
+                                                                    <div class="comment-author">
+                                                                        {{ reply.author_name }}
                                                                     </div>
 
+                                                                    {% if reply.created_at %}
 
-                                                                    <div class="comment-content">
-                                                                        {{ reply.content }}
-                                                                    </div>
-
-
-                                                                    {% if is_logged_in and
-                                                                          (current_user_id == reply.user_id
-                                                                          or current_user_id == community.owner_id) %}
-
-                                                                        <div class="comment-actions">
-
-                                                                            <form
-                                                                                method="POST"
-                                                                                action="{{ url_for('delete_community_comment', comment_id=reply.id) }}"
-                                                                                onsubmit="return confirm('Delete this reply?');"
-                                                                            >
-
-                                                                                <button
-                                                                                    type="submit"
-                                                                                    class="delete-button"
-                                                                                >
-                                                                                    Delete
-                                                                                </button>
-
-                                                                            </form>
-
+                                                                        <div class="comment-date">
+                                                                            {{ reply.created_at.strftime('%d %b %Y, %I:%M %p') }}
                                                                         </div>
 
                                                                     {% endif %}
 
                                                                 </div>
 
-                                                            </div>
 
-                                                        </div>
-
-                                                    {% endfor %}
-
-                                                {% endif %}
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                {% endfor %}
-
-                            {% else %}
-
-                                <div class="empty-state">
-
-                                    No comments yet.
-                                    Be the first to comment.
-
-                                </div>
-
-                            {% endif %}
-
-
-                            <!-- NEW COMMENT -->
-
-                            {% if is_logged_in and is_member %}
-
-                                <form
-                                    method="POST"
-                                    action="{{ url_for('create_community_comment', post_id=post.id) }}"
-                                    class="comment-form"
-                                >
-
-                                    <div class="form-group">
-
-                                        <label for="comment-{{ post.id }}">
-                                            Add a Comment
-                                        </label>
-
-                                        <textarea
-                                            id="comment-{{ post.id }}"
-                                            name="content"
-                                            maxlength="2000"
-                                            placeholder="Write your comment..."
-                                            required
-                                        ></textarea>
-
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        class="button button-primary"
-                                    >
-                                        Post Comment
-                                    </button>
-
-                                </form>
-
-                            {% elif is_logged_in and not is_member %}
-
-                                <div class="notice" style="margin-top:15px;">
-                                    Join this community to comment and reply.
-                                </div>
-
-                            {% else %}
-
-                                <div class="login-notice">
-
-                                    Please
-                                    <a href="{{ url_for('login') }}">
-                                        <strong>login</strong>
-                                    </a>
-                                    to comment and reply.
-
-                                </div>
-
-                            {% endif %}
-
-                        </div>
-
-                    </article>
-
-                {% endfor %}
-
-            {% else %}
-
-                <div class="empty-state">
-
-                    <div style="font-size:30px; margin-bottom:10px;">
-                        💬
-                    </div>
-
-                    <strong>
-                        No discussions yet.
-                    </strong>
-
-                    <p>
-                        Be the first member to start a discussion in this community.
-                    </p>
-
-                </div>
-
-            {% endif %}
-
-        </section>
-
-
-        <!-- MEMBERS -->
-
-        <section class="card">
-
-            <h2 class="section-title">
-                👥 Community Members
-            </h2>
-
-
-            {% if members %}
-
-                <div class="members-list">
-
-                    {% for member in members %}
-
-                        {% if member.id == community.owner_id %}
-
-                            <div class="member owner-member">
-
-                                <div class="member-name">
-                                    {{ member.name }}
-                                </div>
-
-                                <div class="member-role">
-                                    👑 Community Owner
-                                </div>
-
-                            </div>
-
-                        {% else %}
-
-                            <div class="member">
-
-                                <div class="member-name">
-                                    {{ member.name }}
-                                </div>
-
-                                <div class="member-role">
-                                    👤 Community Member
-                                </div>
-
-                            </div>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                </div>
-
-            {% else %}
-
-                <div class="empty-state">
-                    No members yet.
-                </div>
-
-            {% endif %}
-
-        </section>
-
-    </main>
-
-
-    <footer class="footer">
-        🇳🇬 NijaWebbies — Built for Nigeria & Africa
-    </footer>
-
-
-    <script>
-
-        function toggleReplyForm(commentId) {
-
-            const form =
-                document.getElementById(
-                    "reply-form-" + commentId
-                );
-
-            if (!form) {
-                return;
-            }
-
-            if (
-                form.style.display === "none" ||
-                form.style.display === ""
-            ) {
-
-                form.style.display = "block";
-
-                const textarea =
-                    form.querySelector("textarea");
-
-                if (textarea) {
-                    textarea.focus();
-                }
-
-            } else {
-
-                form.style.display = "none";
-
-            }
-        }
-
-    </script>
-
-</body>
-</html>                                               {% endif %}
-
-                                                            </div>
-
-                                                            <div class="comment-content">
-                                                                {{ reply.content }}
-                                                            </div>
-
-
-                                                            <!-- REPLY DELETE -->
-                                                            {% if is_logged_in and
-                                                                  (current_user_id == reply.user_id
-                                                                  or current_user_id == community.owner_id) %}
-
-                                                                <div class="comment-actions">
-
-                                                                    <form
-                                                                        method="POST"
-                                                                        action="{{ url_for('delete_community_comment', comment_id=reply.id) }}"
-                                                                        onsubmit="return confirm('Delete this reply?');"
-                                                                    >
-                                                                        <button
-                                                                            type="submit"
-                                                                            class="delete-button"
-                                                                        >
-                                                                            Delete
-                                                                        </button>
-                                                                    </form>
-
+                                                                <div class="comment-content">
+                                                                    {{ reply.content }}
                                                                 </div>
 
-                                                            {% endif %}
+
+                                                                <!-- REPLY DELETE -->
+
+                                                                {% if is_logged_in and
+                                                                      (current_user_id == reply.user_id
+                                                                      or current_user_id == community.owner_id) %}
+
+                                                                    <div class="comment-actions">
+
+                                                                        <form
+                                                                            method="POST"
+                                                                            action="{{ url_for('delete_community_comment', comment_id=reply.id) }}"
+                                                                            onsubmit="return confirm('Delete this reply?');"
+                                                                        >
+
+                                                                            <button
+                                                                                type="submit"
+                                                                                class="delete-button"
+                                                                            >
+                                                                                Delete
+                                                                            </button>
+
+                                                                        </form>
+
+                                                                    </div>
+
+                                                                {% endif %}
+
+                                                            </div>
 
                                                         </div>
 
                                                     </div>
 
-                                                </div>
+                                                {% endfor %}
 
-                                            {% endfor %}
+                                            {% endif %}
 
-                                        {% endif %}
+                                        </div>
 
                                     </div>
 
-                                {% endfor %}
-
-                            {% else %}
-
-                                <div class="empty-state">
-                                    No comments yet. Be the first to comment.
                                 </div>
 
-                            {% endif %}
+                            {% endfor %}
+
+                        {% else %}
+
+                            <div class="empty-state">
+
+                                No comments yet.
+                                Be the first to comment.
+
+                            </div>
+
+                        {% endif %}
 
 
-                            <!-- NEW COMMENT FORM -->
-                            {% if is_logged_in and is_member %}
+                        <!-- NEW COMMENT -->
 
-                                <form
-                                    method="POST"
-                                    action="{{ url_for('create_community_comment', post_id=post.id) }}"
-                                    class="comment-form"
+                        {% if is_logged_in and is_member %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('create_community_comment', post_id=post.id) }}"
+                                class="comment-form"
+                            >
+
+                                <div class="form-group">
+
+                                    <label for="comment-{{ post.id }}">
+                                        Add a Comment
+                                    </label>
+
+                                    <textarea
+                                        id="comment-{{ post.id }}"
+                                        name="content"
+                                        maxlength="2000"
+                                        placeholder="Write your comment..."
+                                        required
+                                    ></textarea>
+
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="button button-primary"
                                 >
+                                    Post Comment
+                                </button>
 
-                                    <div class="form-group">
+                            </form>
 
-                                        <label for="comment-{{ post.id }}">
-                                            Add a Comment
-                                        </label>
+                        {% elif is_logged_in and not is_member %}
 
-                                        <textarea
-                                            id="comment-{{ post.id }}"
-                                            name="content"
-                                            maxlength="2000"
-                                            placeholder="Write your comment..."
-                                            required
-                                        ></textarea>
+                            <div class="notice" style="margin-top:15px;">
+                                Join this community to comment and reply.
+                            </div>
 
-                                    </div>
+                        {% else %}
 
-                                    <button
-                                        type="submit"
-                                        class="button button-primary"
-                                    >
-                                        Post Comment
-                                    </button>
+                            <div class="login-notice">
 
-                                </form>
+                                Please
+                                <a href="{{ url_for('login') }}">
+                                    <strong>login</strong>
+                                </a>
+                                to comment and reply.
 
-                            {% elif is_logged_in and not is_member %}
+                            </div>
 
-                                <div class="notice" style="margin-top:15px;">
-                                    Join this community to comment and reply.
-                                </div>
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div style="font-size:30px; margin-bottom:10px;">
+                    💬
+                </div>
+
+                <strong>
+                    No discussions yet.
+                </strong>
+
+                <p>
+                    Be the first member to start a discussion in this community.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- MEMBERS -->
+
+    <section class="card">
+
+        <h2 class="section-title">
+            👥 Community Members
+        </h2>
+
+
+        {% if members %}
+
+            <div class="members-list">
+
+                {% for member in members %}
+
+                    <div
+                        class="member {% if member.user_id == community.owner_id %}owner-member{% endif %}"
+                    >
+
+                        <div class="member-name">
+                            {{ member.name }}
+                        </div>
+
+                        <div class="member-role">
+
+                            {% if member.user_id == community.owner_id %}
+
+                                👑 Community Owner
 
                             {% else %}
 
-                                <div class="login-notice">
-                                    Please
-                                    <a href="{{ url_for('login') }}"><strong>login</strong></a>
-                                    to comment and reply.
-                                </div>
+                                👤 Community Member
 
                             {% endif %}
 
                         </div>
 
-                    </article>
+                    </div>
 
                 {% endfor %}
 
-            {% else %}
+            </div>
 
-                <div class="empty-state">
-                    <div style="font-size:30px; margin-bottom:10px;">
-                        💬
-                    </div>
+        {% else %}
 
-                    <strong>No discussions yet.</strong>
+            <div class="empty-state">
+                No members yet.
+            </div>
 
-                    <p>
-                        Be the first member to start a discussion in this community.
-                    </p>
-                </div>
+        {% endif %}
 
-            {% endif %}
+    </section>
 
-        </section>
+</main>
 
 
-        <!-- MEMBERS -->
-        <section class="card">
-
-            <h2 class="section-title">
-                👥 Community Members
-            </h2>
-
-            {% if members %}
-
-                <div class="members-list">
-
-                    {% for member in members %}
-
-                        <div class="member">
-
-                            <div class="member-name">
-                                {{ member.name }}
-                            </div>
-
-                            <div class="member-role">
-
-                                {% if member.user_id == community.owner_id %}
-                                    👑 Community Owner
-                                {% else %}
-                                    Community Member
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            {% else %}
-
-                <div class="empty-state">
-                    No members yet.
-                </div>
-
-            {% endif %}
-
-        </section>
-
-    </main>
+<footer class="footer">
+    🇳🇬 NijaWebbies — Built for Nigeria & Africa
+</footer>
 
 
-    <footer class="footer">
-        🇳🇬 NijaWebbies — Built for Nigeria & Africa
-    </footer>
+<script>
 
+    function toggleReplyForm(commentId) {
 
-    <!-- REPLY FORM TOGGLE -->
-    <script>
-        function toggleReplyForm(commentId) {
-            const form = document.getElementById("reply-form-" + commentId);
+        const form =
+            document.getElementById(
+                "reply-form-" + commentId
+            );
 
-            if (!form) {
-                return;
-            }
-
-            if (form.style.display === "none" || form.style.display === "") {
-                form.style.display = "block";
-
-                const textarea = form.querySelector("textarea");
-
-                if (textarea) {
-                    textarea.focus();
-                }
-            } else {
-                form.style.display = "none";
-            }
+        if (!form) {
+            return;
         }
-    </script>
+
+        if (
+            form.style.display === "none" ||
+            form.style.display === ""
+        ) {
+
+            form.style.display = "block";
+
+            const textarea =
+                form.querySelector("textarea");
+
+            if (textarea) {
+                textarea.focus();
+            }
+
+        } else {
+
+            form.style.display = "none";
+
+        }
+    }
+
+</script>
 
 </body>
 </html>
