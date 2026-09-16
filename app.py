@@ -20,7 +20,6 @@ app.config["SECRET_KEY"] = os.environ.get(
 )
 
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
-
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = bool(
@@ -65,7 +64,6 @@ def init_db():
     conn = None
 
     try:
-
         conn = get_db()
 
         with conn.cursor() as cursor:
@@ -220,7 +218,7 @@ def init_db():
             """)
 
             # =================================================
-            # COMMUNITY DISCUSSION INDEXES
+            # COMMUNITY INDEXES
             # =================================================
 
             cursor.execute("""
@@ -235,6 +233,18 @@ def init_db():
                 ON community_posts(user_id)
             """)
 
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_community_members_community
+                ON community_members(community_id)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_community_members_user
+                ON community_members(user_id)
+            """)
+
         conn.commit()
 
         app.logger.info(
@@ -242,7 +252,6 @@ def init_db():
         )
 
     except Exception:
-
         if conn:
             conn.rollback()
 
@@ -261,11 +270,8 @@ def init_db():
 # =========================================================
 
 try:
-
     init_db()
-
 except Exception:
-
     app.logger.exception(
         "Database startup failed."
     )
@@ -281,7 +287,6 @@ def is_safe_url(target):
         return False
 
     try:
-
         parsed = urlparse(target)
 
         return (
@@ -292,7 +297,6 @@ def is_safe_url(target):
         )
 
     except Exception:
-
         return False
 
 
@@ -311,11 +315,9 @@ def make_whatsapp_link(number):
         return None
 
     if digits.startswith("0"):
-
         digits = "234" + digits[1:]
 
     elif not digits.startswith("234"):
-
         digits = "234" + digits
 
     return f"https://wa.me/{digits}"
@@ -349,7 +351,6 @@ def make_website_link(website):
         return None
 
     if not website.startswith(("http://", "https://")):
-
         website = "https://" + website
 
     return website
@@ -371,11 +372,19 @@ def login_required(view):
                 "warning"
             )
 
-            next_page = request.full_path
+            # For POST requests, return the visitor to the
+            # page they came from after login instead of
+            # redirecting them to a POST-only URL.
+            if request.method == "POST":
 
-            if next_page.endswith("?"):
+                next_page = request.referrer or url_for("home")
 
-                next_page = next_page[:-1]
+            else:
+
+                next_page = request.full_path
+
+                if next_page.endswith("?"):
+                    next_page = next_page[:-1]
 
             return redirect(
                 url_for(
@@ -396,9 +405,7 @@ def login_required(view):
 @app.route("/")
 def home():
 
-    return render_template(
-        "home.html"
-    )
+    return render_template("home.html")
 
 
 # =========================================================
@@ -412,10 +419,7 @@ def home():
 def register():
 
     if session.get("user_id"):
-
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     if request.method == "POST":
 
@@ -500,13 +504,9 @@ def register():
                         "warning"
                     )
 
-                    return redirect(
-                        url_for("login")
-                    )
+                    return redirect(url_for("login"))
 
-                hashed_password = generate_password_hash(
-                    password
-                )
+                hashed_password = generate_password_hash(password)
 
                 cursor.execute(
                     """
@@ -534,9 +534,7 @@ def register():
                 "success"
             )
 
-            return redirect(
-                url_for("login")
-            )
+            return redirect(url_for("login"))
 
         except psycopg2.IntegrityError:
 
@@ -548,9 +546,7 @@ def register():
                 "warning"
             )
 
-            return redirect(
-                url_for("login")
-            )
+            return redirect(url_for("login"))
 
         except Exception:
 
@@ -573,12 +569,9 @@ def register():
             )
 
         finally:
-
             close_db(conn)
 
-    return render_template(
-        "register.html"
-    )
+    return render_template("register.html")
 
 
 # =========================================================
@@ -592,10 +585,7 @@ def register():
 def login():
 
     if session.get("user_id"):
-
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     next_page = request.args.get(
         "next",
@@ -614,9 +604,7 @@ def login():
             ""
         )
 
-        remember = request.form.get(
-            "remember"
-        )
+        remember = request.form.get("remember")
 
         if not next_page:
 
@@ -683,7 +671,6 @@ def login():
             )
 
         finally:
-
             close_db(conn)
 
         password_valid = False
@@ -725,12 +712,9 @@ def login():
         session.permanent = bool(remember)
 
         if is_safe_url(next_page):
-
             return redirect(next_page)
 
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     return render_template(
         "login.html",
@@ -753,9 +737,7 @@ def logout():
         "success"
     )
 
-    return redirect(
-        url_for("home")
-    )
+    return redirect(url_for("home"))
 
 
 # =========================================================
@@ -850,12 +832,9 @@ def workspace():
             "danger"
         )
 
-        return redirect(
-            url_for("home")
-        )
+        return redirect(url_for("home"))
 
     finally:
-
         close_db(conn)
 
 
@@ -889,9 +868,7 @@ def create_post():
                 "danger"
             )
 
-            return redirect(
-                url_for("create_post")
-            )
+            return redirect(url_for("create_post"))
 
         conn = None
 
@@ -927,9 +904,7 @@ def create_post():
                 "success"
             )
 
-            return redirect(
-                url_for("workspace")
-            )
+            return redirect(url_for("workspace"))
 
         except Exception:
 
@@ -945,17 +920,12 @@ def create_post():
                 "danger"
             )
 
-            return redirect(
-                url_for("create_post")
-            )
+            return redirect(url_for("create_post"))
 
         finally:
-
             close_db(conn)
 
-    return render_template(
-        "create_post.html"
-    )
+    return render_template("create_post.html")
 
 
 # =========================================================
@@ -1002,9 +972,7 @@ def edit_post(post_id):
                     "danger"
                 )
 
-                return redirect(
-                    url_for("workspace")
-                )
+                return redirect(url_for("workspace"))
 
             if request.method == "POST":
 
@@ -1054,9 +1022,7 @@ def edit_post(post_id):
             "success"
         )
 
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     except Exception:
 
@@ -1072,12 +1038,9 @@ def edit_post(post_id):
             "danger"
         )
 
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     finally:
-
         close_db(conn)
 
 
@@ -1123,9 +1086,7 @@ def delete_post(post_id):
                 "danger"
             )
 
-            return redirect(
-                url_for("workspace")
-            )
+            return redirect(url_for("workspace"))
 
         conn.commit()
 
@@ -1134,9 +1095,7 @@ def delete_post(post_id):
             "success"
         )
 
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     except Exception:
 
@@ -1152,12 +1111,9 @@ def delete_post(post_id):
             "danger"
         )
 
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     finally:
-
         close_db(conn)
 
 
@@ -1209,7 +1165,6 @@ def blog():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1247,7 +1202,6 @@ def view_post(post_id):
             post = cursor.fetchone()
 
         if not post:
-
             return "Post not found", 404
 
         return render_template(
@@ -1264,7 +1218,6 @@ def view_post(post_id):
         return "Unable to load post.", 500
 
     finally:
-
         close_db(conn)
 
 
@@ -1424,18 +1377,26 @@ def search():
                 cursor.execute(
                     """
                     SELECT
-                        id,
-                        owner_id,
-                        name,
-                        description,
-                        category,
-                        created_at
-                    FROM communities
+                        c.id,
+                        c.owner_id,
+                        c.name,
+                        c.description,
+                        c.category,
+                        c.created_at,
+                        u.name AS owner_name,
+                        (
+                            SELECT COUNT(*)
+                            FROM community_members cm
+                            WHERE cm.community_id = c.id
+                        ) AS member_count
+                    FROM communities c
+                    LEFT JOIN users u
+                        ON c.owner_id = u.id
                     WHERE
-                        name ILIKE %s
-                        OR description ILIKE %s
-                        OR category ILIKE %s
-                    ORDER BY id DESC
+                        c.name ILIKE %s
+                        OR c.description ILIKE %s
+                        OR c.category ILIKE %s
+                    ORDER BY c.id DESC
                     """,
                     (
                         search_term,
@@ -1497,7 +1458,6 @@ def search():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -1567,11 +1527,9 @@ def creator_studio():
             ).strip()
 
             if project_type not in ALLOWED_PROJECT_TYPES:
-
                 project_type = "General"
 
             if status not in ALLOWED_PROJECT_STATUSES:
-
                 status = "Idea"
 
             if not title:
@@ -1581,9 +1539,7 @@ def creator_studio():
                     "danger"
                 )
 
-                return redirect(
-                    url_for("creator_studio")
-                )
+                return redirect(url_for("creator_studio"))
 
             with conn.cursor() as cursor:
 
@@ -1617,9 +1573,7 @@ def creator_studio():
                 "success"
             )
 
-            return redirect(
-                url_for("creator_studio")
-            )
+            return redirect(url_for("creator_studio"))
 
         with conn.cursor(
             cursor_factory=RealDictCursor
@@ -1657,12 +1611,9 @@ def creator_studio():
             "danger"
         )
 
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     finally:
-
         close_db(conn)
 
 
@@ -1670,9 +1621,7 @@ def creator_studio():
 # VIEW CREATOR PROJECT
 # =========================================================
 
-@app.route(
-    "/creator-project/<int:project_id>"
-)
+@app.route("/creator-project/<int:project_id>")
 @login_required
 def view_creator_project(project_id):
 
@@ -1713,9 +1662,7 @@ def view_creator_project(project_id):
                 "danger"
             )
 
-            return redirect(
-                url_for("creator_studio")
-            )
+            return redirect(url_for("creator_studio"))
 
         return render_template(
             "view_creator_project.html",
@@ -1737,12 +1684,9 @@ def view_creator_project(project_id):
             "danger"
         )
 
-        return redirect(
-            url_for("creator_studio")
-        )
+        return redirect(url_for("creator_studio"))
 
     finally:
-
         close_db(conn)
 
 
@@ -1750,9 +1694,7 @@ def view_creator_project(project_id):
 # PROJECT URL ALIAS
 # =========================================================
 
-@app.route(
-    "/project/<int:project_id>"
-)
+@app.route("/project/<int:project_id>")
 @login_required
 def view_project(project_id):
 
@@ -1808,9 +1750,7 @@ def edit_creator_project(project_id):
                 "danger"
             )
 
-            return redirect(
-                url_for("creator_studio")
-            )
+            return redirect(url_for("creator_studio"))
 
         if request.method == "GET":
 
@@ -1841,11 +1781,9 @@ def edit_creator_project(project_id):
         ).strip()
 
         if project_type not in ALLOWED_PROJECT_TYPES:
-
             project_type = "General"
 
         if status not in ALLOWED_PROJECT_STATUSES:
-
             status = "Idea"
 
         if not title:
@@ -1937,12 +1875,9 @@ def edit_creator_project(project_id):
             "danger"
         )
 
-        return redirect(
-            url_for("creator_studio")
-        )
+        return redirect(url_for("creator_studio"))
 
     finally:
-
         close_db(conn)
 
 
@@ -1988,9 +1923,7 @@ def delete_creator_project(project_id):
                 "danger"
             )
 
-            return redirect(
-                url_for("creator_studio")
-            )
+            return redirect(url_for("creator_studio"))
 
         conn.commit()
 
@@ -1999,9 +1932,7 @@ def delete_creator_project(project_id):
             "success"
         )
 
-        return redirect(
-            url_for("creator_studio")
-        )
+        return redirect(url_for("creator_studio"))
 
     except Exception:
 
@@ -2017,12 +1948,9 @@ def delete_creator_project(project_id):
             "danger"
         )
 
-        return redirect(
-            url_for("creator_studio")
-        )
+        return redirect(url_for("creator_studio"))
 
     finally:
-
         close_db(conn)
 
 
@@ -2087,9 +2015,7 @@ def business_space():
                     "danger"
                 )
 
-                return redirect(
-                    url_for("business_space")
-                )
+                return redirect(url_for("business_space"))
 
             if not category:
 
@@ -2098,9 +2024,7 @@ def business_space():
                     "danger"
                 )
 
-                return redirect(
-                    url_for("business_space")
-                )
+                return redirect(url_for("business_space"))
 
             whatsapp_clean = (
                 whatsapp
@@ -2114,22 +2038,18 @@ def business_space():
             if whatsapp_clean:
 
                 if whatsapp_clean.startswith("+234"):
-
                     whatsapp_clean = whatsapp_clean[1:]
 
                 elif whatsapp_clean.startswith("234"):
-
                     pass
 
                 elif whatsapp_clean.startswith("0"):
-
                     whatsapp_clean = (
                         "234" +
                         whatsapp_clean[1:]
                     )
 
                 else:
-
                     whatsapp_clean = (
                         "234" +
                         whatsapp_clean
@@ -2138,7 +2058,6 @@ def business_space():
                 whatsapp = whatsapp_clean
 
             else:
-
                 whatsapp = ""
 
             with conn.cursor(
@@ -2153,9 +2072,7 @@ def business_space():
                     ORDER BY id DESC
                     LIMIT 1
                     """,
-                    (
-                        session["user_id"],
-                    )
+                    (session["user_id"],)
                 )
 
                 existing = cursor.fetchone()
@@ -2207,15 +2124,8 @@ def business_space():
                         )
                         VALUES
                         (
-                            %s,
-                            %s,
-                            %s,
-                            %s,
-                            %s,
-                            %s,
-                            %s,
-                            %s,
-                            %s
+                            %s, %s, %s, %s,
+                            %s, %s, %s, %s, %s
                         )
                         """,
                         (
@@ -2238,9 +2148,7 @@ def business_space():
                 "success"
             )
 
-            return redirect(
-                url_for("business_space")
-            )
+            return redirect(url_for("business_space"))
 
         with conn.cursor(
             cursor_factory=RealDictCursor
@@ -2254,9 +2162,7 @@ def business_space():
                 ORDER BY id DESC
                 LIMIT 1
                 """,
-                (
-                    session["user_id"],
-                )
+                (session["user_id"],)
             )
 
             business = cursor.fetchone()
@@ -2305,36 +2211,22 @@ def business_space():
             "danger"
         )
 
-        return redirect(
-            url_for("workspace")
-        )
+        return redirect(url_for("workspace"))
 
     finally:
-
         close_db(conn)
 
 
 # =========================================================
-# PUBLIC BUSINESS DIRECTORY / SEARCH
+# PUBLIC BUSINESS DIRECTORY
 # =========================================================
 
 @app.route("/businesses")
 def businesses():
 
-    q = request.args.get(
-        "q",
-        ""
-    ).strip()
-
-    category = request.args.get(
-        "category",
-        ""
-    ).strip()
-
-    location = request.args.get(
-        "location",
-        ""
-    ).strip()
+    q = request.args.get("q", "").strip()
+    category = request.args.get("category", "").strip()
+    location = request.args.get("location", "").strip()
 
     conn = None
 
@@ -2387,28 +2279,29 @@ def businesses():
 
                 query += " AND category ILIKE %s"
 
-                params.append(
-                    f"%{category}%"
-                )
+                params.append(f"%{category}%")
 
             if location:
 
                 query += " AND location ILIKE %s"
 
-                params.append(
-                    f"%{location}%"
-                )
+                params.append(f"%{location}%")
 
-            query += """
-                ORDER BY created_at DESC
-            """
+            query += " ORDER BY created_at DESC"
 
-            cur.execute(
-                query,
-                params
-            )
+            cur.execute(query, params)
 
             businesses_list = cur.fetchall()
+
+            cur.execute("""
+                SELECT DISTINCT category
+                FROM business_profiles
+                WHERE category IS NOT NULL
+                  AND TRIM(category) <> ''
+                ORDER BY category ASC
+            """)
+
+            categories = cur.fetchall()
 
         for business in businesses_list:
 
@@ -2424,20 +2317,6 @@ def businesses():
                 business.get("website")
             )
 
-        with conn.cursor(
-            cursor_factory=RealDictCursor
-        ) as cur:
-
-            cur.execute("""
-                SELECT DISTINCT category
-                FROM business_profiles
-                WHERE category IS NOT NULL
-                  AND TRIM(category) <> ''
-                ORDER BY category ASC
-            """)
-
-            categories = cur.fetchall()
-
         return render_template(
             "businesses.html",
             businesses=businesses_list,
@@ -2447,11 +2326,11 @@ def businesses():
             location=location
         )
 
-    except Exception as e:
+    except Exception as error:
 
         app.logger.exception(
             "BUSINESS DIRECTORY ERROR: %s",
-            e
+            error
         )
 
         flash(
@@ -2469,7 +2348,6 @@ def businesses():
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -2477,9 +2355,7 @@ def businesses():
 # PUBLIC BUSINESS PROFILE
 # =========================================================
 
-@app.route(
-    "/business/<int:business_id>"
-)
+@app.route("/business/<int:business_id>")
 def public_business_profile(business_id):
 
     conn = None
@@ -2515,7 +2391,6 @@ def public_business_profile(business_id):
             business = cursor.fetchone()
 
         if not business:
-
             return "Business profile not found.", 404
 
         whatsapp_link = make_whatsapp_link(
@@ -2545,18 +2420,14 @@ def public_business_profile(business_id):
             error
         )
 
-        return (
-            "Unable to load business profile.",
-            500
-        )
+        return "Unable to load business profile.", 500
 
     finally:
-
         close_db(conn)
 
 
 # =========================================================
-# BUSINESS PREMIUM UPGRADE PAGE
+# BUSINESS PREMIUM UPGRADE
 # =========================================================
 
 @app.route("/upgrade")
@@ -2583,21 +2454,18 @@ def upgrade():
 
 
 # =========================================================
-# COMMUNITIES
+# COMMUNITIES - PUBLIC DIRECTORY
 # =========================================================
 
 @app.route(
     "/communities",
     methods=["GET", "POST"]
 )
-@login_required
 def communities():
 
     conn = None
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
     try:
 
@@ -2608,6 +2476,21 @@ def communities():
         # =====================================================
 
         if request.method == "POST":
+
+            # Creating a community requires an account.
+            if not user_id:
+
+                flash(
+                    "Please login or create an account before creating a community.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "login",
+                        next=url_for("communities")
+                    )
+                )
 
             name = request.form.get(
                 "name",
@@ -2631,9 +2514,7 @@ def communities():
                     "danger"
                 )
 
-                return redirect(
-                    url_for("communities")
-                )
+                return redirect(url_for("communities"))
 
             with conn.cursor() as cursor:
 
@@ -2662,13 +2543,13 @@ def communities():
                 result = cursor.fetchone()
 
                 if not result:
-
                     raise RuntimeError(
                         "Community was not created."
                     )
 
                 community_id = result[0]
 
+                # Owner automatically becomes a member.
                 cursor.execute(
                     """
                     INSERT INTO community_members
@@ -2703,7 +2584,7 @@ def communities():
             )
 
         # =====================================================
-        # LOAD ALL COMMUNITIES
+        # PUBLIC COMMUNITY DIRECTORY
         # =====================================================
 
         with conn.cursor(
@@ -2719,7 +2600,12 @@ def communities():
                     c.description,
                     c.category,
                     c.created_at,
-                    u.name AS owner_name
+                    u.name AS owner_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM community_members cm
+                        WHERE cm.community_id = c.id
+                    ) AS member_count
                 FROM communities AS c
                 LEFT JOIN users AS u
                     ON c.owner_id = u.id
@@ -2730,31 +2616,40 @@ def communities():
             all_communities = cursor.fetchall()
 
             # =================================================
-            # LOAD MY COMMUNITIES
+            # MY COMMUNITIES - ONLY WHEN LOGGED IN
             # =================================================
 
-            cursor.execute(
-                """
-                SELECT
-                    c.id,
-                    c.owner_id,
-                    c.name,
-                    c.description,
-                    c.category,
-                    c.created_at,
-                    u.name AS owner_name
-                FROM communities AS c
-                INNER JOIN community_members AS cm
-                    ON c.id = cm.community_id
-                LEFT JOIN users AS u
-                    ON c.owner_id = u.id
-                WHERE cm.user_id = %s
-                ORDER BY c.id DESC
-                """,
-                (user_id,)
-            )
+            my_communities = []
 
-            my_communities = cursor.fetchall()
+            if user_id:
+
+                cursor.execute(
+                    """
+                    SELECT
+                        c.id,
+                        c.owner_id,
+                        c.name,
+                        c.description,
+                        c.category,
+                        c.created_at,
+                        u.name AS owner_name,
+                        (
+                            SELECT COUNT(*)
+                            FROM community_members cm2
+                            WHERE cm2.community_id = c.id
+                        ) AS member_count
+                    FROM communities AS c
+                    INNER JOIN community_members AS cm
+                        ON c.id = cm.community_id
+                    LEFT JOIN users AS u
+                        ON c.owner_id = u.id
+                    WHERE cm.user_id = %s
+                    ORDER BY c.id DESC
+                    """,
+                    (user_id,)
+                )
+
+                my_communities = cursor.fetchall()
 
         joined_community_ids = {
             community["id"]
@@ -2766,7 +2661,8 @@ def communities():
             communities=all_communities,
             my_communities=my_communities,
             joined_community_ids=joined_community_ids,
-            user_name=session.get("user_name")
+            user_name=session.get("user_name"),
+            is_logged_in=bool(user_id)
         )
 
     except Exception as error:
@@ -2786,9 +2682,7 @@ def communities():
             <html lang="en">
 
             <head>
-
                 <meta charset="UTF-8">
-
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0">
 
@@ -2797,7 +2691,6 @@ def communities():
                 </title>
 
                 <style>
-
                     body {
                         font-family: Arial, sans-serif;
                         background: #f5f7fb;
@@ -2836,9 +2729,7 @@ def communities():
                         padding: 12px 18px;
                         border-radius: 8px;
                     }
-
                 </style>
-
             </head>
 
             <body>
@@ -2879,25 +2770,19 @@ def communities():
         )
 
     finally:
-
         close_db(conn)
 
 
 # =========================================================
-# COMMUNITY DETAILS
+# COMMUNITY DETAILS - PUBLIC
 # =========================================================
 
-@app.route(
-    "/community/<int:community_id>"
-)
-@login_required
+@app.route("/community/<int:community_id>")
 def community_detail(community_id):
 
     conn = None
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
     try:
 
@@ -2939,9 +2824,7 @@ def community_detail(community_id):
                     "danger"
                 )
 
-                return redirect(
-                    url_for("communities")
-                )
+                return redirect(url_for("communities"))
 
             # =================================================
             # MEMBER COUNT
@@ -2968,28 +2851,33 @@ def community_detail(community_id):
             # CURRENT USER MEMBERSHIP
             # =================================================
 
-            cursor.execute(
-                """
-                SELECT
-                    id,
-                    joined_at
-                FROM community_members
-                WHERE community_id = %s
-                  AND user_id = %s
-                LIMIT 1
-                """,
-                (
-                    community_id,
-                    user_id
+            membership = None
+            is_member = False
+
+            if user_id:
+
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        joined_at
+                    FROM community_members
+                    WHERE community_id = %s
+                      AND user_id = %s
+                    LIMIT 1
+                    """,
+                    (
+                        community_id,
+                        user_id
+                    )
                 )
-            )
 
-            membership = cursor.fetchone()
+                membership = cursor.fetchone()
 
-            is_member = membership is not None
+                is_member = membership is not None
 
             # =================================================
-            # LOAD MEMBERS
+            # MEMBERS
             # =================================================
 
             cursor.execute(
@@ -3010,7 +2898,7 @@ def community_detail(community_id):
             members = cursor.fetchall()
 
             # =================================================
-            # LOAD COMMUNITY DISCUSSIONS
+            # COMMUNITY DISCUSSIONS
             # =================================================
 
             cursor.execute(
@@ -3041,7 +2929,8 @@ def community_detail(community_id):
             membership=membership,
             members=members,
             discussions=discussions,
-            user_name=session.get("user_name")
+            user_name=session.get("user_name"),
+            is_logged_in=bool(user_id)
         )
 
     except Exception as error:
@@ -3155,7 +3044,6 @@ def community_detail(community_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -3172,9 +3060,7 @@ def create_community_post(community_id):
 
     conn = None
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
     try:
 
@@ -3240,9 +3126,7 @@ def create_community_post(community_id):
                     "danger"
                 )
 
-                return redirect(
-                    url_for("communities")
-                )
+                return redirect(url_for("communities"))
 
             # =================================================
             # CHECK MEMBERSHIP
@@ -3340,7 +3224,6 @@ def create_community_post(community_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -3357,9 +3240,7 @@ def delete_community_post(post_id):
 
     conn = None
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
     try:
 
@@ -3368,10 +3249,6 @@ def delete_community_post(post_id):
         with conn.cursor(
             cursor_factory=RealDictCursor
         ) as cursor:
-
-            # =================================================
-            # GET POST + COMMUNITY OWNER
-            # =================================================
 
             cursor.execute(
                 """
@@ -3398,15 +3275,9 @@ def delete_community_post(post_id):
                     "danger"
                 )
 
-                return redirect(
-                    url_for("communities")
-                )
+                return redirect(url_for("communities"))
 
             community_id = post["community_id"]
-
-            # =================================================
-            # ONLY AUTHOR OR COMMUNITY OWNER CAN DELETE
-            # =================================================
 
             if (
                 post["user_id"] != user_id
@@ -3464,12 +3335,9 @@ def delete_community_post(post_id):
             "danger"
         )
 
-        return redirect(
-            url_for("communities")
-        )
+        return redirect(url_for("communities"))
 
     finally:
-
         close_db(conn)
 
 
@@ -3490,9 +3358,7 @@ def join_community(community_id):
 
         conn = get_db()
 
-        user_id = session.get(
-            "user_id"
-        )
+        user_id = session.get("user_id")
 
         with conn.cursor() as cursor:
 
@@ -3515,9 +3381,7 @@ def join_community(community_id):
                     "danger"
                 )
 
-                return redirect(
-                    url_for("communities")
-                )
+                return redirect(url_for("communities"))
 
             cursor.execute(
                 """
@@ -3580,12 +3444,9 @@ def join_community(community_id):
             "danger"
         )
 
-        return redirect(
-            url_for("communities")
-        )
+        return redirect(url_for("communities"))
 
     finally:
-
         close_db(conn)
 
 
@@ -3602,9 +3463,7 @@ def leave_community(community_id):
 
     conn = None
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
     try:
 
@@ -3635,14 +3494,9 @@ def leave_community(community_id):
                     "danger"
                 )
 
-                return redirect(
-                    url_for("communities")
-                )
+                return redirect(url_for("communities"))
 
-            # =================================================
-            # OWNER CANNOT LEAVE
-            # =================================================
-
+            # Owner cannot leave their own community.
             if community["owner_id"] == user_id:
 
                 flash(
@@ -3719,7 +3573,6 @@ def leave_community(community_id):
         )
 
     finally:
-
         close_db(conn)
 
 
@@ -3730,9 +3583,7 @@ def leave_community(community_id):
 @app.route("/tools")
 def tools():
 
-    return render_template(
-        "tools.html"
-    )
+    return render_template("tools.html")
 
 
 # =========================================================
