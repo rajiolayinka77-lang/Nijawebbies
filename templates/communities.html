@@ -254,6 +254,16 @@
             background: #dfeeff;
         }
 
+        .btn-clear {
+            background: #f1f3f2;
+            color: #39433d;
+            border: 1px solid #d7ded9;
+        }
+
+        .btn-clear:hover {
+            background: #e5e9e7;
+        }
+
         .section {
             margin-top: 24px;
         }
@@ -282,6 +292,56 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: 700;
+        }
+
+        /* SEARCH AND DISCOVERY */
+
+        .discovery-tools {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+            border: 1px solid #edf1ee;
+        }
+
+        .discovery-tools-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .search-field label {
+            margin-bottom: 6px;
+        }
+
+        .search-field input,
+        .search-field select {
+            min-height: 44px;
+        }
+
+        .clear-wrap {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .clear-wrap .btn {
+            min-height: 44px;
+            white-space: nowrap;
+        }
+
+        .search-help {
+            margin: 11px 0 0;
+            color: #68736c;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .community-grid {
@@ -357,6 +417,11 @@
             margin-bottom: 0;
         }
 
+        .search-empty {
+            display: none;
+            margin-top: 16px;
+        }
+
         .flash-container {
             margin-bottom: 20px;
         }
@@ -428,6 +493,7 @@
         }
 
         @media (max-width: 850px) {
+
             .layout {
                 grid-template-columns: 1fr;
             }
@@ -435,9 +501,22 @@
             .community-grid {
                 grid-template-columns: 1fr;
             }
+
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+
+            .clear-wrap {
+                display: block;
+            }
+
+            .clear-wrap .btn {
+                width: 100%;
+            }
         }
 
         @media (max-width: 650px) {
+
             .topbar {
                 padding: 12px 14px;
             }
@@ -491,6 +570,7 @@
 <body>
 
 <header class="topbar">
+
     <div class="nav">
 
         <a href="{{ url_for('home') }}" class="brand">
@@ -544,6 +624,7 @@
         </nav>
 
     </div>
+
 </header>
 
 
@@ -607,8 +688,6 @@
 
             {% if is_logged_in %}
 
-                <!-- CREATE COMMUNITY -->
-
                 <div class="card">
 
                     <h2>➕ Create a Community</h2>
@@ -636,11 +715,11 @@
 
                         <div class="form-group">
 
-                            <label for="category">
+                            <label for="create-category">
                                 Category
                             </label>
 
-                            <select id="category" name="category">
+                            <select id="create-category" name="category">
 
                                 <option value="">
                                     Select a category
@@ -682,6 +761,14 @@
                                     Lifestyle
                                 </option>
 
+                                <option value="Faith">
+                                    Faith
+                                </option>
+
+                                <option value="Sports">
+                                    Sports
+                                </option>
+
                                 <option value="Other">
                                     Other
                                 </option>
@@ -718,8 +805,6 @@
                 </div>
 
             {% else %}
-
-                <!-- LOGIN / REGISTER -->
 
                 <div class="card login-card">
 
@@ -788,7 +873,6 @@
                                     <h3>
                                         {{ community.name }}
                                     </h3>
-
 
                                     {% if community.description %}
 
@@ -874,16 +958,131 @@
 
                     <h2>Discover Communities</h2>
 
-                    <span class="count">
+                    <span class="count" id="community-count">
                         {{ communities|length }}
                     </span>
 
                 </div>
 
 
+                <!-- SEARCH AND FILTER -->
+
+                <div class="discovery-tools">
+
+                    <div class="discovery-tools-title">
+                        🔎 Find a Community
+                    </div>
+
+                    <div class="search-row">
+
+                        <div class="search-field">
+
+                            <label for="community-search">
+                                Search
+                            </label>
+
+                            <input
+                                type="search"
+                                id="community-search"
+                                placeholder="Search by name, description or owner..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <div class="search-field">
+
+                            <label for="community-category">
+                                Category
+                            </label>
+
+                            <select id="community-category">
+
+                                <option value="">
+                                    All Categories
+                                </option>
+
+                                <option value="Business">
+                                    Business
+                                </option>
+
+                                <option value="Entrepreneurship">
+                                    Entrepreneurship
+                                </option>
+
+                                <option value="Education">
+                                    Education
+                                </option>
+
+                                <option value="Technology">
+                                    Technology
+                                </option>
+
+                                <option value="Agriculture">
+                                    Agriculture
+                                </option>
+
+                                <option value="Creative">
+                                    Creative
+                                </option>
+
+                                <option value="Entertainment">
+                                    Entertainment
+                                </option>
+
+                                <option value="Community">
+                                    Community
+                                </option>
+
+                                <option value="Lifestyle">
+                                    Lifestyle
+                                </option>
+
+                                <option value="Faith">
+                                    Faith
+                                </option>
+
+                                <option value="Sports">
+                                    Sports
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="clear-wrap">
+
+                            <button
+                                type="button"
+                                class="btn btn-clear"
+                                id="clear-community-filters">
+                                Clear Filters
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="search-help">
+                        Search communities by name, description, category
+                        or creator. Use the category filter to narrow your results.
+                    </p>
+
+                </div>
+
+
                 {% if communities %}
 
-                    <div class="community-grid">
+                    <div
+                        class="community-grid"
+                        id="community-grid">
 
                         {% for community in communities %}
 
@@ -905,7 +1104,13 @@
                             {% endif %}
 
 
-                            <article class="community">
+                            <article
+                                class="community community-card"
+                                data-name="{{ community.name|default('', true)|lower }}"
+                                data-description="{{ community.description|default('', true)|lower }}"
+                                data-category="{{ community.category|default('', true)|lower }}"
+                                data-owner="{{ community.owner_name|default('', true)|lower }}"
+                            >
 
                                 <h3>
                                     {{ community.name }}
@@ -938,7 +1143,8 @@
                                     {% endif %}
 
                                     <span class="tag">
-                                        👤 {{ community.member_count or 0 }} member{% if (community.member_count or 0) != 1 %}s{% endif %}
+                                        👤 {{ community.member_count or 0 }}
+                                        member{% if (community.member_count or 0) != 1 %}s{% endif %}
                                     </span>
 
                                 </div>
@@ -1012,6 +1218,21 @@
                             </article>
 
                         {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="empty search-empty"
+                        id="no-search-results">
+
+                        <strong>
+                            🔍 No communities found.
+                        </strong>
+
+                        <p>
+                            Try another search word or choose a different category.
+                        </p>
 
                     </div>
 
@@ -1102,6 +1323,157 @@
     </div>
 
 </footer>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchInput =
+            document.getElementById("community-search");
+
+        const categorySelect =
+            document.getElementById("community-category");
+
+        const clearButton =
+            document.getElementById("clear-community-filters");
+
+        const cards =
+            document.querySelectorAll(".community-card");
+
+        const count =
+            document.getElementById("community-count");
+
+        const noResults =
+            document.getElementById("no-search-results");
+
+
+        function filterCommunities() {
+
+            const searchTerm =
+                searchInput
+                    ? searchInput.value.trim().toLowerCase()
+                    : "";
+
+            const selectedCategory =
+                categorySelect
+                    ? categorySelect.value.trim().toLowerCase()
+                    : "";
+
+            let visibleCount = 0;
+
+
+            cards.forEach(function (card) {
+
+                const name =
+                    card.dataset.name || "";
+
+                const description =
+                    card.dataset.description || "";
+
+                const category =
+                    card.dataset.category || "";
+
+                const owner =
+                    card.dataset.owner || "";
+
+
+                const searchableText =
+                    name + " " +
+                    description + " " +
+                    category + " " +
+                    owner;
+
+
+                const matchesSearch =
+                    !searchTerm ||
+                    searchableText.includes(searchTerm);
+
+
+                const matchesCategory =
+                    !selectedCategory ||
+                    category === selectedCategory;
+
+
+                if (matchesSearch && matchesCategory) {
+
+                    card.style.display = "";
+
+                    visibleCount++;
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+
+            if (count) {
+                count.textContent = visibleCount;
+            }
+
+
+            if (noResults) {
+
+                if (cards.length > 0 && visibleCount === 0) {
+
+                    noResults.style.display = "block";
+
+                } else {
+
+                    noResults.style.display = "none";
+
+                }
+
+            }
+
+        }
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                filterCommunities
+            );
+
+        }
+
+
+        if (categorySelect) {
+
+            categorySelect.addEventListener(
+                "change",
+                filterCommunities
+            );
+
+        }
+
+
+        if (clearButton) {
+
+            clearButton.addEventListener(
+                "click",
+                function () {
+
+                    if (searchInput) {
+                        searchInput.value = "";
+                    }
+
+                    if (categorySelect) {
+                        categorySelect.value = "";
+                    }
+
+                    filterCommunities();
+
+                }
+            );
+
+        }
+
+    });
+</script>
 
 </body>
 </html>
