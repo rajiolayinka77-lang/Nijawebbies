@@ -3263,6 +3263,141 @@ def create_community_post(community_id):
                         community_id=community_id
                     )
                 )
+                # =========================================================
+# COMMUNITY INVITE
+# =========================================================
+
+@app.route("/community-invite/<int:community_id>")
+def community_invite(community_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    c.id,
+                    c.owner_id,
+                    c.name,
+                    c.description,
+                    c.category,
+                    c.created_at,
+                    u.name AS owner_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM community_members cm
+                        WHERE cm.community_id = c.id
+                    ) AS member_count
+                FROM communities AS c
+                LEFT JOIN users AS u
+                    ON c.owner_id = u.id
+                WHERE c.id = %s
+                LIMIT 1
+                """,
+                (community_id,)
+            )
+
+            community = cursor.fetchone()
+
+            if not community:
+
+                flash(
+                    "Community not found.",
+                    "danger"
+                )
+
+                return redirect(url_for("communities"))
+
+            is_member = False
+
+            if user_id:
+
+                cursor.execute(
+                    """
+                    SELECT id
+                    FROM community_members
+                    WHERE community_id = %s
+                      AND user_id = %s
+                    LIMIT 1
+                    """,
+                    (
+                        community_id,
+                        user_id
+                    )
+                )
+
+                membership = cursor.fetchone()
+
+                is_member = membership is not None
+
+        invite_url = url_for(
+            "community_invite",
+            community_id=community_id,
+            _external=True
+        )
+
+        community_url = url_for(
+            "community_detail",
+            community_id=community_id,
+            _external=True
+        )
+
+        whatsapp_message = (
+            "Join me on NijaWebbies Communities: "
+            + community["name"]
+            + "\n\n"
+            + (
+                community["description"]
+                or "Come and connect with other members."
+            )
+            + "\n\n"
+            + invite_url
+        )
+
+        whatsapp_link = (
+            "https://wa.me/?text="
+            + whatsapp_message.replace(" ", "%20")
+            .replace("\n", "%0A")
+        )
+
+        return render_template(
+            "community_invite.html",
+            community=community,
+            is_member=is_member,
+            is_logged_in=bool(user_id),
+            invite_url=invite_url,
+            community_url=community_url,
+            whatsapp_link=whatsapp_link,
+            user_name=session.get("user_name")
+        )
+
+    except Exception as error:
+
+        app.logger.exception(
+            "COMMUNITY INVITE FAILED | community_id=%s | user_id=%s | error=%s",
+            community_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to load the community invitation right now.",
+            "danger"
+        )
+
+        return redirect(url_for("communities"))
+
+    finally:
+        close_db(conn)
 
             # =================================================
             # CREATE DISCUSSION
