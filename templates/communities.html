@@ -1,1146 +1,1174 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Communities - NijaWebbies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
+    <title>Communities - NijaWebbies</title>
 
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f7fb;
-        color: #222;
-    }
-
-    nav {
-        background: #111827;
-        padding: 14px 20px;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 12px;
-    }
-
-    nav .brand {
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    nav a {
-        color: #e5e7eb;
-        text-decoration: none;
-        font-size: 14px;
-    }
-
-    nav a:hover {
-        color: white;
-    }
-
-    .container {
-        width: 94%;
-        max-width: 1200px;
-        margin: 25px auto;
-    }
-
-    .hero {
-        background: white;
-        border-radius: 14px;
-        padding: 28px;
-        margin-bottom: 22px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-    }
-
-    .hero h1 {
-        margin-top: 0;
-        margin-bottom: 8px;
-        font-size: 30px;
-    }
-
-    .hero p {
-        margin: 0;
-        color: #666;
-        line-height: 1.6;
-    }
-
-    .flash {
-        padding: 12px 15px;
-        border-radius: 8px;
-        background: #e8f5e9;
-        color: #256029;
-        margin-bottom: 15px;
-    }
-
-    .layout {
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 22px;
-    }
-
-    .card {
-        background: white;
-        border-radius: 14px;
-        padding: 20px;
-        margin-bottom: 18px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-    }
-
-    .card h2 {
-        margin-top: 0;
-        font-size: 20px;
-    }
-
-    .card h3 {
-        margin-top: 0;
-        margin-bottom: 8px;
-    }
-
-    .muted {
-        color: #777;
-        font-size: 14px;
-    }
-
-    .community-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 15px;
-        background: #fff;
-    }
-
-    .community-card:last-child {
-        margin-bottom: 0;
-    }
-
-    .community-card h3 {
-        margin: 0 0 8px 0;
-        font-size: 21px;
-    }
-
-    .community-card h3 a {
-        color: #111827;
-        text-decoration: none;
-    }
-
-    .community-card h3 a:hover {
-        text-decoration: underline;
-    }
-
-    .community-description {
-        color: #555;
-        line-height: 1.5;
-        margin-bottom: 12px;
-    }
-
-    .meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin: 10px 0 14px;
-    }
-
-    .badge {
-        display: inline-block;
-        padding: 5px 9px;
-        border-radius: 20px;
-        background: #eef2ff;
-        color: #3730a3;
-        font-size: 12px;
-    }
-
-    .member-badge {
-        background: #ecfdf5;
-        color: #047857;
-    }
-
-    .owner-badge {
-        background: #fff7ed;
-        color: #c2410c;
-    }
-
-    .community-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
-    }
-
-    .community-actions form {
-        margin: 0;
-    }
-
-    .btn {
-        display: inline-block;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 14px;
-        text-decoration: none;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .btn-primary {
-        background: #2563eb;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #1d4ed8;
-    }
-
-    .btn-join {
-        background: #16a34a;
-        color: white;
-    }
-
-    .btn-join:hover {
-        background: #15803d;
-    }
-
-    .btn-leave {
-        background: #dc2626;
-        color: white;
-    }
-
-    .btn-leave:hover {
-        background: #b91c1c;
-    }
-
-    .btn-clear {
-        background: #6b7280;
-        color: white;
-    }
-
-    .btn-clear:hover {
-        background: #4b5563;
-    }
-
-    .btn-disabled {
-        background: #e5e7eb;
-        color: #555;
-        cursor: default;
-    }
-
-    input,
-    textarea,
-    select {
-        width: 100%;
-        padding: 11px 12px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        font-size: 14px;
-        background: white;
-    }
-
-    textarea {
-        min-height: 110px;
-        resize: vertical;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        font-size: 14px;
-    }
-
-    .form-group {
-        margin-bottom: 14px;
-    }
-
-    .section-title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    .section-title h2 {
-        margin: 0;
-    }
-
-    .count {
-        color: #666;
-        font-size: 14px;
-    }
-
-    /* =========================
-       COMMUNITY SEARCH
-       ========================= */
-
-    .discovery-tools {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 18px;
-    }
-
-    .discovery-tools-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 14px;
-    }
-
-    .search-row {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 220px auto;
-        gap: 10px;
-        align-items: end;
-    }
-
-    .search-field {
-        min-width: 0;
-    }
-
-    .search-actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .search-help {
-        margin: 10px 0 0;
-        color: #6b7280;
-        font-size: 13px;
-    }
-
-    .results-message {
-        margin: 0 0 14px;
-        color: #555;
-        font-size: 14px;
-    }
-
-    .no-results {
-        display: none;
-        background: white;
-        border: 1px dashed #cbd5e1;
-        border-radius: 12px;
-        padding: 25px;
-        text-align: center;
-        color: #666;
-    }
-
-    /* =========================
-       MOBILE
-       ========================= */
-
-    @media (max-width: 800px) {
-        .layout {
-            grid-template-columns: 1fr;
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        .search-row {
-            grid-template-columns: 1fr;
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
         }
 
-        .search-actions {
-            width: 100%;
-        }
-
-        .search-actions .btn {
-            flex: 1;
-        }
-    }
-
-    @media (max-width: 500px) {
         nav {
-            padding: 12px;
+            background: #111827;
+            padding: 14px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
         }
 
         nav .brand {
-            width: 100%;
-            margin-bottom: 4px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        nav a {
+            color: #e5e7eb;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: white;
         }
 
         .container {
-            width: 92%;
+            width: 94%;
+            max-width: 1200px;
+            margin: 25px auto;
         }
 
         .hero {
-            padding: 20px;
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
         }
 
         .hero h1 {
-            font-size: 25px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 30px;
+        }
+
+        .hero p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .flash {
+            padding: 12px 15px;
+            border-radius: 8px;
+            background: #e8f5e9;
+            color: #256029;
+            margin-bottom: 15px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 22px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .muted {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .community-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            background: #fff;
+        }
+
+        .community-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .community-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 21px;
+        }
+
+        .community-card h3 a {
+            color: #111827;
+            text-decoration: none;
+        }
+
+        .community-card h3 a:hover {
+            text-decoration: underline;
+        }
+
+        .community-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 12px;
+        }
+
+        .member-badge {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .owner-badge {
+            background: #fff7ed;
+            color: #c2410c;
         }
 
         .community-actions {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .community-actions .btn {
-            text-align: center;
-            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
         }
 
         .community-actions form {
-            width: 100%;
+            margin: 0;
         }
 
-        .community-actions form .btn {
-            width: 100%;
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
         }
-    }
-</style>
 
-</head><body><nav><div class="brand">
-    🇳🇬 NijaWebbies
-</div>
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
 
-<a href="{{ url_for('home') }}">
-    Home
-</a>
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
 
-<a href="{{ url_for('search') }}">
-    Search
-</a>
+        .btn-join {
+            background: #16a34a;
+            color: white;
+        }
 
-<a href="{{ url_for('businesses') }}">
-    Businesses
-</a>
+        .btn-join:hover {
+            background: #15803d;
+        }
 
-<a href="{{ url_for('communities') }}">
-    Communities
-</a>
+        .btn-leave {
+            background: #dc2626;
+            color: white;
+        }
 
-<a href="{{ url_for('tools') }}">
-    Tools
-</a>
+        .btn-leave:hover {
+            background: #b91c1c;
+        }
 
-{% if is_logged_in %}
+        .btn-clear {
+            background: #6b7280;
+            color: white;
+        }
 
-    <a href="{{ url_for('workspace') }}">
-        Workspace
+        .btn-clear:hover {
+            background: #4b5563;
+        }
+
+        .btn-disabled {
+            background: #e5e7eb;
+            color: #555;
+            cursor: default;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+        }
+
+        .count {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* =========================
+           COMMUNITY SEARCH
+           ========================= */
+
+        .discovery-tools {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+
+        .discovery-tools-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 220px auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .search-field {
+            min-width: 0;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .search-help {
+            margin: 10px 0 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .results-message {
+            margin: 0 0 14px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .no-results {
+            display: none;
+            background: white;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            color: #666;
+        }
+
+        /* =========================
+           COMMUNITY INTRO
+           ========================= */
+
+        .join-info {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+            color: #166534;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 800px) {
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+
+            .search-actions {
+                width: 100%;
+            }
+
+            .search-actions .btn {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            nav {
+                padding: 12px;
+            }
+
+            nav .brand {
+                width: 100%;
+                margin-bottom: 4px;
+            }
+
+            .container {
+                width: 92%;
+            }
+
+            .hero {
+                padding: 20px;
+            }
+
+            .hero h1 {
+                font-size: 25px;
+            }
+
+            .community-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .community-actions .btn {
+                text-align: center;
+                width: 100%;
+            }
+
+            .community-actions form {
+                width: 100%;
+            }
+
+            .community-actions form .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+
+    <div class="brand">
+        🇳🇬 NijaWebbies
+    </div>
+
+    <a href="{{ url_for('home') }}">
+        Home
     </a>
 
-    <a href="{{ url_for('logout') }}">
-        Logout
+    <a href="{{ url_for('search') }}">
+        Search
     </a>
 
-{% else %}
-
-    <a href="{{ url_for('login') }}">
-        Login
+    <a href="{{ url_for('businesses') }}">
+        Businesses
     </a>
 
-    <a href="{{ url_for('register') }}">
-        Register
+    <a href="{{ url_for('communities') }}">
+        Communities
     </a>
 
-{% endif %}
+    <a href="{{ url_for('tools') }}">
+        Tools
+    </a>
 
-</nav><div class="container"><!-- =========================
-     HERO
-     ========================= -->
+    {% if is_logged_in %}
 
-<div class="hero">
+        <a href="{{ url_for('workspace') }}">
+            Workspace
+        </a>
 
-    <h1>
-        👥 NijaWebbies Communities
-    </h1>
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
 
-    <p>
-        Discover communities, connect with people, share ideas,
-        start discussions and build relationships around common interests.
-    </p>
+    {% else %}
 
-</div>
+        <a href="{{ url_for('login') }}">
+            Login
+        </a>
 
-
-<!-- =========================
-     FLASH MESSAGES
-     ========================= -->
-
-{% with messages = get_flashed_messages() %}
-
-    {% if messages %}
-
-        {% for message in messages %}
-
-            <div class="flash">
-                {{ message }}
-            </div>
-
-        {% endfor %}
+        <a href="{{ url_for('register') }}">
+            Register
+        </a>
 
     {% endif %}
 
-{% endwith %}
+</nav>
 
 
-<div class="layout">
+<div class="container">
+
+    <!-- =========================
+         HERO
+         ========================= -->
+
+    <div class="hero">
+
+        <h1>
+            👥 NijaWebbies Communities
+        </h1>
+
+        <p>
+            Discover communities, connect with people, share ideas,
+            start discussions and build relationships around common interests.
+        </p>
+
+        <div class="join-info">
+            💚 Joining a community is free. Create an account or log in
+            to join communities and participate in discussions.
+        </div>
+
+    </div>
 
 
     <!-- =========================
-         LEFT COLUMN
+         FLASH MESSAGES
          ========================= -->
 
-    <div>
+    {% with messages = get_flashed_messages() %}
 
+        {% if messages %}
 
-        {% if is_logged_in %}
+            {% for message in messages %}
 
-
-        <!-- =========================
-             CREATE COMMUNITY
-             ========================= -->
-
-        <div class="card">
-
-            <h2>
-                ➕ Create Community
-            </h2>
-
-            <form
-                method="POST"
-                action="{{ url_for('communities') }}"
-            >
-
-                <div class="form-group">
-
-                    <label for="name">
-                        Community Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="e.g. Epe Entrepreneurs"
-                        required
-                    >
-
+                <div class="flash">
+                    {{ message }}
                 </div>
 
-
-                <div class="form-group">
-
-                    <label for="description">
-                        Description
-                    </label>
-
-                    <textarea
-                        id="description"
-                        name="description"
-                        placeholder="What is this community about?"
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="category">
-                        Category
-                    </label>
-
-                    <select
-                        id="category"
-                        name="category"
-                    >
-
-                        <option value="Business">
-                            Business
-                        </option>
-
-                        <option value="Entrepreneurship">
-                            Entrepreneurship
-                        </option>
-
-                        <option value="Education">
-                            Education
-                        </option>
-
-                        <option value="Technology">
-                            Technology
-                        </option>
-
-                        <option value="Agriculture">
-                            Agriculture
-                        </option>
-
-                        <option value="Creative">
-                            Creative
-                        </option>
-
-                        <option value="Entertainment">
-                            Entertainment
-                        </option>
-
-                        <option value="Community">
-                            Community
-                        </option>
-
-                        <option value="Lifestyle">
-                            Lifestyle
-                        </option>
-
-                        <option value="Faith">
-                            Faith
-                        </option>
-
-                        <option value="Sports">
-                            Sports
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
-                    Create Community
-                </button>
-
-            </form>
-
-        </div>
-
-
-        {% else %}
-
-
-        <!-- =========================
-             LOGIN CARD
-             ========================= -->
-
-        <div class="card">
-
-            <h2>
-                🔐 Join the Community
-            </h2>
-
-            <p class="muted">
-                Login or create a NijaWebbies account to create,
-                join and participate in communities.
-            </p>
-
-            <div class="community-actions">
-
-                <a
-                    href="{{ url_for('login', next=url_for('communities')) }}"
-                    class="btn btn-primary"
-                >
-                    Login
-                </a>
-
-                <a
-                    href="{{ url_for('register') }}"
-                    class="btn btn-join"
-                >
-                    Register
-                </a>
-
-            </div>
-
-        </div>
-
+            {% endfor %}
 
         {% endif %}
 
+    {% endwith %}
+
+
+    <div class="layout">
+
 
         <!-- =========================
-             MY COMMUNITIES
+             LEFT COLUMN
              ========================= -->
 
-        {% if is_logged_in %}
-
-        <div class="card">
-
-            <div class="section-title">
-
-                <h2>
-                    ⭐ My Communities
-                </h2>
-
-                <span class="count">
-                    {{ my_communities|length }}
-                </span>
-
-            </div>
+        <div>
 
 
-            {% if my_communities %}
+            {% if is_logged_in %}
 
 
-                {% for community in my_communities %}
+                <!-- =========================
+                     CREATE COMMUNITY
+                     ========================= -->
 
+                <div class="card">
 
-                <div class="community-card">
+                    <h2>
+                        ➕ Create Community
+                    </h2>
 
-                    <h3>
-
-                        <a
-                            href="{{ url_for('community_detail', community_id=community.id) }}"
-                        >
-                            {{ community.name }}
-                        </a>
-
-                    </h3>
-
-
-                    <div class="meta">
-
-                        {% if community.category %}
-
-                            <span class="badge">
-                                {{ community.category }}
-                            </span>
-
-                        {% endif %}
-
-
-                        <span class="badge member-badge">
-                            👥 {{ community.member_count }} members
-                        </span>
-
-                    </div>
-
-
-                    <a
-                        href="{{ url_for('community_detail', community_id=community.id) }}"
-                        class="btn btn-primary"
+                    <form
+                        method="POST"
+                        action="{{ url_for('communities') }}"
                     >
-                        Open Community
-                    </a>
+
+                        <div class="form-group">
+
+                            <label for="name">
+                                Community Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="e.g. Epe Entrepreneurs"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                placeholder="What is this community about?"
+                                required
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="category">
+                                Category
+                            </label>
+
+                            <select
+                                id="category"
+                                name="category"
+                            >
+
+                                <option value="Business">
+                                    Business
+                                </option>
+
+                                <option value="Entrepreneurship">
+                                    Entrepreneurship
+                                </option>
+
+                                <option value="Education">
+                                    Education
+                                </option>
+
+                                <option value="Technology">
+                                    Technology
+                                </option>
+
+                                <option value="Agriculture">
+                                    Agriculture
+                                </option>
+
+                                <option value="Creative">
+                                    Creative
+                                </option>
+
+                                <option value="Entertainment">
+                                    Entertainment
+                                </option>
+
+                                <option value="Community">
+                                    Community
+                                </option>
+
+                                <option value="Lifestyle">
+                                    Lifestyle
+                                </option>
+
+                                <option value="Faith">
+                                    Faith
+                                </option>
+
+                                <option value="Sports">
+                                    Sports
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Create Community
+                        </button>
+
+                    </form>
 
                 </div>
-
-
-                {% endfor %}
 
 
             {% else %}
 
 
-                <p class="muted">
-                    You have not joined any communities yet.
-                </p>
+                <!-- =========================
+                     LOGIN CARD
+                     ========================= -->
+
+                <div class="card">
+
+                    <h2>
+                        🔐 Join NijaWebbies Communities
+                    </h2>
+
+                    <p class="muted">
+                        Login or create a free NijaWebbies account
+                        to join communities, create discussions and
+                        participate with other members.
+                    </p>
+
+                    <div class="community-actions">
+
+                        <a
+                            href="{{ url_for('login', next=url_for('communities')) }}"
+                            class="btn btn-primary"
+                        >
+                            Login
+                        </a>
+
+                        <a
+                            href="{{ url_for('register') }}"
+                            class="btn btn-join"
+                        >
+                            Register Free
+                        </a>
+
+                    </div>
+
+                </div>
 
 
             {% endif %}
 
+
+            <!-- =========================
+                 MY COMMUNITIES
+                 ========================= -->
+
+            {% if is_logged_in %}
+
+                <div class="card">
+
+                    <div class="section-title">
+
+                        <h2>
+                            ⭐ My Communities
+                        </h2>
+
+                        <span class="count">
+                            {{ my_communities|length }}
+                        </span>
+
+                    </div>
+
+
+                    {% if my_communities %}
+
+                        {% for community in my_communities %}
+
+                            <div class="community-card">
+
+                                <h3>
+
+                                    <a
+                                        href="{{ url_for('community_detail', community_id=community.id) }}"
+                                    >
+                                        {{ community.name }}
+                                    </a>
+
+                                </h3>
+
+
+                                <div class="meta">
+
+                                    {% if community.category %}
+
+                                        <span class="badge">
+                                            {{ community.category }}
+                                        </span>
+
+                                    {% endif %}
+
+                                    <span class="badge member-badge">
+                                        👥 {{ community.member_count }} members
+                                    </span>
+
+                                </div>
+
+
+                                <a
+                                    href="{{ url_for('community_detail', community_id=community.id) }}"
+                                    class="btn btn-primary"
+                                >
+                                    Open Community
+                                </a>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <p class="muted">
+                            You have not joined any communities yet.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+
         </div>
 
-        {% endif %}
 
+        <!-- =========================
+             RIGHT COLUMN
+             ========================= -->
 
-    </div>
+        <div>
 
+            <div class="card">
 
-    <!-- =========================
-         RIGHT COLUMN
-         ========================= -->
+                <div class="section-title">
 
-    <div>
+                    <h2>
+                        🌍 Discover Communities
+                    </h2>
 
-        <div class="card">
-
-
-            <div class="section-title">
-
-                <h2>
-                    🌍 Discover Communities
-                </h2>
-
-                <span
-                    class="count"
-                    id="community-result-count"
-                >
-                    {{ communities|length }}
-                    {% if communities|length == 1 %}
-                        community
-                    {% else %}
-                        communities
-                    {% endif %}
-                </span>
-
-            </div>
-
-
-            <!-- =========================
-                 SEARCH & FILTER
-                 ========================= -->
-
-            <div class="discovery-tools">
-
-                <div class="discovery-tools-title">
-                    🔎 Find a Community
-                </div>
-
-
-                <div class="search-row">
-
-
-                    <div class="search-field">
-
-                        <label for="community-search">
-                            Search
-                        </label>
-
-                        <input
-                            type="search"
-                            id="community-search"
-                            placeholder="Search community name, description or owner..."
-                            autocomplete="off"
-                        >
-
-                    </div>
-
-
-                    <div class="search-field">
-
-                        <label for="community-category">
-                            Category
-                        </label>
-
-                        <select id="community-category">
-
-                            <option value="">
-                                All Categories
-                            </option>
-
-                            <option value="Business">
-                                Business
-                            </option>
-
-                            <option value="Entrepreneurship">
-                                Entrepreneurship
-                            </option>
-
-                            <option value="Education">
-                                Education
-                            </option>
-
-                            <option value="Technology">
-                                Technology
-                            </option>
-
-                            <option value="Agriculture">
-                                Agriculture
-                            </option>
-
-                            <option value="Creative">
-                                Creative
-                            </option>
-
-                            <option value="Entertainment">
-                                Entertainment
-                            </option>
-
-                            <option value="Community">
-                                Community
-                            </option>
-
-                            <option value="Lifestyle">
-                                Lifestyle
-                            </option>
-
-                            <option value="Faith">
-                                Faith
-                            </option>
-
-                            <option value="Sports">
-                                Sports
-                            </option>
-
-                            <option value="Other">
-                                Other
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="search-actions">
-
-                        <button
-                            type="button"
-                            class="btn btn-join"
-                            id="search-community-button"
-                        >
-                            🔎 Search
-                        </button>
-
-                        <button
-                            type="button"
-                            class="btn btn-clear"
-                            id="clear-community-filters"
-                        >
-                            🧹 Clear
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <p class="search-help">
-                    Search by community name, description, category or creator.
-                </p>
-
-            </div>
-
-
-            <!-- =========================
-                 RESULT MESSAGE
-                 ========================= -->
-
-            <p
-                class="results-message"
-                id="search-results-message"
-            ></p>
-
-
-            <!-- =========================
-                 COMMUNITY LIST
-                 ========================= -->
-
-            <div id="communities-list">
-
-
-                {% if communities %}
-
-
-                    {% for community in communities %}
-
-
-                    <div
-                        class="community-card discover-community"
-                        data-name="{{ community.name|default('', true)|lower }}"
-                        data-description="{{ community.description|default('', true)|lower }}"
-                        data-category="{{ community.category|default('', true)|lower }}"
-                        data-owner="{{ community.owner_name|default('', true)|lower }}"
+                    <span
+                        class="count"
+                        id="community-result-count"
                     >
+                        {{ communities|length }}
+
+                        {% if communities|length == 1 %}
+                            community
+                        {% else %}
+                            communities
+                        {% endif %}
+
+                    </span>
+
+                </div>
 
 
-                        <h3>
+                <!-- =========================
+                     SEARCH & FILTER
+                     ========================= -->
 
-                            <a
-                                href="{{ url_for('community_detail', community_id=community.id) }}"
+                <div class="discovery-tools">
+
+                    <div class="discovery-tools-title">
+                        🔎 Find a Community
+                    </div>
+
+
+                    <div class="search-row">
+
+                        <div class="search-field">
+
+                            <label for="community-search">
+                                Search
+                            </label>
+
+                            <input
+                                type="search"
+                                id="community-search"
+                                placeholder="Search community name, description or owner..."
+                                autocomplete="off"
                             >
-                                {{ community.name }}
-                            </a>
-
-                        </h3>
-
-
-                        <div class="community-description">
-
-                            {% if community.description %}
-
-                                {{ community.description }}
-
-                            {% else %}
-
-                                <span class="muted">
-                                    No description provided.
-                                </span>
-
-                            {% endif %}
 
                         </div>
 
 
-                        <div class="meta">
+                        <div class="search-field">
 
+                            <label for="community-category">
+                                Category
+                            </label>
 
-                            {% if community.category %}
+                            <select id="community-category">
 
-                                <span class="badge">
-                                    {{ community.category }}
-                                </span>
+                                <option value="">
+                                    All Categories
+                                </option>
 
-                            {% endif %}
+                                <option value="Business">
+                                    Business
+                                </option>
 
+                                <option value="Entrepreneurship">
+                                    Entrepreneurship
+                                </option>
 
-                            <span class="badge member-badge">
-                                👥 {{ community.member_count }} members
-                            </span>
+                                <option value="Education">
+                                    Education
+                                </option>
 
+                                <option value="Technology">
+                                    Technology
+                                </option>
 
-                            {% if community.owner_name %}
+                                <option value="Agriculture">
+                                    Agriculture
+                                </option>
 
-                                <span class="badge owner-badge">
-                                    👤 {{ community.owner_name }}
-                                </span>
+                                <option value="Creative">
+                                    Creative
+                                </option>
 
-                            {% endif %}
+                                <option value="Entertainment">
+                                    Entertainment
+                                </option>
 
+                                <option value="Community">
+                                    Community
+                                </option>
+
+                                <option value="Lifestyle">
+                                    Lifestyle
+                                </option>
+
+                                <option value="Faith">
+                                    Faith
+                                </option>
+
+                                <option value="Sports">
+                                    Sports
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
 
                         </div>
 
 
-                        <!-- =========================
-                             COMMUNITY ACTIONS
-                             ========================= -->
+                        <div class="search-actions">
 
-                        <div class="community-actions">
-
-
-                            <!-- VIEW COMMUNITY -->
-
-                            <a
-                                href="{{ url_for('community_detail', community_id=community.id) }}"
-                                class="btn btn-primary"
+                            <button
+                                type="button"
+                                class="btn btn-join"
+                                id="search-community-button"
                             >
-                                View Community
-                            </a>
+                                🔎 Search
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-clear"
+                                id="clear-community-filters"
+                            >
+                                🧹 Clear
+                            </button>
+
+                        </div>
+
+                    </div>
 
 
-                            {% if is_logged_in %}
+                    <p class="search-help">
+                        Search by community name, description,
+                        category or creator.
+                    </p>
+
+                </div>
 
 
-                                {% if community.id in joined_community_ids %}
+                <!-- =========================
+                     RESULT MESSAGE
+                     ========================= -->
+
+                <p
+                    class="results-message"
+                    id="search-results-message"
+                ></p>
 
 
-                                    <!-- MEMBER -->
+                <!-- =========================
+                     COMMUNITY LIST
+                     ========================= -->
 
-                                    <span class="btn btn-disabled">
-                                        ✓ Joined
+                <div id="communities-list">
+
+                    {% if communities %}
+
+                        {% for community in communities %}
+
+                            <div
+                                class="community-card discover-community"
+                                data-name="{{ community.name|default('', true)|lower }}"
+                                data-description="{{ community.description|default('', true)|lower }}"
+                                data-category="{{ community.category|default('', true)|lower }}"
+                                data-owner="{{ community.owner_name|default('', true)|lower }}"
+                            >
+
+                                <h3>
+
+                                    <a
+                                        href="{{ url_for('community_detail', community_id=community.id) }}"
+                                    >
+                                        {{ community.name }}
+                                    </a>
+
+                                </h3>
+
+
+                                <div class="community-description">
+
+                                    {% if community.description %}
+
+                                        {{ community.description }}
+
+                                    {% else %}
+
+                                        <span class="muted">
+                                            No description provided.
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="meta">
+
+                                    {% if community.category %}
+
+                                        <span class="badge">
+                                            {{ community.category }}
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    <span class="badge member-badge">
+                                        👥 {{ community.member_count }} members
                                     </span>
 
 
-                                    <!--
-                                        Community owners cannot leave
-                                        their own communities.
-                                    -->
+                                    {% if community.owner_name %}
 
-                                    {% if community.owner_id != session.get('user_id') %}
+                                        <span class="badge owner-badge">
+                                            👤 {{ community.owner_name }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
 
 
-                                        <form
-                                            method="POST"
-                                            action="{{ url_for('leave_community', community_id=community.id) }}"
-                                        >
+                                <!-- =========================
+                                     COMMUNITY ACTIONS
+                                     ========================= -->
 
-                                            <button
-                                                type="submit"
-                                                class="btn btn-leave"
-                                                onclick="return confirm('Are you sure you want to leave this community?');"
+                                <div class="community-actions">
+
+
+                                    <!-- VIEW COMMUNITY -->
+
+                                    <a
+                                        href="{{ url_for('community_detail', community_id=community.id) }}"
+                                        class="btn btn-primary"
+                                    >
+                                        View Community
+                                    </a>
+
+
+                                    {% if is_logged_in %}
+
+
+                                        {% if community.id in joined_community_ids %}
+
+
+                                            <!-- =========================
+                                                 MEMBER
+                                                 ========================= -->
+
+                                            <span class="btn btn-disabled">
+                                                ✓ Joined
+                                            </span>
+
+
+                                            <!-- OWNER CANNOT LEAVE -->
+
+                                            {% if community.owner_id != session.get('user_id') %}
+
+                                                <form
+                                                    method="POST"
+                                                    action="{{ url_for('leave_community', community_id=community.id) }}"
+                                                >
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-leave"
+                                                        onclick="return confirm('Are you sure you want to leave this community?');"
+                                                    >
+                                                        Leave Community
+                                                    </button>
+
+                                                </form>
+
+                                            {% else %}
+
+                                                <span class="badge owner-badge">
+                                                    👑 Community Owner
+                                                </span>
+
+                                            {% endif %}
+
+
+                                        {% else %}
+
+
+                                            <!-- =========================
+                                                 JOIN FREE
+                                                 ========================= -->
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for('join_community', community_id=community.id) }}"
                                             >
-                                                Leave Community
-                                            </button>
 
-                                        </form>
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-join"
+                                                >
+                                                    ➕ Join Free
+                                                </button>
+
+                                            </form>
+
+
+                                        {% endif %}
+
+
+                                    {% else %}
+
+
+                                        <!-- =========================
+                                             NOT LOGGED IN
+                                             ========================= -->
+
+                                        <a
+                                            href="{{ url_for('login', next=url_for('community_detail', community_id=community.id)) }}"
+                                            class="btn btn-join"
+                                        >
+                                            🔐 Login to Join Free
+                                        </a>
 
 
                                     {% endif %}
 
 
-                                {% else %}
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
 
 
-                                    <!-- =========================
-                                         JOIN COMMUNITY
-                                         IMPORTANT:
-                                         This MUST be POST.
-                                         ========================= -->
-
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('join_community', community_id=community.id) }}"
-                                    >
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-join"
-                                        >
-                                            ➕ Join Community
-                                        </button>
-
-                                    </form>
+                    {% else %}
 
 
-                                {% endif %}
+                        <div
+                            class="no-results"
+                            style="display:block;"
+                        >
 
+                            <h3>
+                                No communities yet
+                            </h3>
 
-                            {% else %}
-
-
-                                <!-- NOT LOGGED IN -->
-
-                                <a
-                                    href="{{ url_for('login', next=url_for('community_detail', community_id=community.id)) }}"
-                                    class="btn btn-join"
-                                >
-                                    🔐 Login to Join
-                                </a>
-
-
-                            {% endif %}
-
+                            <p>
+                                Be the first to create a community
+                                on NijaWebbies.
+                            </p>
 
                         </div>
 
 
-                    </div>
+                    {% endif %}
+
+                </div>
 
 
-                    {% endfor %}
+                <!-- =========================
+                     NO SEARCH RESULTS
+                     ========================= -->
 
+                <div
+                    class="no-results"
+                    id="no-search-results"
+                >
 
-                {% else %}
+                    <h3>
+                        🔎 No communities found
+                    </h3>
 
+                    <p>
+                        Try another search word or select
+                        a different category.
+                    </p>
 
-                    <div
-                        class="no-results"
-                        style="display:block;"
-                    >
-
-                        <h3>
-                            No communities yet
-                        </h3>
-
-                        <p>
-                            Be the first to create a community on NijaWebbies.
-                        </p>
-
-                    </div>
-
-
-                {% endif %}
+                </div>
 
 
             </div>
-
-
-            <!-- =========================
-                 NO SEARCH RESULTS
-                 ========================= -->
-
-            <div
-                class="no-results"
-                id="no-search-results"
-            >
-
-                <h3>
-                    🔎 No communities found
-                </h3>
-
-                <p>
-                    Try another search word or select a different category.
-                </p>
-
-            </div>
-
 
         </div>
 
@@ -1148,47 +1176,41 @@
 
 </div>
 
-</div><!-- =========================
+
+<!-- =========================
      SEARCH JAVASCRIPT
-     ========================= --><script>
+     ========================= -->
+
+<script>
 
 document.addEventListener("DOMContentLoaded", function () {
-
 
     const searchInput =
         document.getElementById("community-search");
 
-
     const categorySelect =
         document.getElementById("community-category");
-
 
     const searchButton =
         document.getElementById("search-community-button");
 
-
     const clearButton =
         document.getElementById("clear-community-filters");
-
 
     const resultCount =
         document.getElementById("community-result-count");
 
-
     const resultMessage =
         document.getElementById("search-results-message");
 
-
     const noResults =
         document.getElementById("no-search-results");
-
 
     const communityCards =
         document.querySelectorAll(".discover-community");
 
 
     function filterCommunities() {
-
 
         if (!searchInput || !categorySelect) {
             return;
@@ -1197,7 +1219,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const searchTerm =
             searchInput.value.trim().toLowerCase();
-
 
         const selectedCategory =
             categorySelect.value.trim().toLowerCase();
@@ -1208,18 +1229,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         communityCards.forEach(function (card) {
 
-
             const name =
                 card.dataset.name || "";
-
 
             const description =
                 card.dataset.description || "";
 
-
             const category =
                 card.dataset.category || "";
-
 
             const owner =
                 card.dataset.owner || "";
@@ -1243,17 +1260,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 matchesCategory
             ) {
 
-
                 card.style.display = "block";
 
                 visibleCount++;
 
-
             } else {
 
-
                 card.style.display = "none";
-
 
             }
 
@@ -1261,7 +1274,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         if (resultCount) {
-
 
             resultCount.textContent =
                 visibleCount +
@@ -1271,18 +1283,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         : " communities"
                 );
 
-
         }
 
 
         if (resultMessage) {
 
-
             if (
                 searchTerm ||
                 selectedCategory
             ) {
-
 
                 resultMessage.textContent =
                     "Showing " +
@@ -1293,12 +1302,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             : " matching communities."
                     );
 
-
             } else {
 
-
                 resultMessage.textContent = "";
-
 
             }
 
@@ -1307,21 +1313,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (noResults) {
 
-
             if (
                 visibleCount === 0 &&
                 communityCards.length > 0
             ) {
 
-
                 noResults.style.display = "block";
-
 
             } else {
 
-
                 noResults.style.display = "none";
-
 
             }
 
@@ -1336,7 +1337,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (searchButton) {
 
-
         searchButton.addEventListener(
             "click",
             function () {
@@ -1345,7 +1345,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
         );
-
 
     }
 
@@ -1356,25 +1355,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (searchInput) {
 
-
         searchInput.addEventListener(
             "keydown",
             function (event) {
 
-
                 if (event.key === "Enter") {
-
 
                     event.preventDefault();
 
                     filterCommunities();
 
-
                 }
 
             }
         );
-
 
     }
 
@@ -1385,7 +1379,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (categorySelect) {
 
-
         categorySelect.addEventListener(
             "change",
             function () {
@@ -1394,7 +1387,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
         );
-
 
     }
 
@@ -1405,32 +1397,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (clearButton) {
 
-
         clearButton.addEventListener(
             "click",
             function () {
 
-
                 if (searchInput) {
-
                     searchInput.value = "";
-
                 }
-
 
                 if (categorySelect) {
-
                     categorySelect.value = "";
-
                 }
-
 
                 filterCommunities();
 
-
             }
         );
-
 
     }
 
@@ -1441,8 +1423,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     filterCommunities();
 
-
 });
 
-</script></body>
+</script>
+
+</body>
 </html>
