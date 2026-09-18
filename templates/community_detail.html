@@ -1091,12 +1091,20 @@
 
 
                     {% if is_member %}
+<form
+    method="POST"
+    action="/community-post/{{ post.id }}/comment"
+    class="action-form"
+>
+    <textarea
+        name="content"
+        placeholder="Write a comment..."
+        required
+        maxlength="2000"
+    ></textarea>
 
-                        <form
-                            method="POST"
-                            action="{{ url_for('comment_on_community_post', post_id=post.id) }}"
-                            class="comment-form action-form"
-                        >
+    <button type="submit">💬 Post Comment</button>
+</form>
 
                             <textarea
                                 name="content"
