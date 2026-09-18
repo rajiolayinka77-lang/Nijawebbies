@@ -1,593 +1,684 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{{ business.business_name or "Business Profile" }} | NijaWebbies</title>
 
-    <title>{{ business.business_name or "Business Profile" }} | NijaWebbies</title>
+<meta name="description"
+      content="{{ business.description or 'Business profile on NijaWebbies' }}">
 
-    <meta name="description"
-          content="{{ business.description or 'Business profile on NijaWebbies' }}">
+<meta name="theme-color" content="#111827">
 
-    <meta name="theme-color" content="#111827">
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5f7fb;
+        color: #222;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f7fb;
-            color: #222;
-        }
+    .topbar {
+        background: #111827;
+        color: white;
+        padding: 16px 20px;
+        text-align: center;
+    }
 
-        .topbar {
-            background: #111827;
-            color: white;
-            padding: 16px 20px;
-            text-align: center;
-        }
+    .brand {
+        font-size: 22px;
+        font-weight: bold;
+    }
 
-        .brand {
-            font-size: 22px;
-            font-weight: bold;
-        }
+    .container {
+        max-width: 850px;
+        margin: 30px auto;
+        padding: 0 16px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+    }
+
+    .business-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .business-logo {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #e5e7eb;
+        margin-bottom: 15px;
+    }
+
+    .business-name {
+        font-size: 30px;
+        margin: 5px 0;
+        color: #111827;
+    }
+
+    .category {
+        color: #6b7280;
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+    .verified {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #e8f5e9;
+        color: #15803d;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .section {
+        margin-top: 28px;
+    }
+
+    .section h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #111827;
+    }
+
+    .description {
+        line-height: 1.7;
+        color: #4b5563;
+        white-space: pre-line;
+    }
+
+    .info {
+        display: grid;
+        gap: 12px;
+    }
+
+    .info-row {
+        padding: 14px;
+        background: #f9fafb;
+        border-radius: 10px;
+    }
+
+    .info-label {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        font-size: 16px;
+        color: #111827;
+        word-break: break-word;
+    }
+
+    .info-value a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 25px;
+        justify-content: center;
+    }
+
+    .btn {
+        display: inline-block;
+        text-decoration: none;
+        padding: 13px 18px;
+        border-radius: 10px;
+        font-weight: bold;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .btn-phone {
+        background: #16a34a;
+        color: white;
+    }
+
+    .btn-whatsapp {
+        background: #25d366;
+        color: white;
+    }
+
+    .btn-website {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-location {
+        background: #7c3aed;
+        color: white;
+    }
+
+    .btn-share {
+        background: #111827;
+        color: white;
+    }
+
+    .footer {
+        text-align: center;
+        color: #6b7280;
+        font-size: 13px;
+        margin: 25px 0;
+    }
+
+    .footer a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    .share-message {
+        display: none;
+        text-align: center;
+        margin-top: 12px;
+        color: #15803d;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
 
         .container {
-            max-width: 850px;
-            margin: 30px auto;
-            padding: 0 16px;
+            margin: 15px auto;
         }
 
         .card {
-            background: white;
-            border-radius: 18px;
-            padding: 28px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
-        }
-
-        .business-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .business-logo {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #e5e7eb;
-            margin-bottom: 15px;
+            padding: 20px;
         }
 
         .business-name {
-            font-size: 30px;
-            margin: 5px 0;
-            color: #111827;
-        }
-
-        .category {
-            color: #6b7280;
-            font-size: 16px;
-            margin-top: 5px;
-        }
-
-        .verified {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: #e8f5e9;
-            color: #15803d;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .section {
-            margin-top: 28px;
-        }
-
-        .section h2 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: #111827;
-        }
-
-        .description {
-            line-height: 1.7;
-            color: #4b5563;
-            white-space: pre-line;
-        }
-
-        .info {
-            display: grid;
-            gap: 12px;
-        }
-
-        .info-row {
-            padding: 14px;
-            background: #f9fafb;
-            border-radius: 10px;
-        }
-
-        .info-label {
-            font-size: 13px;
-            color: #6b7280;
-            margin-bottom: 4px;
-        }
-
-        .info-value {
-            font-size: 16px;
-            color: #111827;
-            word-break: break-word;
-        }
-
-        .info-value a {
-            color: #2563eb;
-            text-decoration: none;
+            font-size: 25px;
         }
 
         .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 25px;
-            justify-content: center;
+            flex-direction: column;
         }
 
         .btn {
-            display: inline-block;
-            text-decoration: none;
-            padding: 13px 18px;
-            border-radius: 10px;
-            font-weight: bold;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
+            width: 100%;
         }
+    }
+</style>
 
-        .btn-phone {
-            background: #16a34a;
-            color: white;
-        }
-
-        .btn-whatsapp {
-            background: #25d366;
-            color: white;
-        }
-
-        .btn-website {
-            background: #2563eb;
-            color: white;
-        }
-
-        .btn-location {
-            background: #7c3aed;
-            color: white;
-        }
-
-        .btn-share {
-            background: #111827;
-            color: white;
-        }
-
-        .footer {
-            text-align: center;
-            color: #6b7280;
-            font-size: 13px;
-            margin: 25px 0;
-        }
-
-        .footer a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-
-        .location-note {
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 6px;
-        }
-
-        .share-message {
-            display: none;
-            text-align: center;
-            margin-top: 12px;
-            color: #15803d;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        @media (max-width: 600px) {
-
-            .container {
-                margin: 15px auto;
-            }
-
-            .card {
-                padding: 20px;
-            }
-
-            .business-name {
-                font-size: 25px;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="topbar">
+</head><body><div class="topbar">
     <div class="brand">🇳🇬 NijaWebbies</div>
-</div>
+</div><div class="container"><div class="card">
+
+    <!-- BUSINESS HEADER -->
+
+    <div class="business-header">
+
+        {% if business.logo_url %}
+
+            <img
+                src="{{ business.logo_url }}"
+                alt="{{ business.business_name or 'Business Logo' }}"
+                class="business-logo"
+            >
+
+        {% else %}
+
+            <div
+                class="business-logo"
+                style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:45px;
+                    margin-left:auto;
+                    margin-right:auto;
+                "
+            >
+                🏪
+            </div>
+
+        {% endif %}
+
+        <h1 class="business-name">
+            {{ business.business_name or "Business Profile" }}
+        </h1>
+
+        {% if business.category %}
+
+            <div class="category">
+                {{ business.category }}
+            </div>
+
+        {% endif %}
+
+        <div class="verified">
+            ✓ NijaWebbies Business Profile
+        </div>
+
+    </div>
 
 
-<div class="container">
+    <!-- ABOUT -->
 
-    <div class="card">
+    {% if business.description %}
 
-        <!-- BUSINESS HEADER -->
+    <div class="section">
 
-        <div class="business-header">
+        <h2>About the Business</h2>
 
-            {% if business.logo_url %}
+        <div class="description">
+            {{ business.description }}
+        </div>
 
-                <img
-                    src="{{ business.logo_url }}"
-                    alt="{{ business.business_name or 'Business Logo' }}"
-                    class="business-logo"
-                >
+    </div>
 
-            {% else %}
+    {% endif %}
 
-                <div
-                    class="business-logo"
-                    style="
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        font-size:45px;
-                        margin-left:auto;
-                        margin-right:auto;
-                    "
-                >
-                    🏪
+
+    <!-- BUSINESS INFORMATION -->
+
+    <div class="section">
+
+        <h2>Business Information</h2>
+
+        <div class="info">
+
+            {% if business.location %}
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    📍 Location
                 </div>
+
+                <div class="info-value">
+                    {{ business.location }}
+                </div>
+
+            </div>
 
             {% endif %}
 
 
-            <h1 class="business-name">
-                {{ business.business_name or "Business Profile" }}
-            </h1>
+            {% if business.phone %}
 
+            <div class="info-row">
 
-            {% if business.category %}
-
-                <div class="category">
-                    {{ business.category }}
+                <div class="info-label">
+                    📞 Phone
                 </div>
+
+                <div class="info-value">
+                    {{ business.phone }}
+                </div>
+
+            </div>
 
             {% endif %}
 
 
-            <div class="verified">
-                ✓ NijaWebbies Business Profile
+            {% if business.whatsapp %}
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    💬 WhatsApp
+                </div>
+
+                <div class="info-value">
+                    Available for WhatsApp chat
+                </div>
+
             </div>
+
+            {% endif %}
+
+
+            {% if business.website %}
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    🌐 Website
+                </div>
+
+                <div class="info-value">
+
+                    <a
+                        href="{{ business.website }}"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        {{ business.website }}
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endif %}
 
         </div>
 
+    </div>
 
-        <!-- ABOUT -->
 
-        {% if business.description %}
+    <!-- ACTION BUTTONS -->
 
-        <div class="section">
+    <div class="actions">
 
-            <h2>About the Business</h2>
+        <!-- CALL -->
 
-            <div class="description">
-                {{ business.description }}
-            </div>
+        {% if phone_link %}
 
-        </div>
+        <a
+            href="{{ phone_link }}"
+            class="btn btn-phone"
+        >
+            📞 Call Business
+        </a>
+
+        {% elif business.phone %}
+
+        <a
+            href="tel:{{ business.phone }}"
+            class="btn btn-phone"
+        >
+            📞 Call Business
+        </a>
 
         {% endif %}
 
 
-        <!-- BUSINESS INFORMATION -->
+        <!-- WHATSAPP -->
 
-        <div class="section">
+        {% if business.whatsapp %}
 
-            <h2>Business Information</h2>
-
-            <div class="info">
-
-
-                <!-- LOCATION -->
-
-                {% if business.location %}
-
-                <div class="info-row">
-
-                    <div class="info-label">
-                        📍 Location
-                    </div>
-
-                    <div class="info-value">
-                        {{ business.location }}
-                    </div>
-
-                </div>
-
-                {% endif %}
-
-
-                <!-- PHONE -->
-
-                {% if business.phone %}
-
-                <div class="info-row">
-
-                    <div class="info-label">
-                        📞 Phone
-                    </div>
-
-                    <div class="info-value">
-                        {{ business.phone }}
-                    </div>
-
-                </div>
-
-                {% endif %}
-
-
-                <!-- WHATSAPP -->
-
-                {% if business.whatsapp %}
-
-                <div class="info-row">
-
-                    <div class="info-label">
-                        💬 WhatsApp
-                    </div>
-
-                    <div class="info-value">
-                        Available for WhatsApp chat
-                    </div>
-
-                </div>
-
-                {% endif %}
-
-
-                <!-- WEBSITE -->
-
-                {% if business.website %}
-
-                <div class="info-row">
-
-                    <div class="info-label">
-                        🌐 Website
-                    </div>
-
-                    <div class="info-value">
-
-                        <a
-                            href="{{ business.website }}"
-                            target="_blank"
-                            rel="noopener"
-                        >
-                            {{ business.website }}
-                        </a>
-
-                    </div>
-
-                </div>
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
-
-        <!-- ACTION BUTTONS -->
-
-        <div class="actions">
-
-
-            <!-- CALL -->
-
-            {% if phone_link %}
-
-            <a
-                href="{{ phone_link }}"
-                class="btn btn-phone"
-            >
-                📞 Call Business
-            </a>
-
-            {% elif business.phone %}
-
-            <a
-                href="tel:{{ business.phone }}"
-                class="btn btn-phone"
-            >
-                📞 Call Business
-            </a>
-
-            {% endif %}
-
-
-            <!-- WHATSAPP -->
-
-            {% if whatsapp_link %}
-
-            <a
-                href="https://wa.me/{{ whatsapp_link }}"
-                class="btn btn-whatsapp"
-                target="_blank"
-                rel="noopener"
-            >
-                💬 Chat on WhatsApp
-            </a>
-
-            {% endif %}
-
-
-            <!-- WEBSITE -->
-
-            {% if business.website %}
-
-            <a
-                href="{{ business.website }}"
-                class="btn btn-website"
-                target="_blank"
-                rel="noopener"
-            >
-                🌐 Visit Website
-            </a>
-
-            {% endif %}
-
-
-            <!-- LOCATION -->
-
-            {% if business.location %}
-
-            <a
-                href="https://www.google.com/maps/search/?api=1&query={{ business.location|urlencode }}"
-                class="btn btn-location"
-                target="_blank"
-                rel="noopener"
-            >
-                📍 View Location
-            </a>
-
-            {% endif %}
-
-
-            <!-- SHARE -->
-
-            <button
-                type="button"
-                class="btn btn-share"
-                onclick="shareBusiness()"
-            >
-                📤 Share Profile
-            </button>
-
-        </div>
-
-
-        <!-- SHARE MESSAGE -->
-
-        <div
-            id="shareMessage"
-            class="share-message"
+        <a
+            href="#"
+            class="btn btn-whatsapp"
+            onclick="openWhatsApp(event)"
         >
-            ✓ Profile link copied!
-        </div>
+            💬 Chat on WhatsApp
+        </a>
+
+        {% endif %}
+
+
+        <!-- WEBSITE -->
+
+        {% if business.website %}
+
+        <a
+            href="{{ business.website }}"
+            class="btn btn-website"
+            target="_blank"
+            rel="noopener"
+        >
+            🌐 Visit Website
+        </a>
+
+        {% endif %}
+
+
+        <!-- LOCATION -->
+
+        {% if business.location %}
+
+        <a
+            href="https://www.google.com/maps/search/?api=1&query={{ business.location|urlencode }}"
+            class="btn btn-location"
+            target="_blank"
+            rel="noopener"
+        >
+            📍 View Location
+        </a>
+
+        {% endif %}
+
+
+        <!-- COPY PROFILE LINK -->
+
+        <button
+            type="button"
+            class="btn btn-share"
+            onclick="copyProfileLink()"
+        >
+            🔗 Copy Profile Link
+        </button>
 
     </div>
 
 
-    <!-- FOOTER -->
+    <!-- SHARE MESSAGE -->
 
-    <div class="footer">
-
-        Powered by
-
-        <a href="{{ url_for('home') }}">
-            NijaWebbies
-        </a>
-
-        🇳🇬
-
+    <div
+        id="shareMessage"
+        class="share-message"
+    >
+        ✓ Profile link copied!
     </div>
 
 </div>
 
 
-<script>
+<!-- FOOTER -->
 
-function shareBusiness() {
+<div class="footer">
 
-    const shareData = {
-        title: "{{ business.business_name|e }} | NijaWebbies",
-        text: "Check out {{ business.business_name|e }} on NijaWebbies.",
-        url: window.location.href
-    };
+    Powered by
 
+    <a href="{{ url_for('home') }}">
+        NijaWebbies
+    </a>
 
-    if (navigator.share) {
+    🇳🇬
 
-        navigator.share(shareData)
-            .catch(function(error) {
+</div>
 
-                if (error.name !== "AbortError") {
-                    copyProfileLink();
-                }
+</div><script>
 
-            });
+/* =========================================================
+   WHATSAPP
+   ========================================================= */
 
-    } else {
+function openWhatsApp(event) {
 
-        copyProfileLink();
+    event.preventDefault();
+
+    let whatsapp = {{ business.whatsapp|tojson }};
+
+    if (!whatsapp) {
+        alert("WhatsApp number is not available.");
+        return;
+    }
+
+    whatsapp = String(whatsapp).trim();
+
+    /*
+       If the database contains a full WhatsApp URL,
+       extract the phone number from it.
+    */
+
+    if (whatsapp.includes("wa.me/")) {
+
+        whatsapp = whatsapp.split("wa.me/")[1];
 
     }
 
+    if (whatsapp.includes("whatsapp.com/send?phone=")) {
+
+        whatsapp = whatsapp.split("phone=")[1];
+
+    }
+
+    /*
+       Remove everything except numbers.
+    */
+
+    whatsapp = whatsapp.replace(/\D/g, "");
+
+    /*
+       Convert Nigerian local numbers:
+
+       08012345678
+       ->
+       2348012345678
+    */
+
+    if (whatsapp.startsWith("0")) {
+
+        whatsapp = "234" + whatsapp.substring(1);
+
+    }
+
+    /*
+       If it is not a usable number, stop.
+    */
+
+    if (whatsapp.length < 10) {
+
+        alert("The WhatsApp number is not valid.");
+
+        return;
+
+    }
+
+    const message =
+        "Hello, I found your business on NijaWebbies.";
+
+    const whatsappUrl =
+        "https://wa.me/" +
+        whatsapp +
+        "?text=" +
+        encodeURIComponent(message);
+
+    window.location.href = whatsappUrl;
 }
 
+
+/* =========================================================
+   COPY PROFILE LINK
+   ========================================================= */
 
 function copyProfileLink() {
 
     const url = window.location.href;
 
-    if (navigator.clipboard) {
+    /*
+       Modern clipboard API
+    */
+
+    if (
+        navigator.clipboard &&
+        window.isSecureContext
+    ) {
 
         navigator.clipboard.writeText(url)
             .then(function() {
 
-                const message =
-                    document.getElementById("shareMessage");
-
-                message.style.display = "block";
-
-                setTimeout(function() {
-
-                    message.style.display = "none";
-
-                }, 3000);
+                showCopiedMessage();
 
             })
             .catch(function() {
 
-                alert("Copy this profile link: " + url);
+                fallbackCopy(url);
 
             });
 
-    } else {
+        return;
+    }
 
-        alert("Copy this profile link: " + url);
+    /*
+       Older Android/browser fallback
+    */
+
+    fallbackCopy(url);
+}
+
+
+/* =========================================================
+   FALLBACK COPY
+   ========================================================= */
+
+function fallbackCopy(url) {
+
+    const textArea =
+        document.createElement("textarea");
+
+    textArea.value = url;
+
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+
+    document.body.appendChild(textArea);
+
+    textArea.focus();
+    textArea.select();
+
+    try {
+
+        const successful =
+            document.execCommand("copy");
+
+        if (successful) {
+
+            showCopiedMessage();
+
+        } else {
+
+            alert(
+                "Copy failed. Please copy this link:\n\n" +
+                url
+            );
+
+        }
+
+    } catch (error) {
+
+        alert(
+            "Copy failed. Please copy this link:\n\n" +
+            url
+        );
 
     }
 
+    document.body.removeChild(textArea);
 }
 
-</script>
 
-</body>
+/* =========================================================
+   COPIED MESSAGE
+   ========================================================= */
+
+function showCopiedMessage() {
+
+    const message =
+        document.getElementById("shareMessage");
+
+    message.textContent =
+        "✓ Profile link copied!";
+
+    message.style.display = "block";
+
+    setTimeout(function() {
+
+        message.style.display = "none";
+
+    }, 3000);
+}
+
+</script></body>
 </html>
