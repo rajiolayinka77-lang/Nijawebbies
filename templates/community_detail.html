@@ -908,12 +908,8 @@
                 {% endif %}
 
 
-                {% set post_comments = comments_by_post.get(post.id, []) %}
-
-                <div class="comments-title">
-
-                    💬 {{ post_comments|length }}
-                    Comment{% if post_comments|length != 1 %}s{% endif %}
+                💬 {{ comment_counts.get(post.id, 0) }}
+Comment{% if comment_counts.get(post.id, 0) != 1 %}s{% endif %}
 
                 </div>
 
