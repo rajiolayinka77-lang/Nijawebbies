@@ -2993,32 +2993,48 @@ def community_detail(community_id):
             comments = cursor.fetchall()
 
         # =====================================================
-        # GROUP TOP-LEVEL COMMENTS BY DISCUSSION
-        # =====================================================
+# GROUP COMMENTS BY DISCUSSION
+# =====================================================
 
-        comments_by_post = {}
+comments_by_post = {}
 
-        # =====================================================
-        # GROUP REPLIES BY PARENT COMMENT
-        # =====================================================
+# =====================================================
+# GROUP REPLIES BY PARENT COMMENT
+# =====================================================
 
-        replies_by_comment = {}
+replies_by_comment = {}
 
-        for comment in comments:
+# =====================================================
+# TOTAL COMMENT COUNT BY DISCUSSION
+# Includes both main comments and replies
+# =====================================================
 
-            if comment["parent_comment_id"] is None:
+comment_counts = {}
 
-                comments_by_post.setdefault(
-                    comment["community_post_id"],
-                    []
-                ).append(comment)
+for comment in comments:
 
-            else:
+    post_id = comment["community_post_id"]
 
-                replies_by_comment.setdefault(
-                    comment["parent_comment_id"],
-                    []
-                ).append(comment)
+    # Count EVERY comment, including replies
+    comment_counts[post_id] = (
+        comment_counts.get(post_id, 0) + 1
+    )
+
+    # Main/top-level comments
+    if comment["parent_comment_id"] is None:
+
+        comments_by_post.setdefault(
+            post_id,
+            []
+        ).append(comment)
+
+    # Replies
+    else:
+
+        replies_by_comment.setdefault(
+            comment["parent_comment_id"],
+            []
+        ).append(comment)
 
         return render_template(
             "community_detail.html",
