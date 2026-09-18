@@ -54,13 +54,13 @@
 
         .nav {
             display: flex;
-            gap: 8px;
+            gap: 7px;
             flex-wrap: wrap;
         }
 
         .nav a {
             color: white;
-            padding: 8px 11px;
+            padding: 8px 10px;
             border-radius: 7px;
             font-size: 14px;
         }
@@ -76,7 +76,7 @@
         .container {
             max-width: 1100px;
             margin: 30px auto;
-            padding: 0 15px 50px;
+            padding: 0 15px 60px;
         }
 
         /* =====================================================
@@ -85,26 +85,28 @@
 
         .community-header {
             background: white;
-            border-radius: 16px;
-            padding: 25px;
+            border-radius: 18px;
+            padding: 28px;
             box-shadow: 0 8px 25px rgba(0,0,0,.06);
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .community-title {
             margin: 0 0 10px;
             font-size: 30px;
+            color: #111827;
         }
 
         .description {
             color: #4b5563;
-            line-height: 1.6;
+            line-height: 1.65;
+            font-size: 15px;
             margin-bottom: 18px;
         }
 
         .community-meta {
             display: flex;
-            gap: 10px;
+            gap: 9px;
             flex-wrap: wrap;
             margin-bottom: 18px;
         }
@@ -140,7 +142,7 @@
 
         .actions {
             display: flex;
-            gap: 10px;
+            gap: 9px;
             flex-wrap: wrap;
         }
 
@@ -184,10 +186,6 @@
         .btn-light {
             background: #f3f4f6;
             color: #111827;
-        }
-
-        .btn-light:hover {
-            background: #e5e7eb;
         }
 
         /* =====================================================
@@ -237,21 +235,21 @@
         }
 
         /* =====================================================
-           MAIN GRID
+           GRID
         ===================================================== */
 
         .grid {
             display: grid;
             grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-            gap: 20px;
+            gap: 22px;
             align-items: start;
         }
 
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 22px;
-            box-shadow: 0 8px 25px rgba(0,0,0,.05);
+            box-shadow: 0 7px 22px rgba(0,0,0,.05);
             margin-bottom: 20px;
         }
 
@@ -261,13 +259,13 @@
         }
 
         /* =====================================================
-           DISCUSSION CREATE FORM
+           DISCUSSION FORM
         ===================================================== */
 
         .discussion-form {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
-            border-radius: 12px;
+            border-radius: 13px;
             padding: 16px;
             margin-bottom: 20px;
         }
@@ -277,7 +275,7 @@
             min-height: 100px;
             resize: vertical;
             border: 1px solid #d1d5db;
-            border-radius: 9px;
+            border-radius: 10px;
             padding: 12px;
             font-family: inherit;
             font-size: 14px;
@@ -290,13 +288,13 @@
         }
 
         /* =====================================================
-           DISCUSSIONS
+           DISCUSSION
         ===================================================== */
 
         .discussion {
             border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 18px;
+            border-radius: 15px;
+            padding: 19px;
             margin-bottom: 18px;
             background: white;
         }
@@ -306,8 +304,28 @@
         }
 
         .discussion-author {
+            display: flex;
+            align-items: center;
+            gap: 9px;
             font-weight: bold;
             color: #111827;
+        }
+
+        .author-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #16a34a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .author-info {
+            min-width: 0;
         }
 
         .discussion-date {
@@ -317,14 +335,18 @@
         }
 
         .discussion-content {
-            margin-top: 15px;
-            line-height: 1.65;
+            margin-top: 16px;
+            line-height: 1.7;
             white-space: pre-wrap;
             word-break: break-word;
+            font-size: 15px;
+            color: #1f2937;
         }
 
         .discussion-actions {
-            margin-top: 15px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
@@ -333,7 +355,7 @@
         .small-btn {
             border: none;
             cursor: pointer;
-            padding: 7px 10px;
+            padding: 7px 11px;
             border-radius: 7px;
             font-size: 12px;
             font-weight: bold;
@@ -344,9 +366,17 @@
             color: #1d4ed8;
         }
 
+        .small-blue:hover {
+            background: #dbeafe;
+        }
+
         .small-red {
             background: #fef2f2;
             color: #b91c1c;
+        }
+
+        .small-red:hover {
+            background: #fee2e2;
         }
 
         /* =====================================================
@@ -354,7 +384,7 @@
         ===================================================== */
 
         .comments-section {
-            margin-top: 18px;
+            margin-top: 17px;
             border-top: 1px solid #e5e7eb;
             padding-top: 15px;
         }
@@ -369,9 +399,29 @@
         .comment {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 11px;
+            padding: 13px;
             margin-bottom: 10px;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .comment-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
         }
 
         .comment-author {
@@ -386,15 +436,18 @@
         }
 
         .comment-content {
-            margin-top: 8px;
+            margin-top: 9px;
+            margin-left: 38px;
             font-size: 14px;
-            line-height: 1.55;
+            line-height: 1.6;
             white-space: pre-wrap;
             word-break: break-word;
+            color: #374151;
         }
 
         .comment-actions {
             margin-top: 9px;
+            margin-left: 38px;
             display: flex;
             gap: 7px;
             flex-wrap: wrap;
@@ -405,10 +458,10 @@
         ===================================================== */
 
         .replies {
-            margin-top: 10px;
-            margin-left: 25px;
+            margin-top: 11px;
+            margin-left: 38px;
             padding-left: 12px;
-            border-left: 3px solid #e5e7eb;
+            border-left: 3px solid #dbeafe;
         }
 
         .reply {
@@ -423,8 +476,17 @@
             margin-bottom: 0;
         }
 
+        .reply .comment-content {
+            margin-left: 0;
+        }
+
+        .reply .comment-actions {
+            margin-left: 0;
+        }
+
         .reply-form {
             margin-top: 10px;
+            margin-left: 38px;
             display: none;
         }
 
@@ -462,12 +524,31 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            padding: 11px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #e5e7eb;
         }
 
         .member:last-child {
             border-bottom: none;
+        }
+
+        .member-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #16a34a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
         }
 
         .member-name {
@@ -507,10 +588,11 @@
             padding: 13px;
             font-size: 14px;
             margin-bottom: 15px;
+            line-height: 1.5;
         }
 
         /* =====================================================
-           RESPONSIVE
+           MOBILE
         ===================================================== */
 
         @media (max-width: 800px) {
@@ -533,6 +615,26 @@
 
             .nav {
                 width: 100%;
+            }
+
+            .community-header {
+                padding: 21px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .discussion {
+                padding: 15px;
+            }
+
+            .replies {
+                margin-left: 15px;
+            }
+
+            .reply-form {
+                margin-left: 0;
             }
 
         }
@@ -644,6 +746,7 @@
             <span class="badge green">
 
                 👥 {{ member_count }}
+
                 {% if member_count == 1 %}
                     Member
                 {% else %}
@@ -676,6 +779,7 @@
         <div class="owner">
 
             👤 Owner:
+
             <strong>
                 {{ community.owner_name or "NijaWebbies User" }}
             </strong>
@@ -790,7 +894,7 @@
 
     <!-- =====================================================
          MAIN GRID
-    ====================================================== -->
+    ===================================================== -->
 
     <div class="grid">
 
@@ -849,9 +953,11 @@
                     <div class="login-box">
 
                         Please
+
                         <a href="/login">
                             log in
                         </a>
+
                         to join the community and participate
                         in discussions.
 
@@ -884,25 +990,37 @@
 
 
                             <!-- =================================
-                                 POST AUTHOR
+                                 AUTHOR
                             ================================== -->
 
                             <div class="discussion-author">
 
-                                {{ post.author_name }}
+                                <div class="author-avatar">
 
-                            </div>
+                                    {{ post.author_name[:1] | upper }}
 
+                                </div>
 
-                            <div class="discussion-date">
+                                <div class="author-info">
 
-                                {{ post.created_at }}
+                                    <div>
+                                        {{ post.author_name }}
+                                    </div>
+
+                                    <div
+                                        class="discussion-date"
+                                        data-date="{{ post.created_at }}"
+                                    >
+                                        {{ post.created_at }}
+                                    </div>
+
+                                </div>
 
                             </div>
 
 
                             <!-- =================================
-                                 POST CONTENT
+                                 CONTENT
                             ================================== -->
 
                             <div class="discussion-content">
@@ -913,7 +1031,7 @@
 
 
                             <!-- =================================
-                                 POST ACTIONS
+                                 ACTIONS
                             ================================== -->
 
                             <div class="discussion-actions">
@@ -963,6 +1081,7 @@
                                 <div class="comments-title">
 
                                     💬
+
                                     {{ comment_counts.get(post.id, 0) }}
 
                                     {% if comment_counts.get(post.id, 0) == 1 %}
@@ -975,7 +1094,7 @@
 
 
                                 <!-- =================================
-                                     EXISTING TOP-LEVEL COMMENTS
+                                     TOP LEVEL COMMENTS
                                 ================================== -->
 
                                 {% if post_comments %}
@@ -985,16 +1104,34 @@
                                         <div class="comment">
 
 
-                                            <div class="comment-author">
+                                            <div class="comment-header">
 
-                                                {{ comment.author_name }}
+                                                <div class="comment-avatar">
 
-                                            </div>
+                                                    {{ comment.author_name[:1] | upper }}
+
+                                                </div>
 
 
-                                            <div class="comment-date">
+                                                <div>
 
-                                                {{ comment.created_at }}
+                                                    <div class="comment-author">
+
+                                                        {{ comment.author_name }}
+
+                                                    </div>
+
+
+                                                    <div
+                                                        class="comment-date"
+                                                        data-date="{{ comment.created_at }}"
+                                                    >
+
+                                                        {{ comment.created_at }}
+
+                                                    </div>
+
+                                                </div>
 
                                             </div>
 
@@ -1108,16 +1245,34 @@
                                                         <div class="reply">
 
 
-                                                            <div class="comment-author">
+                                                            <div class="comment-header">
 
-                                                                {{ reply.author_name }}
+                                                                <div class="comment-avatar">
 
-                                                            </div>
+                                                                    {{ reply.author_name[:1] | upper }}
+
+                                                                </div>
 
 
-                                                            <div class="comment-date">
+                                                                <div>
 
-                                                                {{ reply.created_at }}
+                                                                    <div class="comment-author">
+
+                                                                        {{ reply.author_name }}
+
+                                                                    </div>
+
+
+                                                                    <div
+                                                                        class="comment-date"
+                                                                        data-date="{{ reply.created_at }}"
+                                                                    >
+
+                                                                        {{ reply.created_at }}
+
+                                                                    </div>
+
+                                                                </div>
 
                                                             </div>
 
@@ -1170,7 +1325,8 @@
 
                                     <div class="empty-comments">
 
-                                        No comments yet. Be the first to comment.
+                                        No comments yet.
+                                        Be the first to comment.
 
                                     </div>
 
@@ -1178,7 +1334,7 @@
 
 
                                 <!-- =================================
-                                     NEW COMMENT FORM
+                                     NEW COMMENT
                                 ================================== -->
 
                                 {% if is_logged_in and is_member %}
@@ -1226,7 +1382,9 @@
                         No discussions yet.
 
                         {% if is_logged_in and is_member %}
+
                             Start the first discussion.
+
                         {% endif %}
 
                     </div>
@@ -1268,19 +1426,33 @@
                         <div class="member">
 
 
-                            <div>
+                            <div class="member-left">
 
-                                <div class="member-name">
+                                <div class="member-avatar">
 
-                                    {{ member.name }}
+                                    {{ member.name[:1] | upper }}
 
                                 </div>
 
 
-                                <div class="member-date">
+                                <div>
 
-                                    Joined:
-                                    {{ member.joined_at }}
+                                    <div class="member-name">
+
+                                        {{ member.name }}
+
+                                    </div>
+
+
+                                    <div
+                                        class="member-date"
+                                        data-date="{{ member.joined_at }}"
+                                    >
+
+                                        Joined:
+                                        {{ member.joined_at }}
+
+                                    </div>
 
                                 </div>
 
@@ -1316,13 +1488,15 @@
 
 
             <!-- =============================================
-                 COMMUNITY INFORMATION
+                 ABOUT
             ============================================== -->
 
             <section class="card">
 
                 <h2 class="card-title">
+
                     ℹ️ About this Community
+
                 </h2>
 
 
@@ -1342,6 +1516,7 @@
                     <p style="line-height:1.6;">
 
                         <strong>Category:</strong>
+
                         {{ community.category }}
 
                     </p>
@@ -1352,6 +1527,7 @@
                 <p style="line-height:1.6;">
 
                     <strong>Owner:</strong>
+
                     {{ community.owner_name or "NijaWebbies User" }}
 
                 </p>
@@ -1374,6 +1550,11 @@
 
 <script>
 
+
+    /* =====================================================
+       REPLY FORM
+    ===================================================== */
+
     function toggleReplyForm(commentId) {
 
         const form =
@@ -1392,6 +1573,19 @@
 
             form.style.display = "block";
 
+            const textarea =
+                form.querySelector("textarea");
+
+            if (textarea) {
+
+                setTimeout(function() {
+
+                    textarea.focus();
+
+                }, 100);
+
+            }
+
         } else {
 
             form.style.display = "none";
@@ -1400,6 +1594,10 @@
 
     }
 
+
+    /* =====================================================
+       COMMENT FORM
+    ===================================================== */
 
     function toggleCommentForm(postId) {
 
@@ -1435,6 +1633,10 @@
 
     }
 
+
+    /* =====================================================
+       COPY COMMUNITY LINK
+    ===================================================== */
 
     function copyCommunityLink() {
 
@@ -1483,6 +1685,7 @@
         document.body.appendChild(textarea);
 
         textarea.focus();
+
         textarea.select();
 
         try {
@@ -1505,6 +1708,74 @@
         document.body.removeChild(textarea);
 
     }
+
+
+    /* =====================================================
+       FORMAT DATES
+    ===================================================== */
+
+    function formatCommunityDates() {
+
+        const elements =
+            document.querySelectorAll(
+                "[data-date]"
+            );
+
+
+        elements.forEach(function(element) {
+
+            const raw =
+                element.getAttribute("data-date");
+
+            if (!raw) {
+                return;
+            }
+
+
+            const date =
+                new Date(
+                    raw.replace(" ", "T")
+                );
+
+
+            if (isNaN(date.getTime())) {
+                return;
+            }
+
+
+            const formatted =
+                date.toLocaleString(
+                    "en-NG",
+                    {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit"
+                    }
+                );
+
+
+            element.textContent =
+                formatted;
+
+        });
+
+    }
+
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            formatCommunityDates();
+
+        }
+    );
 
 </script>
 
