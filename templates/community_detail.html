@@ -568,25 +568,19 @@
     <div class="nav-links">
 
         <a href="{{ url_for('home') }}">Home</a>
-
         <a href="{{ url_for('search') }}">Search</a>
-
         <a href="{{ url_for('businesses') }}">Businesses</a>
-
         <a href="{{ url_for('communities') }}">Communities</a>
-
         <a href="{{ url_for('tools') }}">Tools</a>
 
         {% if is_logged_in %}
 
             <a href="{{ url_for('workspace') }}">Workspace</a>
-
             <a href="{{ url_for('logout') }}">Logout</a>
 
         {% else %}
 
             <a href="{{ url_for('login') }}">Login</a>
-
             <a href="{{ url_for('register') }}">Register</a>
 
         {% endif %}
@@ -597,9 +591,6 @@
 
 
 <main class="container">
-
-
-    <!-- FLASH MESSAGES -->
 
     {% with messages = get_flashed_messages() %}
 
@@ -621,8 +612,6 @@
 
     {% endwith %}
 
-
-    <!-- COMMUNITY HEADER -->
 
     <section class="community-header">
 
@@ -882,8 +871,6 @@
                     </div>
 
 
-                    <!-- DELETE DISCUSSION -->
-
                     {% if is_logged_in and
                           (current_user_id == post.user_id
                           or current_user_id == community.owner_id) %}
@@ -959,8 +946,6 @@
                                             </div>
 
 
-                                            <!-- COMMENT ACTIONS -->
-
                                             {% if is_logged_in %}
 
                                                 <div class="comment-actions">
@@ -1003,8 +988,6 @@
                                             {% endif %}
 
 
-                                            <!-- REPLY FORM -->
-
                                             {% if is_logged_in and is_member %}
 
                                                 <div
@@ -1046,8 +1029,6 @@
 
                                             {% endif %}
 
-
-                                            <!-- REPLIES -->
 
                                             {% if replies_by_comment is defined and replies_by_comment.get(comment.id) %}
 
@@ -1136,8 +1117,6 @@
 
                         {% endif %}
 
-
-                        <!-- NEW COMMENT -->
 
                         {% if is_logged_in and is_member %}
 
@@ -1294,8 +1273,11 @@
        ===================================================== */
 
     const communityUrl =
-        window.location.origin +
-        "{{ url_for('community_detail', community_id=community.id) }}";
+        {{ url_for(
+            'community_detail',
+            community_id=community.id,
+            _external=True
+        )|tojson }};
 
     const communityName =
         {{ community.name|tojson }};
@@ -1306,115 +1288,174 @@
         " community on NijaWebbies 🇳🇬";
 
 
-    /* WHATSAPP */
+    /* =====================================================
+       WHATSAPP SHARING
+       ===================================================== */
 
     const whatsappButton =
         document.getElementById("whatsapp-share");
 
     if (whatsappButton) {
 
+        const whatsappMessage =
+            shareText +
+            "\n\n" +
+            "Open the community here:" +
+            "\n" +
+            communityUrl;
+
         whatsappButton.href =
             "https://wa.me/?text=" +
-            encodeURIComponent(
-                shareText + "\n\n" + communityUrl
-            );
+            encodeURIComponent(whatsappMessage);
 
     }
 
 
-    /* COPY LINK */
+    /* =====================================================
+       COPY COMMUNITY LINK
+       ===================================================== */
 
-    function copyCommunityLink() {
+    function showCopyMessage(text) {
 
         const message =
             document.getElementById("copy-message");
 
-        function showCopiedMessage() {
-
-            if (!message) {
-                return;
-            }
-
-            message.style.display = "block";
-
-            setTimeout(function () {
-
-                message.style.display = "none";
-
-            }, 2500);
-
+        if (!message) {
+            return;
         }
 
+        message.textContent = text;
 
-        if (
-            navigator.clipboard &&
-            window.isSecureContext
-        ) {
+        message.style.display = "block";
 
-            navigator.clipboard
-                .writeText(communityUrl)
-                .then(function () {
+        setTimeout(function () {
 
-                    showCopiedMessage();
+            message.style.display = "none";
 
-                })
-                .catch(function () {
-
-                    fallbackCopy();
-
-                });
-
-        } else {
-
-            fallbackCopy();
-
-        }
-
-
-        function fallbackCopy() {
-
-            const temporaryInput =
-                document.createElement("input");
-
-            temporaryInput.value =
-                communityUrl;
-
-            document.body.appendChild(
-                temporaryInput
-            );
-
-            temporaryInput.select();
-
-            try {
-
-                document.execCommand("copy");
-
-                showCopiedMessage();
-
-            } catch (error) {
-
-                alert(
-                    "Please copy this community link manually:\n\n" +
-                    communityUrl
-                );
-
-            }
-
-            document.body.removeChild(
-                temporaryInput
-            );
-
-        }
+        }, 2500);
 
     }
 
 
-    /* NATIVE PHONE SHARE */
+    function fallbackCopyText(text) {
+
+        const textarea =
+            document.createElement("textarea");
+
+        textarea.value = text;
+
+        textarea.setAttribute(
+            "readonly",
+            ""
+        );
+
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "0";
+        textarea.style.opacity = "0";
+
+        document.body.appendChild(textarea);
+
+        textarea.focus();
+        textarea.select();
+        textarea.setSelectionRange(
+            0,
+            textarea.value.length
+        );
+
+        let copied = false;
+
+        try {
+
+            copied =
+                document.execCommand("copy");
+
+        } catch (error) {
+
+            copied = false;
+
+        }
+
+        document.body.removeChild(textarea);
+
+        return copied;
+
+    }
+
+
+    async function copyCommunityLink() {
+
+        try {
+
+            if (
+                navigator.clipboard &&
+                typeof navigator.clipboard.writeText === "function"
+            ) {
+
+                await navigator.clipboard.writeText(
+                    communityUrl
+                );
+
+                showCopyMessage(
+                    "✓ Community link copied!"
+                );
+
+                return;
+
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Clipboard API failed. Trying fallback.",
+                error
+            );
+
+        }
+
+
+        const copied =
+            fallbackCopyText(
+                communityUrl
+            );
+
+
+        if (copied) {
+
+            showCopyMessage(
+                "✓ Community link copied!"
+            );
+
+            return;
+
+        }
+
+
+        showCopyMessage(
+            "Copy failed. Please copy the link manually."
+        );
+
+
+        window.prompt(
+            "Copy this community link:",
+            communityUrl
+        );
+
+    }
+
+
+    /* =====================================================
+       NATIVE PHONE SHARE
+       ===================================================== */
 
     function shareCommunity() {
 
-        if (!navigator.share) {
+        if (
+            !navigator.share
+        ) {
+
             return;
+
         }
 
         navigator.share({
@@ -1427,7 +1468,9 @@
 
         }).catch(function (error) {
 
-            if (error.name !== "AbortError") {
+            if (
+                error.name !== "AbortError"
+            ) {
 
                 console.log(
                     "Share failed:",
@@ -1449,7 +1492,7 @@
 
     if (
         nativeShareButton &&
-        navigator.share
+        typeof navigator.share === "function"
     ) {
 
         nativeShareButton.style.display =
@@ -1473,7 +1516,24 @@
             return;
         }
 
+
         if (
             form.style.display === "none" ||
             form.style.display === ""
         ) {
+
+            form.style.display = "block";
+
+        } else {
+
+            form.style.display = "none";
+
+        }
+
+    }
+
+</script>
+
+</body>
+
+</html>
