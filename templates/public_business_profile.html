@@ -183,10 +183,33 @@
         text-decoration: none;
     }
 
-    .share-message {
+    .share-box {
+        margin-top: 18px;
+        padding: 15px;
+        background: #f9fafb;
+        border-radius: 12px;
+    }
+
+    .share-box-label {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 8px;
+    }
+
+    .profile-url {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: white;
+        font-size: 14px;
+        color: #374151;
+    }
+
+    .copy-result {
         display: none;
         text-align: center;
-        margin-top: 12px;
+        margin-top: 10px;
         color: #15803d;
         font-size: 14px;
         font-weight: bold;
@@ -250,9 +273,11 @@
 
         {% endif %}
 
+
         <h1 class="business-name">
             {{ business.business_name or "Business Profile" }}
         </h1>
+
 
         {% if business.category %}
 
@@ -261,6 +286,7 @@
             </div>
 
         {% endif %}
+
 
         <div class="verified">
             ✓ NijaWebbies Business Profile
@@ -389,26 +415,18 @@
             📞 Call Business
         </a>
 
-        {% elif business.phone %}
-
-        <a
-            href="tel:{{ business.phone }}"
-            class="btn btn-phone"
-        >
-            📞 Call Business
-        </a>
-
         {% endif %}
 
 
         <!-- WHATSAPP -->
 
-        {% if business.whatsapp %}
+        {% if whatsapp_link %}
 
         <a
-            href="#"
+            href="{{ whatsapp_link }}"
             class="btn btn-whatsapp"
-            onclick="openWhatsApp(event)"
+            target="_blank"
+            rel="noopener"
         >
             💬 Chat on WhatsApp
         </a>
@@ -461,13 +479,30 @@
     </div>
 
 
-    <!-- SHARE MESSAGE -->
+    <!-- PROFILE URL -->
 
-    <div
-        id="shareMessage"
-        class="share-message"
-    >
-        ✓ Profile link copied!
+    <div class="share-box">
+
+        <div class="share-box-label">
+            Profile link
+        </div>
+
+        <input
+            id="profileUrl"
+            class="profile-url"
+            type="text"
+            value="{{ request.url }}"
+            readonly
+            onclick="this.select()"
+        >
+
+        <div
+            id="copyResult"
+            class="copy-result"
+        >
+            ✓ Profile link copied!
+        </div>
+
     </div>
 
 </div>
@@ -489,95 +524,46 @@
 
 </div><script>
 
-/* =========================================================
-   WHATSAPP
-   ========================================================= */
+function showCopySuccess() {
 
-function openWhatsApp(event) {
+    const result =
+        document.getElementById("copyResult");
 
-    event.preventDefault();
+    result.textContent =
+        "✓ Profile link copied!";
 
-    let whatsapp = {{ business.whatsapp|tojson }};
+    result.style.display = "block";
 
-    if (!whatsapp) {
-        alert("WhatsApp number is not available.");
-        return;
-    }
+    setTimeout(function() {
 
-    whatsapp = String(whatsapp).trim();
+        result.style.display = "none";
 
-    /*
-       If the database contains a full WhatsApp URL,
-       extract the phone number from it.
-    */
-
-    if (whatsapp.includes("wa.me/")) {
-
-        whatsapp = whatsapp.split("wa.me/")[1];
-
-    }
-
-    if (whatsapp.includes("whatsapp.com/send?phone=")) {
-
-        whatsapp = whatsapp.split("phone=")[1];
-
-    }
-
-    /*
-       Remove everything except numbers.
-    */
-
-    whatsapp = whatsapp.replace(/\D/g, "");
-
-    /*
-       Convert Nigerian local numbers:
-
-       08012345678
-       ->
-       2348012345678
-    */
-
-    if (whatsapp.startsWith("0")) {
-
-        whatsapp = "234" + whatsapp.substring(1);
-
-    }
-
-    /*
-       If it is not a usable number, stop.
-    */
-
-    if (whatsapp.length < 10) {
-
-        alert("The WhatsApp number is not valid.");
-
-        return;
-
-    }
-
-    const message =
-        "Hello, I found your business on NijaWebbies.";
-
-    const whatsappUrl =
-        "https://wa.me/" +
-        whatsapp +
-        "?text=" +
-        encodeURIComponent(message);
-
-    window.location.href = whatsappUrl;
+    }, 3000);
 }
 
 
-/* =========================================================
-   COPY PROFILE LINK
-   ========================================================= */
-
 function copyProfileLink() {
 
-    const url = window.location.href;
+    const input =
+        document.getElementById("profileUrl");
+
+    const url =
+        input.value;
 
     /*
-       Modern clipboard API
+       First select the URL.
+    */
+
+    input.focus();
+    input.select();
+    input.setSelectionRange(
+        0,
+        input.value.length
+    );
+
+
+    /*
+       Try the modern clipboard method.
     */
 
     if (
@@ -588,96 +574,65 @@ function copyProfileLink() {
         navigator.clipboard.writeText(url)
             .then(function() {
 
-                showCopiedMessage();
+                showCopySuccess();
 
             })
             .catch(function() {
 
-                fallbackCopy(url);
+                oldCopyMethod(input, url);
 
             });
 
         return;
     }
 
+
     /*
-       Older Android/browser fallback
+       Android/browser fallback.
     */
 
-    fallbackCopy(url);
+    oldCopyMethod(input, url);
 }
 
 
-/* =========================================================
-   FALLBACK COPY
-   ========================================================= */
-
-function fallbackCopy(url) {
-
-    const textArea =
-        document.createElement("textarea");
-
-    textArea.value = url;
-
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    textArea.style.top = "0";
-
-    document.body.appendChild(textArea);
-
-    textArea.focus();
-    textArea.select();
+function oldCopyMethod(input, url) {
 
     try {
 
-        const successful =
+        const copied =
             document.execCommand("copy");
 
-        if (successful) {
+        if (copied) {
 
-            showCopiedMessage();
+            showCopySuccess();
 
-        } else {
-
-            alert(
-                "Copy failed. Please copy this link:\n\n" +
-                url
-            );
+            return;
 
         }
 
     } catch (error) {
 
-        alert(
-            "Copy failed. Please copy this link:\n\n" +
-            url
-        );
+        console.log(error);
 
     }
 
-    document.body.removeChild(textArea);
-}
 
+    /*
+       If the browser refuses automatic copying,
+       keep the URL selected so the user can
+       press Copy on the Android menu.
+    */
 
-/* =========================================================
-   COPIED MESSAGE
-   ========================================================= */
+    input.focus();
+    input.select();
+    input.setSelectionRange(
+        0,
+        input.value.length
+    );
 
-function showCopiedMessage() {
-
-    const message =
-        document.getElementById("shareMessage");
-
-    message.textContent =
-        "✓ Profile link copied!";
-
-    message.style.display = "block";
-
-    setTimeout(function() {
-
-        message.style.display = "none";
-
-    }, 3000);
+    alert(
+        "The link is selected. Please tap Copy from your phone menu."
+    );
 }
 
 </script></body>
