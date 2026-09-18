@@ -2821,6 +2821,10 @@ def communities():
 # COMMUNITY DETAILS - PUBLIC
 # =========================================================
 
+# =========================================================
+# COMMUNITY DETAILS - PUBLIC
+# =========================================================
+
 @app.route("/community/<int:community_id>")
 def community_detail(community_id):
 
@@ -2992,49 +2996,59 @@ def community_detail(community_id):
 
             comments = cursor.fetchall()
 
+            # =================================================
+            # GROUP COMMENTS BY DISCUSSION
+            # =================================================
+
+            comments_by_post = {}
+
+            # =================================================
+            # GROUP REPLIES BY PARENT COMMENT
+            # =================================================
+
+            replies_by_comment = {}
+
+            # =================================================
+            # TOTAL COMMENT COUNT BY DISCUSSION
+            # Includes both main comments and replies
+            # =================================================
+
+            comment_counts = {}
+
+            for comment in comments:
+
+                post_id = comment["community_post_id"]
+
+                # Count EVERY comment, including replies
+                comment_counts[post_id] = (
+                    comment_counts.get(post_id, 0) + 1
+                )
+
+                # =================================================
+                # MAIN / TOP-LEVEL COMMENT
+                # =================================================
+
+                if comment["parent_comment_id"] is None:
+
+                    comments_by_post.setdefault(
+                        post_id,
+                        []
+                    ).append(comment)
+
+                # =================================================
+                # REPLY
+                # =================================================
+
+                else:
+
+                    replies_by_comment.setdefault(
+                        comment["parent_comment_id"],
+                        []
+                    ).append(comment)
+
         # =====================================================
-# GROUP COMMENTS BY DISCUSSION
-# =====================================================
-
-comments_by_post = {}
-
-# =====================================================
-# GROUP REPLIES BY PARENT COMMENT
-# =====================================================
-
-replies_by_comment = {}
-
-# =====================================================
-# TOTAL COMMENT COUNT BY DISCUSSION
-# Includes both main comments and replies
-# =====================================================
-
-comment_counts = {}
-
-for comment in comments:
-
-    post_id = comment["community_post_id"]
-
-    # Count EVERY comment, including replies
-    comment_counts[post_id] = (
-        comment_counts.get(post_id, 0) + 1
-    )
-
-    # Main/top-level comments
-    if comment["parent_comment_id"] is None:
-
-        comments_by_post.setdefault(
-            post_id,
-            []
-        ).append(comment)
-
-    # Replies
-    else:
-
-        replies_by_comment.setdefault(
-            comment["parent_comment_id"],
-            []
-        ).append(comment)
+        # RENDER COMMUNITY PAGE
+        # =====================================================
 
         return render_template(
             "community_detail.html",
@@ -3046,6 +3060,7 @@ for comment in comments:
             discussions=discussions,
             comments_by_post=comments_by_post,
             replies_by_comment=replies_by_comment,
+            comment_counts=comment_counts,
             current_user_id=user_id,
             user_name=session.get("user_name"),
             is_logged_in=bool(user_id)
