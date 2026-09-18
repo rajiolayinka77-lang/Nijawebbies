@@ -1,1272 +1,1271 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<head>
+<title>{{ community.name }} - NijaWebbies</title>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
 
-    <title>{{ community.name }} - NijaWebbies</title>
+    * {
+        box-sizing: border-box;
+    }
 
-    <style>
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5f7fa;
+        color: #222;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f7fa;
-            color: #222;
-        }
+    .navbar {
+        background: #111827;
+        color: white;
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+    .brand {
+        font-size: 21px;
+        font-weight: bold;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .nav-links a {
+        color: #fff;
+        font-size: 14px;
+    }
+
+    .nav-links a:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 25px auto;
+        padding: 0 15px 40px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .community-header {
+        background: linear-gradient(135deg, #0f766e, #115e59);
+        color: white;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .community-header h1 {
+        margin: 0 0 10px;
+        font-size: 30px;
+    }
+
+    .community-description {
+        margin: 0 0 15px;
+        line-height: 1.6;
+        opacity: 0.95;
+    }
+
+    .community-meta {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        font-size: 14px;
+    }
+
+    .badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.18);
+        padding: 6px 10px;
+        border-radius: 20px;
+    }
+
+    .owner-badge {
+        display: inline-block;
+        background: #fef3c7;
+        color: #92400e;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+
+    .share-area {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .share-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .share-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .share-button {
+        border: none;
+        border-radius: 8px;
+        padding: 9px 13px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .share-whatsapp {
+        background: #25d366;
+        color: white;
+    }
+
+    .share-whatsapp:hover {
+        background: #1ebe5d;
+    }
+
+    .share-copy {
+        background: white;
+        color: #115e59;
+    }
+
+    .share-copy:hover {
+        background: #f0fdfa;
+    }
+
+    .share-native {
+        background: #e0f2fe;
+        color: #075985;
+    }
+
+    .share-native:hover {
+        background: #bae6fd;
+    }
+
+    .copy-message {
+        margin-top: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        display: none;
+    }
+
+    .section-title {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 22px;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 11px 12px;
+        font-size: 15px;
+        font-family: inherit;
+    }
+
+    textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #0f766e;
+        box-shadow: 0 0 0 2px rgba(15,118,110,0.12);
+    }
+
+    button,
+    .button {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 14px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    button:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    .button-primary {
+        background: #0f766e;
+        color: white;
+    }
+
+    .button-primary:hover {
+        background: #115e59;
+    }
+
+    .button-secondary {
+        background: #e5e7eb;
+        color: #111827;
+    }
+
+    .button-danger {
+        background: #dc2626;
+        color: white;
+    }
+
+    .button-small {
+        padding: 7px 11px;
+        font-size: 12px;
+    }
+
+    .membership-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .discussion {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .discussion-header {
+        padding: 18px;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .discussion-title {
+        font-size: 15px;
+        font-weight: bold;
+        margin: 0 0 8px;
+        color: #374151;
+    }
+
+    .discussion-meta {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .discussion-content {
+        padding: 18px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 16px;
+    }
+
+    .discussion-actions {
+        padding: 0 18px 18px;
+    }
+
+    .comments-area {
+        border-top: 1px solid #e5e7eb;
+        background: #fafafa;
+        padding: 18px;
+    }
+
+    .comments-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 0 15px;
+    }
+
+    .comment {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 13px;
+        margin-bottom: 12px;
+    }
+
+    .comment-main {
+        display: flex;
+        gap: 10px;
+    }
+
+    .comment-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #0f766e;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .comment-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .comment-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .comment-author {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .comment-date {
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .comment-content {
+        margin-top: 7px;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .comment-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .reply-button {
+        background: #e0f2fe;
+        color: #0369a1;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 7px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .reply-button:hover {
+        background: #bae6fd;
+    }
+
+    .delete-button {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 7px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .delete-button:hover {
+        background: #fecaca;
+    }
+
+    .reply-form {
+        margin-top: 12px;
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+    }
+
+    .reply-form textarea {
+        min-height: 80px;
+        margin-bottom: 8px;
+    }
+
+    .reply {
+        margin-top: 12px;
+        margin-left: 45px;
+        padding: 12px;
+        background: #f8fafc;
+        border-left: 3px solid #0f766e;
+        border-radius: 8px;
+    }
+
+    .reply .comment-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .comment-form {
+        margin-top: 15px;
+    }
+
+    .comment-form textarea {
+        min-height: 80px;
+    }
+
+    .empty-state {
+        padding: 20px;
+        text-align: center;
+        color: #6b7280;
+        background: #f9fafb;
+        border-radius: 10px;
+    }
+
+    .members-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+    }
+
+    .member {
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        padding: 12px;
+        background: #fafafa;
+    }
+
+    .member-name {
+        font-weight: bold;
+    }
+
+    .member-role {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+    }
+
+    .owner-member {
+        border-color: #f59e0b;
+        background: #fffbeb;
+    }
+
+    .owner-member .member-role {
+        color: #92400e;
+        font-weight: bold;
+    }
+
+    .notice {
+        padding: 12px 14px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e40af;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .login-notice {
+        padding: 13px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+    .flash-messages {
+        margin-bottom: 15px;
+    }
+
+    .flash {
+        padding: 12px 14px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+    }
+
+    .footer {
+        text-align: center;
+        color: #6b7280;
+        font-size: 13px;
+        padding: 25px 10px;
+    }
+
+    @media (max-width: 650px) {
 
         .navbar {
-            background: #111827;
-            color: white;
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .brand {
-            font-size: 21px;
-            font-weight: bold;
+            align-items: flex-start;
         }
 
         .nav-links {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 25px auto;
-            padding: 0 15px 40px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
-
-        .community-header {
-            background: linear-gradient(135deg, #0f766e, #115e59);
-            color: white;
-            border-radius: 14px;
-            padding: 25px;
-            margin-bottom: 20px;
+            width: 100%;
         }
 
         .community-header h1 {
-            margin: 0 0 10px;
-            font-size: 30px;
-        }
-
-        .community-description {
-            margin: 0 0 15px;
-            line-height: 1.6;
-            opacity: 0.95;
-        }
-
-        .community-meta {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            font-size: 14px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.18);
-            padding: 6px 10px;
-            border-radius: 20px;
-        }
-
-        .owner-badge {
-            display: inline-block;
-            background: #fef3c7;
-            color: #92400e;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-
-        .share-area {
-            margin-top: 18px;
-            padding-top: 18px;
-            border-top: 1px solid rgba(255,255,255,0.25);
-        }
-
-        .share-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .share-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .share-button {
-            border: none;
-            border-radius: 8px;
-            padding: 9px 13px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .share-whatsapp {
-            background: #25d366;
-            color: white;
-        }
-
-        .share-whatsapp:hover {
-            background: #1ebe5d;
-        }
-
-        .share-copy {
-            background: white;
-            color: #115e59;
-        }
-
-        .share-copy:hover {
-            background: #f0fdfa;
-        }
-
-        .share-native {
-            background: #e0f2fe;
-            color: #075985;
-        }
-
-        .share-native:hover {
-            background: #bae6fd;
-        }
-
-        .copy-message {
-            margin-top: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            display: none;
-        }
-
-        .section-title {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 11px 12px;
-            font-size: 15px;
-            font-family: inherit;
-        }
-
-        textarea {
-            min-height: 110px;
-            resize: vertical;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #0f766e;
-            box-shadow: 0 0 0 2px rgba(15,118,110,0.12);
-        }
-
-        button,
-        .button {
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            display: inline-block;
-        }
-
-        .button-primary {
-            background: #0f766e;
-            color: white;
-        }
-
-        .button-primary:hover {
-            background: #115e59;
-        }
-
-        .button-secondary {
-            background: #e5e7eb;
-            color: #111827;
-        }
-
-        .button-danger {
-            background: #dc2626;
-            color: white;
-        }
-
-        .button-small {
-            padding: 7px 11px;
-            font-size: 12px;
-        }
-
-        .membership-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-
-        .discussion {
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .discussion-header {
-            padding: 18px;
-            background: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
+            font-size: 25px;
         }
 
         .discussion-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 0 0 8px;
-        }
-
-        .discussion-meta {
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        .discussion-content {
-            padding: 18px;
-            line-height: 1.7;
-            white-space: pre-wrap;
-        }
-
-        .discussion-actions {
-            padding: 0 18px 18px;
-        }
-
-        .comments-area {
-            border-top: 1px solid #e5e7eb;
-            background: #fafafa;
-            padding: 18px;
-        }
-
-        .comments-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin: 0 0 15px;
-        }
-
-        .comment {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 13px;
-            margin-bottom: 12px;
-        }
-
-        .comment-main {
-            display: flex;
-            gap: 10px;
-        }
-
-        .comment-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: #0f766e;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .comment-body {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .comment-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .comment-author {
-            font-weight: bold;
             font-size: 14px;
         }
 
-        .comment-date {
-            color: #6b7280;
-            font-size: 12px;
-        }
-
-        .comment-content {
-            margin-top: 7px;
-            line-height: 1.55;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .comment-actions {
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .reply-button {
-            background: #e0f2fe;
-            color: #0369a1;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 7px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .reply-button:hover {
-            background: #bae6fd;
-        }
-
-        .delete-button {
-            background: #fee2e2;
-            color: #b91c1c;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 7px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .delete-button:hover {
-            background: #fecaca;
-        }
-
-        .reply-form {
-            margin-top: 12px;
-            padding: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 9px;
-        }
-
-        .reply-form textarea {
-            min-height: 80px;
-            margin-bottom: 8px;
-        }
-
         .reply {
-            margin-top: 12px;
-            margin-left: 45px;
-            padding: 12px;
-            background: #f8fafc;
-            border-left: 3px solid #0f766e;
-            border-radius: 8px;
+            margin-left: 20px;
         }
 
-        .reply .comment-avatar {
-            width: 30px;
-            height: 30px;
-            font-size: 12px;
+        .comment-top {
+            display: block;
         }
 
-        .comment-form {
-            margin-top: 15px;
+        .comment-date {
+            display: block;
+            margin-top: 3px;
         }
 
-        .comment-form textarea {
-            min-height: 80px;
-        }
-
-        .empty-state {
-            padding: 20px;
-            text-align: center;
-            color: #6b7280;
-            background: #f9fafb;
-            border-radius: 10px;
-        }
-
-        .members-list {
+        .share-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
+            grid-template-columns: 1fr;
         }
 
-        .member {
-            border: 1px solid #e5e7eb;
-            border-radius: 9px;
-            padding: 12px;
-            background: #fafafa;
-        }
-
-        .member-name {
-            font-weight: bold;
-        }
-
-        .member-role {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-
-        .owner-member {
-            border-color: #f59e0b;
-            background: #fffbeb;
-        }
-
-        .owner-member .member-role {
-            color: #92400e;
-            font-weight: bold;
-        }
-
-        .notice {
-            padding: 12px 14px;
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .login-notice {
-            padding: 13px;
-            background: #fff7ed;
-            border: 1px solid #fed7aa;
-            color: #9a3412;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .flash-messages {
-            margin-bottom: 15px;
-        }
-
-        .flash {
-            padding: 12px 14px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            background: #ecfdf5;
-            border: 1px solid #a7f3d0;
-            color: #065f46;
-        }
-
-        .footer {
+        .share-button {
+            width: 100%;
             text-align: center;
-            color: #6b7280;
-            font-size: 13px;
-            padding: 25px 10px;
         }
 
-        @media (max-width: 650px) {
+    }
 
-            .navbar {
-                align-items: flex-start;
-            }
+</style>
 
-            .nav-links {
-                width: 100%;
-            }
+</head><body><nav class="navbar"><div class="brand">
+    🇳🇬 NijaWebbies
+</div>
 
-            .community-header h1 {
-                font-size: 25px;
-            }
+<div class="nav-links">
 
-            .discussion-title {
-                font-size: 18px;
-            }
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('search') }}">Search</a>
+    <a href="{{ url_for('businesses') }}">Businesses</a>
+    <a href="{{ url_for('communities') }}">Communities</a>
+    <a href="{{ url_for('tools') }}">Tools</a>
 
-            .reply {
-                margin-left: 20px;
-            }
+    {% if is_logged_in %}
 
-            .comment-top {
-                display: block;
-            }
+        <a href="{{ url_for('workspace') }}">Workspace</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
 
-            .comment-date {
-                display: block;
-                margin-top: 3px;
-            }
+    {% else %}
 
-            .share-actions {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
 
-            .share-button {
-                width: 100%;
-                text-align: center;
-            }
-        }
+    {% endif %}
 
-    </style>
+</div>
 
-</head>
+</nav><main class="container">{% with messages = get_flashed_messages() %}
 
-<body>
+    {% if messages %}
 
-<nav class="navbar">
+        <div class="flash-messages">
 
-    <div class="brand">
-        🇳🇬 NijaWebbies
-    </div>
+            {% for message in messages %}
 
-    <div class="nav-links">
+                <div class="flash">
+                    {{ message }}
+                </div>
 
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('search') }}">Search</a>
-        <a href="{{ url_for('businesses') }}">Businesses</a>
-        <a href="{{ url_for('communities') }}">Communities</a>
-        <a href="{{ url_for('tools') }}">Tools</a>
+            {% endfor %}
 
-        {% if is_logged_in %}
+        </div>
 
-            <a href="{{ url_for('workspace') }}">Workspace</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
 
-        {% else %}
-
-            <a href="{{ url_for('login') }}">Login</a>
-            <a href="{{ url_for('register') }}">Register</a>
-
-        {% endif %}
-
-    </div>
-
-</nav>
+{% endwith %}
 
 
-<main class="container">
+<!-- COMMUNITY HEADER -->
 
-    {% with messages = get_flashed_messages() %}
+<section class="community-header">
 
-        {% if messages %}
+    <h1>
+        👥 {{ community.name }}
+    </h1>
 
-            <div class="flash-messages">
+    {% if community.description %}
 
-                {% for message in messages %}
+        <p class="community-description">
+            {{ community.description }}
+        </p>
 
-                    <div class="flash">
-                        {{ message }}
-                    </div>
+    {% endif %}
 
-                {% endfor %}
+    <div class="community-meta">
 
-            </div>
+        <span class="badge">
+            👥 {{ member_count }}
+            member{% if member_count != 1 %}s{% endif %}
+        </span>
 
-        {% endif %}
-
-    {% endwith %}
-
-
-    <section class="community-header">
-
-        <h1>
-            👥 {{ community.name }}
-        </h1>
-
-        {% if community.description %}
-
-            <p class="community-description">
-                {{ community.description }}
-            </p>
-
-        {% endif %}
-
-        <div class="community-meta">
+        {% if community.category %}
 
             <span class="badge">
-                👥 {{ member_count }}
-                member{% if member_count != 1 %}s{% endif %}
+                📂 {{ community.category }}
             </span>
-
-            {% if community.owner_name %}
-
-                <span class="badge">
-                    👑 Owner: {{ community.owner_name }}
-                </span>
-
-            {% endif %}
-
-        </div>
-
-
-        {% if is_logged_in and
-              session.get('user_id')|string == community.owner_id|string %}
-
-            <div class="owner-badge">
-                👑 You are the owner
-            </div>
 
         {% endif %}
 
+        {% if community.owner_name %}
 
-        <!-- SHARE COMMUNITY -->
+            <span class="badge">
+                👑 Owner: {{ community.owner_name }}
+            </span>
 
-        <div class="share-area">
+        {% endif %}
 
-            <div class="share-title">
-                📤 Share this community
-            </div>
+    </div>
 
-            <div class="share-actions">
 
-                <a
-                    id="whatsapp-share"
-                    href="#"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="share-button share-whatsapp"
-                >
-                    💬 Share on WhatsApp
-                </a>
+    {% if is_logged_in and current_user_id == community.owner_id %}
 
-                <button
-                    type="button"
-                    class="share-button share-copy"
-                    onclick="copyCommunityLink()"
-                >
-                    📋 Copy Community Link
-                </button>
+        <div class="owner-badge">
+            👑 You are the community owner
+        </div>
 
-                <button
-                    type="button"
-                    id="native-share-button"
-                    class="share-button share-native"
-                    onclick="shareCommunity()"
-                    style="display:none;"
-                >
-                    📤 Share
-                </button>
+    {% endif %}
 
-            </div>
 
-            <div
-                id="copy-message"
-                class="copy-message"
+    <!-- SHARE COMMUNITY -->
+
+    <div class="share-area">
+
+        <div class="share-title">
+            📤 Share this community
+        </div>
+
+        <div class="share-actions">
+
+            <a
+                id="whatsapp-share"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="share-button share-whatsapp"
             >
-                ✓ Community link copied!
-            </div>
+                💬 Share on WhatsApp
+            </a>
+
+            <button
+                type="button"
+                class="share-button share-copy"
+                onclick="copyCommunityLink()"
+            >
+                📋 Copy Community Link
+            </button>
+
+            <button
+                type="button"
+                id="native-share-button"
+                class="share-button share-native"
+                onclick="shareCommunity()"
+                style="display:none;"
+            >
+                📤 Share
+            </button>
 
         </div>
 
+        <div
+            id="copy-message"
+            class="copy-message"
+        >
+            ✓ Community link copied!
+        </div>
 
-        <!-- MEMBERSHIP ACTIONS -->
+    </div>
 
-        {% if is_logged_in %}
 
-            <div class="membership-actions">
+    <!-- MEMBERSHIP ACTIONS -->
 
-                {% if is_member %}
+    {% if is_logged_in %}
 
-                    {% if session.get('user_id')|string == community.owner_id|string %}
+        <div class="membership-actions">
 
-                        <span class="owner-badge">
-                            👑 Community Owner — You cannot leave your own community
-                        </span>
+            {% if is_member %}
 
-                    {% else %}
+                {% if current_user_id == community.owner_id %}
 
-                        <form
-                            method="POST"
-                            action="{{ url_for('leave_community', community_id=community.id) }}"
-                            onsubmit="return confirm('Are you sure you want to leave this community?');"
-                        >
-
-                            <button
-                                type="submit"
-                                class="button button-secondary"
-                            >
-                                Leave Community
-                            </button>
-
-                        </form>
-
-                    {% endif %}
+                    <span class="owner-badge">
+                        👑 Community Owner — You cannot leave your own community
+                    </span>
 
                 {% else %}
 
                     <form
                         method="POST"
-                        action="{{ url_for('join_community', community_id=community.id) }}"
+                        action="{{ url_for('leave_community', community_id=community.id) }}"
+                        onsubmit="return confirm('Are you sure you want to leave this community?');"
                     >
 
                         <button
                             type="submit"
-                            class="button button-primary"
+                            class="button button-secondary"
                         >
-                            ➕ Join Free
+                            Leave Community
                         </button>
 
                     </form>
 
                 {% endif %}
 
-            </div>
+            {% else %}
 
-        {% endif %}
-
-    </section>
-
-
-    <!-- START DISCUSSION -->
-
-    {% if is_logged_in and is_member %}
-
-        <section class="card">
-
-            <h2 class="section-title">
-                💬 Start a Discussion
-            </h2>
-
-            <form
-                method="POST"
-                action="{{ url_for('create_community_post', community_id=community.id) }}"
-            >
-
-                <div class="form-group">
-
-                    <label for="content">
-                        Your Message
-                    </label>
-
-                    <textarea
-                        id="content"
-                        name="content"
-                        maxlength="5000"
-                        placeholder="Share your ideas, questions or experience..."
-                        required
-                    ></textarea>
-
-                </div>
-
-                <button
-                    type="submit"
-                    class="button button-primary"
+                <form
+                    method="POST"
+                    action="{{ url_for('join_community', community_id=community.id) }}"
+                    class="action-form"
                 >
-                    Post Discussion
-                </button>
 
-            </form>
+                    <button
+                        type="submit"
+                        class="button button-primary"
+                    >
+                        ➕ Join Free
+                    </button>
 
-        </section>
+                </form>
 
-    {% elif is_logged_in and not is_member %}
-
-        <div class="notice">
-            Join this community to start discussions and participate in conversations.
-        </div>
-
-    {% else %}
-
-        <div class="login-notice">
-
-            Please
-            <a href="{{ url_for('login', next=url_for('community_detail', community_id=community.id)) }}">
-                <strong>login</strong>
-            </a>
-            to join the community and participate in discussions.
+            {% endif %}
 
         </div>
 
     {% endif %}
 
+</section>
 
-    <!-- DISCUSSIONS -->
+
+<!-- START DISCUSSION -->
+
+{% if is_logged_in and is_member %}
 
     <section class="card">
 
         <h2 class="section-title">
-            🗣️ Discussions
+            💬 Start a Discussion
         </h2>
 
-        {% if discussions %}
+        <form
+            method="POST"
+            action="{{ url_for('create_community_post', community_id=community.id) }}"
+            class="action-form"
+        >
 
-            {% for post in discussions %}
+            <div class="form-group">
 
-                <article class="discussion">
+                <label for="content">
+                    Your Message
+                </label>
 
-                    <div class="discussion-header">
+                <textarea
+                    id="content"
+                    name="content"
+                    maxlength="5000"
+                    placeholder="Share your ideas, questions or experience..."
+                    required
+                ></textarea>
 
-                        <h3 class="discussion-title">
-                            {{ post.title if post.title is defined else "" }}
-                        </h3>
+            </div>
 
-                        <div class="discussion-meta">
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                Post Discussion
+            </button>
 
-                            Posted by
+        </form>
 
-                            <strong>
-                                {{ post.author_name }}
-                            </strong>
+    </section>
 
-                            {% if post.created_at %}
+{% elif is_logged_in and not is_member %}
 
-                                ·
-                                {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+    <div class="notice">
+        Join this community to start discussions and participate in conversations.
+    </div>
 
-                            {% endif %}
+{% else %}
 
-                        </div>
+    <div class="login-notice">
+
+        Please
+        <a href="{{ url_for('login', next=url_for('community_detail', community_id=community.id)) }}">
+            <strong>login</strong>
+        </a>
+        to join the community and participate in discussions.
+
+    </div>
+
+{% endif %}
+
+
+<!-- DISCUSSIONS -->
+
+<section class="card">
+
+    <h2 class="section-title">
+        🗣️ Discussions
+    </h2>
+
+    {% if discussions %}
+
+        {% for post in discussions %}
+
+            <article class="discussion">
+
+                <div class="discussion-header">
+
+                    <h3 class="discussion-title">
+                        💬 Discussion by {{ post.author_name }}
+                    </h3>
+
+                    <div class="discussion-meta">
+
+                        Posted by
+
+                        <strong>
+                            {{ post.author_name }}
+                        </strong>
+
+                        {% if post.created_at %}
+
+                            ·
+                            {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+
+                        {% endif %}
 
                     </div>
 
-
-                    <div class="discussion-content">
-                        {{ post.content }}
-                    </div>
+                </div>
 
 
-                    {% if is_logged_in and
-                          (current_user_id == post.user_id
-                          or current_user_id == community.owner_id) %}
+                <div class="discussion-content">
+                    {{ post.content }}
+                </div>
 
-                        <div class="discussion-actions">
 
-                            <form
-                                method="POST"
-                                action="{{ url_for('delete_community_post', post_id=post.id) }}"
-                                onsubmit="return confirm('Delete this discussion?');"
+                {% if is_logged_in and
+                      (current_user_id == post.user_id
+                      or current_user_id == community.owner_id) %}
+
+                    <div class="discussion-actions">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('delete_community_post', post_id=post.id) }}"
+                            onsubmit="return confirm('Delete this discussion?');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="button button-danger button-small"
                             >
+                                Delete Discussion
+                            </button>
 
-                                <button
-                                    type="submit"
-                                    class="button button-danger button-small"
-                                >
-                                    Delete Discussion
-                                </button>
+                        </form>
 
-                            </form>
+                    </div>
 
-                        </div>
-
-                    {% endif %}
+                {% endif %}
 
 
-                    <!-- COMMENTS -->
+                <!-- COMMENTS -->
 
-                    <div class="comments-area">
+                <div class="comments-area">
 
-                        <h4 class="comments-title">
+                    <h4 class="comments-title">
 
-                            💬
-                            {{ comments_by_post.get(post.id, [])|length }}
-                            Comment{% if comments_by_post.get(post.id, [])|length != 1 %}s{% endif %}
+                        💬
+                        {{ comments_by_post.get(post.id, [])|length }}
+                        Comment{% if comments_by_post.get(post.id, [])|length != 1 %}s{% endif %}
 
-                        </h4>
+                    </h4>
 
 
-                        {% if comments_by_post.get(post.id) %}
+                    {% if comments_by_post.get(post.id) %}
 
-                            {% for comment in comments_by_post.get(post.id) %}
+                        {% for comment in comments_by_post.get(post.id) %}
 
-                                <div class="comment">
+                            <div class="comment">
 
-                                    <div class="comment-main">
+                                <div class="comment-main">
 
-                                        <div class="comment-avatar">
-                                            {{ comment.author_name[:1]|upper }}
-                                        </div>
+                                    <div class="comment-avatar">
+                                        {{ comment.author_name[:1]|upper }}
+                                    </div>
 
-                                        <div class="comment-body">
+                                    <div class="comment-body">
 
-                                            <div class="comment-top">
+                                        <div class="comment-top">
 
-                                                <div class="comment-author">
-                                                    {{ comment.author_name }}
+                                            <div class="comment-author">
+                                                {{ comment.author_name }}
+                                            </div>
+
+                                            {% if comment.created_at %}
+
+                                                <div class="comment-date">
+                                                    {{ comment.created_at.strftime('%d %b %Y, %I:%M %p') }}
                                                 </div>
 
-                                                {% if comment.created_at %}
+                                            {% endif %}
 
-                                                    <div class="comment-date">
-                                                        {{ comment.created_at.strftime('%d %b %Y, %I:%M %p') }}
-                                                    </div>
+                                        </div>
+
+
+                                        <div class="comment-content">
+                                            {{ comment.content }}
+                                        </div>
+
+
+                                        {% if is_logged_in %}
+
+                                            <div class="comment-actions">
+
+                                                {% if is_member %}
+
+                                                    <button
+                                                        type="button"
+                                                        class="reply-button"
+                                                        onclick="toggleReplyForm({{ comment.id }})"
+                                                    >
+                                                        ↩ Reply
+                                                    </button>
+
+                                                {% endif %}
+
+
+                                                {% if current_user_id == comment.user_id
+                                                      or current_user_id == community.owner_id %}
+
+                                                    <form
+                                                        method="POST"
+                                                        action="{{ url_for('delete_community_comment', comment_id=comment.id) }}"
+                                                        onsubmit="return confirm('Delete this comment and its replies?');"
+                                                    >
+
+                                                        <button
+                                                            type="submit"
+                                                            class="delete-button"
+                                                        >
+                                                            Delete
+                                                        </button>
+
+                                                    </form>
 
                                                 {% endif %}
 
                                             </div>
 
-
-                                            <div class="comment-content">
-                                                {{ comment.content }}
-                                            </div>
+                                        {% endif %}
 
 
-                                            {% if is_logged_in %}
+                                        {% if is_logged_in and is_member %}
 
-                                                <div class="comment-actions">
+                                            <div
+                                                id="reply-form-{{ comment.id }}"
+                                                class="reply-form"
+                                                style="display:none;"
+                                            >
 
-                                                    {% if is_member %}
-
-                                                        <button
-                                                            type="button"
-                                                            class="reply-button"
-                                                            onclick="toggleReplyForm({{ comment.id }})"
-                                                        >
-                                                            ↩ Reply
-                                                        </button>
-
-                                                    {% endif %}
-
-
-                                                    {% if current_user_id == comment.user_id
-                                                          or current_user_id == community.owner_id %}
-
-                                                        <form
-                                                            method="POST"
-                                                            action="{{ url_for('delete_community_comment', comment_id=comment.id) }}"
-                                                            onsubmit="return confirm('Delete this comment and its replies?');"
-                                                        >
-
-                                                            <button
-                                                                type="submit"
-                                                                class="delete-button"
-                                                            >
-                                                                Delete
-                                                            </button>
-
-                                                        </form>
-
-                                                    {% endif %}
-
-                                                </div>
-
-                                            {% endif %}
-
-
-                                            {% if is_logged_in and is_member %}
-
-                                                <div
-                                                    id="reply-form-{{ comment.id }}"
-                                                    class="reply-form"
-                                                    style="display:none;"
+                                                <form
+                                                    method="POST"
+                                                    action="{{ url_for('create_community_comment_reply', comment_id=comment.id) }}"
+                                                    class="action-form"
                                                 >
 
-                                                    <form
-                                                        method="POST"
-                                                        action="{{ url_for('create_community_comment_reply', comment_id=comment.id) }}"
+                                                    <textarea
+                                                        name="content"
+                                                        maxlength="2000"
+                                                        placeholder="Write a reply..."
+                                                        required
+                                                    ></textarea>
+
+                                                    <button
+                                                        type="submit"
+                                                        class="button button-primary button-small"
                                                     >
+                                                        Post Reply
+                                                    </button>
 
-                                                        <textarea
-                                                            name="content"
-                                                            maxlength="2000"
-                                                            placeholder="Write a reply..."
-                                                            required
-                                                        ></textarea>
+                                                    <button
+                                                        type="button"
+                                                        class="button button-secondary button-small"
+                                                        onclick="toggleReplyForm({{ comment.id }})"
+                                                    >
+                                                        Cancel
+                                                    </button>
 
-                                                        <button
-                                                            type="submit"
-                                                            class="button button-primary button-small"
-                                                        >
-                                                            Post Reply
-                                                        </button>
+                                                </form>
 
-                                                        <button
-                                                            type="button"
-                                                            class="button button-secondary button-small"
-                                                            onclick="toggleReplyForm({{ comment.id }})"
-                                                        >
-                                                            Cancel
-                                                        </button>
+                                            </div>
 
-                                                    </form>
-
-                                                </div>
-
-                                            {% endif %}
+                                        {% endif %}
 
 
-                                            {% if replies_by_comment is defined and replies_by_comment.get(comment.id) %}
+                                        {% if replies_by_comment is defined and replies_by_comment.get(comment.id) %}
 
-                                                {% for reply in replies_by_comment.get(comment.id) %}
+                                            {% for reply in replies_by_comment.get(comment.id) %}
 
-                                                    <div class="reply">
+                                                <div class="reply">
 
-                                                        <div class="comment-main">
+                                                    <div class="comment-main">
 
-                                                            <div class="comment-avatar">
-                                                                {{ reply.author_name[:1]|upper }}
-                                                            </div>
+                                                        <div class="comment-avatar">
+                                                            {{ reply.author_name[:1]|upper }}
+                                                        </div>
 
-                                                            <div class="comment-body">
+                                                        <div class="comment-body">
 
-                                                                <div class="comment-top">
+                                                            <div class="comment-top">
 
-                                                                    <div class="comment-author">
-                                                                        {{ reply.author_name }}
-                                                                    </div>
-
-                                                                    {% if reply.created_at %}
-
-                                                                        <div class="comment-date">
-                                                                            {{ reply.created_at.strftime('%d %b %Y, %I:%M %p') }}
-                                                                        </div>
-
-                                                                    {% endif %}
-
+                                                                <div class="comment-author">
+                                                                    {{ reply.author_name }}
                                                                 </div>
 
+                                                                {% if reply.created_at %}
 
-                                                                <div class="comment-content">
-                                                                    {{ reply.content }}
-                                                                </div>
-
-
-                                                                {% if is_logged_in and
-                                                                      (current_user_id == reply.user_id
-                                                                      or current_user_id == community.owner_id) %}
-
-                                                                    <div class="comment-actions">
-
-                                                                        <form
-                                                                            method="POST"
-                                                                            action="{{ url_for('delete_community_comment', comment_id=reply.id) }}"
-                                                                            onsubmit="return confirm('Delete this reply?');"
-                                                                        >
-
-                                                                            <button
-                                                                                type="submit"
-                                                                                class="delete-button"
-                                                                            >
-                                                                                Delete
-                                                                            </button>
-
-                                                                        </form>
-
+                                                                    <div class="comment-date">
+                                                                        {{ reply.created_at.strftime('%d %b %Y, %I:%M %p') }}
                                                                     </div>
 
                                                                 {% endif %}
 
                                                             </div>
 
+
+                                                            <div class="comment-content">
+                                                                {{ reply.content }}
+                                                            </div>
+
+
+                                                            {% if is_logged_in and
+                                                                  (current_user_id == reply.user_id
+                                                                  or current_user_id == community.owner_id) %}
+
+                                                                <div class="comment-actions">
+
+                                                                    <form
+                                                                        method="POST"
+                                                                        action="{{ url_for('delete_community_comment', comment_id=reply.id) }}"
+                                                                        onsubmit="return confirm('Delete this reply?');"
+                                                                    >
+
+                                                                        <button
+                                                                            type="submit"
+                                                                            class="delete-button"
+                                                                        >
+                                                                            Delete
+                                                                        </button>
+
+                                                                    </form>
+
+                                                                </div>
+
+                                                            {% endif %}
+
                                                         </div>
 
                                                     </div>
 
-                                                {% endfor %}
+                                                </div>
 
-                                            {% endif %}
+                                            {% endfor %}
 
-                                        </div>
+                                        {% endif %}
 
                                     </div>
 
                                 </div>
 
-                            {% endfor %}
-
-                        {% else %}
-
-                            <div class="empty-state">
-                                No comments yet. Be the first to comment.
                             </div>
 
-                        {% endif %}
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            No comments yet. Be the first to comment.
+                        </div>
+
+                    {% endif %}
 
 
-                        {% if is_logged_in and is_member %}
+                    {% if is_logged_in and is_member %}
 
-                            <form
-                                method="POST"
-                                action="{{ url_for('create_community_comment', post_id=post.id) }}"
-                                class="comment-form"
+                        <form
+                            method="POST"
+                            action="{{ url_for('create_community_comment', post_id=post.id) }}"
+                            class="comment-form action-form"
+                        >
+
+                            <div class="form-group">
+
+                                <label for="comment-{{ post.id }}">
+                                    Add a Comment
+                                </label>
+
+                                <textarea
+                                    id="comment-{{ post.id }}"
+                                    name="content"
+                                    maxlength="2000"
+                                    placeholder="Write your comment..."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="button button-primary"
                             >
+                                Post Comment
+                            </button>
 
-                                <div class="form-group">
+                        </form>
 
-                                    <label for="comment-{{ post.id }}">
-                                        Add a Comment
-                                    </label>
+                    {% elif is_logged_in and not is_member %}
 
-                                    <textarea
-                                        id="comment-{{ post.id }}"
-                                        name="content"
-                                        maxlength="2000"
-                                        placeholder="Write your comment..."
-                                        required
-                                    ></textarea>
-
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    class="button button-primary"
-                                >
-                                    Post Comment
-                                </button>
-
-                            </form>
-
-                        {% elif is_logged_in and not is_member %}
-
-                            <div class="notice" style="margin-top:15px;">
-                                Join this community to comment and reply.
-                            </div>
-
-                        {% else %}
-
-                            <div class="login-notice">
-
-                                Please
-                                <a href="{{ url_for('login', next=url_for('community_detail', community_id=community.id)) }}">
-                                    <strong>login</strong>
-                                </a>
-                                to comment and reply.
-
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </article>
-
-            {% endfor %}
-
-        {% else %}
-
-            <div class="empty-state">
-
-                <div style="font-size:30px; margin-bottom:10px;">
-                    💬
-                </div>
-
-                <strong>
-                    No discussions yet.
-                </strong>
-
-                <p>
-                    Be the first member to start a discussion in this community.
-                </p>
-
-            </div>
-
-        {% endif %}
-
-    </section>
-
-
-    <!-- COMMUNITY MEMBERS -->
-
-    <section class="card">
-
-        <h2 class="section-title">
-            👥 Community Members
-        </h2>
-
-        {% if members %}
-
-            <div class="members-list">
-
-                {% for member in members %}
-
-                    {% if member.id == community.owner_id %}
-
-                        <div class="member owner-member">
-
-                            <div class="member-name">
-                                {{ member.name }}
-                            </div>
-
-                            <div class="member-role">
-                                👑 Community Owner
-                            </div>
-
+                        <div class="notice" style="margin-top:15px;">
+                            Join this community to comment and reply.
                         </div>
 
                     {% else %}
 
-                        <div class="member">
+                        <div class="login-notice">
 
-                            <div class="member-name">
-                                {{ member.name }}
-                            </div>
-
-                            <div class="member-role">
-                                👤 Community Member
-                            </div>
+                            Please
+                            <a href="{{ url_for('login', next=url_for('community_detail', community_id=community.id)) }}">
+                                <strong>login</strong>
+                            </a>
+                            to comment and reply.
 
                         </div>
 
                     {% endif %}
 
-                {% endfor %}
+                </div>
 
+            </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div style="font-size:30px; margin-bottom:10px;">
+                💬
             </div>
 
-        {% else %}
+            <strong>
+                No discussions yet.
+            </strong>
 
-            <div class="empty-state">
-                No members yet.
-            </div>
+            <p>
+                Be the first member to start a discussion in this community.
+            </p>
 
-        {% endif %}
+        </div>
 
-    </section>
+    {% endif %}
 
-</main>
+</section>
 
 
-<footer class="footer">
+<!-- COMMUNITY MEMBERS -->
+
+<section class="card">
+
+    <h2 class="section-title">
+        👥 Community Members
+    </h2>
+
+    {% if members %}
+
+        <div class="members-list">
+
+            {% for member in members %}
+
+                {% if member.id == community.owner_id %}
+
+                    <div class="member owner-member">
+
+                        <div class="member-name">
+                            {{ member.name }}
+                        </div>
+
+                        <div class="member-role">
+                            👑 Community Owner
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="member">
+
+                        <div class="member-name">
+                            {{ member.name }}
+                        </div>
+
+                        <div class="member-role">
+                            👤 Community Member
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            No members yet.
+        </div>
+
+    {% endif %}
+
+</section>
+
+</main><footer class="footer">
     🇳🇬 NijaWebbies — Built for Nigeria & Africa
-</footer>
-
-
-<script>
+</footer><script>
 
     /* =====================================================
        COMMUNITY SHARING
@@ -1532,8 +1531,66 @@
 
     }
 
-</script>
 
-</body>
+    /* =====================================================
+       PREVENT ACCIDENTAL DOUBLE SUBMISSION
+       ===================================================== */
 
-</html>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const forms =
+            document.querySelectorAll(
+                "form.action-form"
+            );
+
+
+        forms.forEach(function (form) {
+
+            form.addEventListener("submit", function (event) {
+
+                if (form.dataset.submitted === "true") {
+
+                    event.preventDefault();
+
+                    return;
+
+                }
+
+
+                form.dataset.submitted = "true";
+
+
+                const buttons =
+                    form.querySelectorAll(
+                        "button[type='submit']"
+                    );
+
+
+                buttons.forEach(function (button) {
+
+                    button.disabled = true;
+
+                    if (
+                        button.classList.contains("button-primary")
+                    ) {
+
+                        const originalText =
+                            button.textContent.trim();
+
+                        button.dataset.originalText =
+                            originalText;
+
+                        button.textContent =
+                            "Posting...";
+
+                    }
+
+                });
+
+            });
+
+        });
+
+    });
+
+</script></body></html>
