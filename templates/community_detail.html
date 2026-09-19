@@ -350,6 +350,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .small-btn {
@@ -377,6 +378,43 @@
 
         .small-red:hover {
             background: #fee2e2;
+        }
+
+        /* =====================================================
+           LIKES
+        ===================================================== */
+
+        .like-form {
+            display: inline;
+            margin: 0;
+        }
+
+        .small-like {
+            background: #fff1f2;
+            color: #be123c;
+        }
+
+        .small-like:hover {
+            background: #ffe4e6;
+        }
+
+        .small-like.liked {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .small-like.liked:hover {
+            background: #d1fae5;
+        }
+
+        .like-count-only {
+            display: inline-block;
+            padding: 7px 11px;
+            border-radius: 7px;
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         /* =====================================================
@@ -591,6 +629,11 @@
             line-height: 1.5;
         }
 
+        .login-box a {
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
         /* =====================================================
            MOBILE
         ===================================================== */
@@ -799,7 +842,7 @@
 
                     <form
                         method="POST"
-                        action="/community/{{ community.id }}/leave"
+                        action="/leave-community/{{ community.id }}"
                         style="display:inline;"
                     >
 
@@ -816,7 +859,7 @@
 
                     <form
                         method="POST"
-                        action="/community/{{ community.id }}/join"
+                        action="/join-community/{{ community.id }}"
                         style="display:inline;"
                     >
 
@@ -968,7 +1011,7 @@
                     <div class="login-box">
 
                         Join this community to participate
-                        in discussions and comments.
+                        in discussions, likes and comments.
 
                     </div>
 
@@ -985,6 +1028,7 @@
 
                         {% set post_comments = comments_by_post.get(post.id, []) %}
 
+                        {% set post_like_count = like_counts.get(post.id, 0) %}
 
                         <article class="discussion">
 
@@ -1036,6 +1080,65 @@
 
                             <div class="discussion-actions">
 
+
+                                <!-- =================================
+                                     LIKE
+                                ================================== -->
+
+                                {% if is_logged_in and is_member %}
+
+                                    <form
+                                        method="POST"
+                                        action="/community-post/{{ post.id }}/like"
+                                        class="like-form"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="small-btn small-like {% if post.id in liked_post_ids %}liked{% endif %}"
+                                        >
+
+                                            {% if post.id in liked_post_ids %}
+
+                                                💚 Liked
+
+                                            {% else %}
+
+                                                ❤️ Like
+
+                                            {% endif %}
+
+                                            · {{ post_like_count }}
+
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <span class="like-count-only">
+
+                                        ❤️ {{ post_like_count }}
+
+                                        {% if post_like_count == 1 %}
+
+                                            Like
+
+                                        {% else %}
+
+                                            Likes
+
+                                        {% endif %}
+
+                                    </span>
+
+                                {% endif %}
+
+
+                                <!-- =================================
+                                     COMMENT
+                                ================================== -->
+
                                 {% if is_logged_in and is_member %}
 
                                     <button
@@ -1049,7 +1152,12 @@
                                 {% endif %}
 
 
-                                {% if current_user_id == post.user_id %}
+                                <!-- =================================
+                                     DELETE
+                                ================================== -->
+
+                                {% if current_user_id == post.user_id
+                                      or current_user_id == community.owner_id %}
 
                                     <form
                                         method="POST"
@@ -1162,7 +1270,8 @@
                                                 {% endif %}
 
 
-                                                {% if current_user_id == comment.user_id %}
+                                                {% if current_user_id == comment.user_id
+                                                      or current_user_id == community.owner_id %}
 
                                                     <form
                                                         method="POST"
@@ -1233,7 +1342,8 @@
                                                  REPLIES
                                             ========================== -->
 
-                                            {% set comment_replies = replies_by_comment.get(comment.id, []) %}
+                                            {% set comment_replies =
+                                                replies_by_comment.get(comment.id, []) %}
 
 
                                             {% if comment_replies %}
@@ -1286,7 +1396,8 @@
 
                                                             <div class="comment-actions">
 
-                                                                {% if current_user_id == reply.user_id %}
+                                                                {% if current_user_id == reply.user_id
+                                                                      or current_user_id == community.owner_id %}
 
                                                                     <form
                                                                         method="POST"
@@ -1506,7 +1617,8 @@
                     <strong>NijaWebbies</strong>.
 
                     Members can participate in discussions,
-                    leave comments and reply to other members.
+                    leave comments, reply to other members,
+                    and like discussions.
 
                 </p>
 
