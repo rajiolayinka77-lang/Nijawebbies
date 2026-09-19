@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -274,6 +274,54 @@ def init_db():
             """)
 
             # =================================================
+            # NOTIFICATIONS
+            # =================================================
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS notifications (
+                    id SERIAL PRIMARY KEY,
+
+                    recipient_user_id INTEGER NOT NULL,
+
+                    actor_user_id INTEGER,
+
+                    notification_type TEXT NOT NULL,
+
+                    community_id INTEGER,
+
+                    community_post_id INTEGER,
+
+                    comment_id INTEGER,
+
+                    message TEXT NOT NULL,
+
+                    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+
+                    created_at TIMESTAMP NOT NULL,
+
+                    FOREIGN KEY (recipient_user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
+
+                    FOREIGN KEY (actor_user_id)
+                    REFERENCES users(id)
+                    ON DELETE SET NULL,
+
+                    FOREIGN KEY (community_id)
+                    REFERENCES communities(id)
+                    ON DELETE CASCADE,
+
+                    FOREIGN KEY (community_post_id)
+                    REFERENCES community_posts(id)
+                    ON DELETE CASCADE,
+
+                    FOREIGN KEY (comment_id)
+                    REFERENCES community_comments(id)
+                    ON DELETE CASCADE
+                )
+            """)
+
+            # =================================================
             # COMMUNITY INDEXES
             # =================================================
 
@@ -329,6 +377,28 @@ def init_db():
                 CREATE INDEX IF NOT EXISTS
                 idx_community_post_likes_user
                 ON community_post_likes(user_id)
+            """)
+
+            # =================================================
+            # NOTIFICATION INDEXES
+            # =================================================
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_notifications_recipient
+                ON notifications(recipient_user_id)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_notifications_unread
+                ON notifications(recipient_user_id, is_read)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_notifications_created
+                ON notifications(created_at)
             """)
 
         conn.commit()
@@ -440,6 +510,80 @@ def make_website_link(website):
         website = "https://" + website
 
     return website
+
+
+# =========================================================
+# NOTIFICATION HELPER
+# =========================================================
+
+def create_notification(
+    cursor,
+    recipient_user_id,
+    actor_user_id,
+    notification_type,
+    message,
+    community_id=None,
+    community_post_id=None,
+    comment_id=None
+):
+    """
+    Creates a notification for a user.
+
+    The actor will never receive a notification for their
+    own action.
+    """
+
+    if not recipient_user_id:
+        return
+
+    if actor_user_id:
+
+        try:
+
+            if int(recipient_user_id) == int(actor_user_id):
+                return
+
+        except (TypeError, ValueError):
+            pass
+
+    cursor.execute(
+        """
+        INSERT INTO notifications
+        (
+            recipient_user_id,
+            actor_user_id,
+            notification_type,
+            community_id,
+            community_post_id,
+            comment_id,
+            message,
+            is_read,
+            created_at
+        )
+        VALUES
+        (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            FALSE,
+            %s
+        )
+        """,
+        (
+            recipient_user_id,
+            actor_user_id,
+            notification_type,
+            community_id,
+            community_post_id,
+            comment_id,
+            message,
+            datetime.utcnow()
+        )
+    )
 
 
 # =========================================================
@@ -3288,7 +3432,8 @@ def toggle_community_post_like(post_id):
                 """
                 SELECT
                     cp.id,
-                    cp.community_id
+                    cp.community_id,
+                    cp.user_id
                 FROM community_posts AS cp
                 WHERE cp.id = %s
                 LIMIT 1
@@ -3408,6 +3553,23 @@ def toggle_community_post_like(post_id):
                         datetime.utcnow()
                     )
                 )
+
+                # Notify the discussion owner only for a
+                # newly created like.
+                if cursor.rowcount == 1:
+
+                    create_notification(
+                        cursor=cursor,
+                        recipient_user_id=post["user_id"],
+                        actor_user_id=user_id,
+                        notification_type="like",
+                        message=(
+                            session.get("user_name", "Someone")
+                            + " liked your community discussion."
+                        ),
+                        community_id=community_id,
+                        community_post_id=post_id
+                    )
 
                 message = "Discussion liked."
 
@@ -3912,7 +4074,8 @@ def create_community_comment(post_id):
                 """
                 SELECT
                     cp.id,
-                    cp.community_id
+                    cp.community_id,
+                    cp.user_id
                 FROM community_posts AS cp
                 WHERE cp.id = %s
                 LIMIT 1
@@ -4009,6 +4172,7 @@ def create_community_comment(post_id):
                     parent_comment_id
                 )
                 VALUES (%s, %s, %s, %s, %s)
+                RETURNING id
                 """,
                 (
                     post_id,
@@ -4017,6 +4181,29 @@ def create_community_comment(post_id):
                     datetime.utcnow(),
                     None
                 )
+            )
+
+            comment_result = cursor.fetchone()
+
+            comment_id = (
+                comment_result["id"]
+                if comment_result
+                else None
+            )
+
+            # Notify the discussion owner.
+            create_notification(
+                cursor=cursor,
+                recipient_user_id=post["user_id"],
+                actor_user_id=user_id,
+                notification_type="comment",
+                message=(
+                    session.get("user_name", "Someone")
+                    + " commented on your community discussion."
+                ),
+                community_id=community_id,
+                community_post_id=post_id,
+                comment_id=comment_id
             )
 
         conn.commit()
@@ -4096,6 +4283,7 @@ def create_community_comment_reply(comment_id):
                 SELECT
                     cc.id,
                     cc.community_post_id,
+                    cc.user_id,
                     cc.parent_comment_id,
                     cp.community_id,
                     c.owner_id
@@ -4213,6 +4401,7 @@ def create_community_comment_reply(comment_id):
                     parent_comment_id
                 )
                 VALUES (%s, %s, %s, %s, %s)
+                RETURNING id
                 """,
                 (
                     parent_comment["community_post_id"],
@@ -4221,6 +4410,29 @@ def create_community_comment_reply(comment_id):
                     datetime.utcnow(),
                     comment_id
                 )
+            )
+
+            reply_result = cursor.fetchone()
+
+            reply_id = (
+                reply_result["id"]
+                if reply_result
+                else None
+            )
+
+            # Notify the original comment author.
+            create_notification(
+                cursor=cursor,
+                recipient_user_id=parent_comment["user_id"],
+                actor_user_id=user_id,
+                notification_type="reply",
+                message=(
+                    session.get("user_name", "Someone")
+                    + " replied to your community comment."
+                ),
+                community_id=community_id,
+                community_post_id=parent_comment["community_post_id"],
+                comment_id=reply_id
             )
 
         conn.commit()
@@ -4422,11 +4634,15 @@ def join_community(community_id):
 
         user_id = session.get("user_id")
 
-        with conn.cursor() as cursor:
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
 
             cursor.execute(
                 """
-                SELECT id
+                SELECT
+                    id,
+                    owner_id
                 FROM communities
                 WHERE id = %s
                 LIMIT 1
@@ -4465,6 +4681,22 @@ def join_community(community_id):
             )
 
             added = cursor.rowcount
+
+            # Notify the community owner only when a new
+            # membership was actually created.
+            if added == 1:
+
+                create_notification(
+                    cursor=cursor,
+                    recipient_user_id=community["owner_id"],
+                    actor_user_id=user_id,
+                    notification_type="join",
+                    message=(
+                        session.get("user_name", "Someone")
+                        + " joined your community."
+                    ),
+                    community_id=community_id
+                )
 
         conn.commit()
 
@@ -4632,6 +4864,284 @@ def leave_community(community_id):
                 community_id=community_id
             )
         )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# NOTIFICATIONS
+# =========================================================
+
+@app.route("/notifications")
+@login_required
+def notifications():
+
+    conn = None
+
+    user_id = session.get("user_id")
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT
+                    n.id,
+                    n.recipient_user_id,
+                    n.actor_user_id,
+                    n.notification_type,
+                    n.community_id,
+                    n.community_post_id,
+                    n.comment_id,
+                    n.message,
+                    n.is_read,
+                    n.created_at,
+                    u.name AS actor_name
+                FROM notifications AS n
+                LEFT JOIN users AS u
+                    ON n.actor_user_id = u.id
+                WHERE n.recipient_user_id = %s
+                ORDER BY n.id DESC
+                """,
+                (user_id,)
+            )
+
+            notification_list = cursor.fetchall()
+
+            cursor.execute(
+                """
+                SELECT COUNT(*) AS unread_count
+                FROM notifications
+                WHERE recipient_user_id = %s
+                  AND is_read = FALSE
+                """,
+                (user_id,)
+            )
+
+            unread_result = cursor.fetchone()
+
+            unread_count = int(
+                unread_result["unread_count"]
+                if unread_result
+                else 0
+            )
+
+        return render_template(
+            "notifications.html",
+            notifications=notification_list,
+            unread_count=unread_count,
+            user_name=session.get("user_name")
+        )
+
+    except Exception as error:
+
+        app.logger.exception(
+            "NOTIFICATIONS PAGE FAILED | user_id=%s | error=%s",
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to load your notifications right now.",
+            "danger"
+        )
+
+        return redirect(url_for("workspace"))
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# MARK ONE NOTIFICATION AS READ
+# =========================================================
+
+@app.route(
+    "/notifications/read/<int:notification_id>",
+    methods=["POST"]
+)
+@login_required
+def mark_notification_read(notification_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor() as cursor:
+
+            cursor.execute(
+                """
+                UPDATE notifications
+                SET is_read = TRUE
+                WHERE id = %s
+                  AND recipient_user_id = %s
+                """,
+                (
+                    notification_id,
+                    user_id
+                )
+            )
+
+        conn.commit()
+
+        return redirect(
+            url_for("notifications")
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "MARK NOTIFICATION READ FAILED | notification_id=%s | user_id=%s | error=%s",
+            notification_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to update the notification.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("notifications")
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# MARK ALL NOTIFICATIONS AS READ
+# =========================================================
+
+@app.route(
+    "/notifications/read-all",
+    methods=["POST"]
+)
+@login_required
+def mark_all_notifications_read():
+
+    conn = None
+
+    user_id = session.get("user_id")
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor() as cursor:
+
+            cursor.execute(
+                """
+                UPDATE notifications
+                SET is_read = TRUE
+                WHERE recipient_user_id = %s
+                  AND is_read = FALSE
+                """,
+                (user_id,)
+            )
+
+        conn.commit()
+
+        flash(
+            "All notifications have been marked as read.",
+            "success"
+        )
+
+        return redirect(
+            url_for("notifications")
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "MARK ALL NOTIFICATIONS READ FAILED | user_id=%s | error=%s",
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to update your notifications.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("notifications")
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# NOTIFICATION COUNT
+# =========================================================
+
+@app.route("/notifications/count")
+@login_required
+def notification_count():
+
+    conn = None
+
+    user_id = session.get("user_id")
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            cursor.execute(
+                """
+                SELECT COUNT(*) AS unread_count
+                FROM notifications
+                WHERE recipient_user_id = %s
+                  AND is_read = FALSE
+                """,
+                (user_id,)
+            )
+
+            result = cursor.fetchone()
+
+            unread_count = int(
+                result["unread_count"]
+                if result
+                else 0
+            )
+
+        return jsonify({
+            "count": unread_count
+        })
+
+    except Exception as error:
+
+        app.logger.exception(
+            "NOTIFICATION COUNT FAILED | user_id=%s | error=%s",
+            user_id,
+            error
+        )
+
+        return jsonify({
+            "count": 0
+        })
 
     finally:
         close_db(conn)
