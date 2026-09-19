@@ -2999,6 +2999,65 @@ def community_detail(community_id):
             discussions = cursor.fetchall()
 
             # =================================================
+            # COMMUNITY POST LIKES
+            # =================================================
+
+            like_counts = {}
+            liked_post_ids = set()
+
+            if discussions:
+
+                discussion_ids = [
+                    discussion["id"]
+                    for discussion in discussions
+                ]
+
+                cursor.execute(
+                    """
+                    SELECT
+                        community_post_id,
+                        COUNT(*) AS like_count
+                    FROM community_post_likes
+                    WHERE community_post_id = ANY(%s)
+                    GROUP BY community_post_id
+                    """,
+                    (discussion_ids,)
+                )
+
+                like_rows = cursor.fetchall()
+
+                for like_row in like_rows:
+
+                    like_counts[
+                        like_row["community_post_id"]
+                    ] = int(
+                        like_row["like_count"]
+                    )
+
+                if user_id:
+
+                    cursor.execute(
+                        """
+                        SELECT
+                            community_post_id
+                        FROM community_post_likes
+                        WHERE user_id = %s
+                          AND community_post_id = ANY(%s)
+                        """,
+                        (
+                            user_id,
+                            discussion_ids
+                        )
+                    )
+
+                    liked_rows = cursor.fetchall()
+
+                    liked_post_ids = {
+                        row["community_post_id"]
+                        for row in liked_rows
+                    }
+
+            # =================================================
             # COMMUNITY COMMENTS AND REPLIES
             # =================================================
 
@@ -3073,6 +3132,8 @@ def community_detail(community_id):
             membership=membership,
             members=members,
             discussions=discussions,
+            like_counts=like_counts,
+            liked_post_ids=liked_post_ids,
             comments_by_post=comments_by_post,
             replies_by_comment=replies_by_comment,
             comment_counts=comment_counts,
@@ -3189,6 +3250,209 @@ def community_detail(community_id):
             </html>
             """,
             500
+        )
+
+    finally:
+        close_db(conn)
+
+
+# =========================================================
+# LIKE / UNLIKE COMMUNITY DISCUSSION
+# =========================================================
+
+@app.route(
+    "/community-post/<int:post_id>/like",
+    methods=["POST"]
+)
+@login_required
+def toggle_community_post_like(post_id):
+
+    conn = None
+
+    user_id = session.get("user_id")
+    community_id = None
+
+    try:
+
+        conn = get_db()
+
+        with conn.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+
+            # =================================================
+            # FIND DISCUSSION
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT
+                    cp.id,
+                    cp.community_id
+                FROM community_posts AS cp
+                WHERE cp.id = %s
+                LIMIT 1
+                """,
+                (post_id,)
+            )
+
+            post = cursor.fetchone()
+
+            if not post:
+
+                flash(
+                    "Discussion not found.",
+                    "danger"
+                )
+
+                return redirect(
+                    url_for("communities")
+                )
+
+            community_id = post["community_id"]
+
+            # =================================================
+            # CHECK COMMUNITY MEMBERSHIP
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM community_members
+                WHERE community_id = %s
+                  AND user_id = %s
+                LIMIT 1
+                """,
+                (
+                    community_id,
+                    user_id
+                )
+            )
+
+            membership = cursor.fetchone()
+
+            if not membership:
+
+                flash(
+                    "You must join this community before liking a discussion.",
+                    "warning"
+                )
+
+                return redirect(
+                    url_for(
+                        "community_detail",
+                        community_id=community_id
+                    )
+                )
+
+            # =================================================
+            # CHECK EXISTING LIKE
+            # =================================================
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM community_post_likes
+                WHERE community_post_id = %s
+                  AND user_id = %s
+                LIMIT 1
+                """,
+                (
+                    post_id,
+                    user_id
+                )
+            )
+
+            existing_like = cursor.fetchone()
+
+            # =================================================
+            # UNLIKE
+            # =================================================
+
+            if existing_like:
+
+                cursor.execute(
+                    """
+                    DELETE FROM community_post_likes
+                    WHERE id = %s
+                    """,
+                    (existing_like["id"],)
+                )
+
+                message = "Like removed."
+
+            # =================================================
+            # LIKE
+            # =================================================
+
+            else:
+
+                cursor.execute(
+                    """
+                    INSERT INTO community_post_likes
+                    (
+                        community_post_id,
+                        user_id,
+                        created_at
+                    )
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (
+                        community_post_id,
+                        user_id
+                    )
+                    DO NOTHING
+                    """,
+                    (
+                        post_id,
+                        user_id,
+                        datetime.utcnow()
+                    )
+                )
+
+                message = "Discussion liked."
+
+        conn.commit()
+
+        flash(
+            message,
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "community_detail",
+                community_id=community_id
+            )
+        )
+
+    except Exception as error:
+
+        if conn:
+            conn.rollback()
+
+        app.logger.exception(
+            "TOGGLE COMMUNITY LIKE FAILED | post_id=%s | user_id=%s | error=%s",
+            post_id,
+            user_id,
+            error
+        )
+
+        flash(
+            "Unable to update the like right now.",
+            "danger"
+        )
+
+        if community_id:
+
+            return redirect(
+                url_for(
+                    "community_detail",
+                    community_id=community_id
+                )
+            )
+
+        return redirect(
+            url_for("communities")
         )
 
     finally:
