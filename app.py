@@ -216,46 +216,30 @@ def init_db():
                     ON DELETE CASCADE
                 )
             """)
-cursor.execute("""
-    CREATE INDEX IF NOT EXISTS
-    idx_community_comments_parent
-    ON community_comments(parent_comment_id)
-""")
 
-# =================================================
-# COMMUNITY POST LIKES
-# =================================================
+            # =================================================
+            # COMMUNITY POST LIKES
+            # =================================================
 
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS community_post_likes (
-        id SERIAL PRIMARY KEY,
-        community_post_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL,
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS community_post_likes (
+                    id SERIAL PRIMARY KEY,
+                    community_post_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
+                    created_at TIMESTAMP NOT NULL,
 
-        UNIQUE(community_post_id, user_id),
+                    UNIQUE(community_post_id, user_id),
 
-        FOREIGN KEY (community_post_id)
-        REFERENCES community_posts(id)
-        ON DELETE CASCADE,
+                    FOREIGN KEY (community_post_id)
+                    REFERENCES community_posts(id)
+                    ON DELETE CASCADE,
 
-        FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
-    )
-""")
+                    FOREIGN KEY (user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+                )
+            """)
 
-cursor.execute("""
-    CREATE INDEX IF NOT EXISTS
-    idx_community_post_likes_post
-    ON community_post_likes(community_post_id)
-""")
-
-cursor.execute("""
-    CREATE INDEX IF NOT EXISTS
-    idx_community_post_likes_user
-    ON community_post_likes(user_id)
-""")
             # =================================================
             # COMMUNITY COMMENTS / REPLIES
             # =================================================
@@ -281,8 +265,6 @@ cursor.execute("""
             # =================================================
             # ADD REPLY SUPPORT TO EXISTING COMMENTS
             # =================================================
-            # Existing comments automatically remain top-level
-            # comments because their parent_comment_id will be NULL.
 
             cursor.execute("""
                 ALTER TABLE community_comments
@@ -335,6 +317,18 @@ cursor.execute("""
                 CREATE INDEX IF NOT EXISTS
                 idx_community_comments_parent
                 ON community_comments(parent_comment_id)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_community_post_likes_post
+                ON community_post_likes(community_post_id)
+            """)
+
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS
+                idx_community_post_likes_user
+                ON community_post_likes(user_id)
             """)
 
         conn.commit()
@@ -2860,10 +2854,6 @@ def communities():
 # COMMUNITY DETAILS - PUBLIC
 # =========================================================
 
-# =========================================================
-# COMMUNITY DETAILS - PUBLIC
-# =========================================================
-
 @app.route("/community/<int:community_id>")
 def community_detail(community_id):
 
@@ -3049,7 +3039,6 @@ def community_detail(community_id):
 
             # =================================================
             # TOTAL COMMENT COUNT BY DISCUSSION
-            # Includes both main comments and replies
             # =================================================
 
             comment_counts = {}
@@ -3058,14 +3047,9 @@ def community_detail(community_id):
 
                 post_id = comment["community_post_id"]
 
-                # Count EVERY comment, including replies
                 comment_counts[post_id] = (
                     comment_counts.get(post_id, 0) + 1
                 )
-
-                # =================================================
-                # MAIN / TOP-LEVEL COMMENT
-                # =================================================
 
                 if comment["parent_comment_id"] is None:
 
@@ -3074,20 +3058,12 @@ def community_detail(community_id):
                         []
                     ).append(comment)
 
-                # =================================================
-                # REPLY
-                # =================================================
-
                 else:
 
                     replies_by_comment.setdefault(
                         comment["parent_comment_id"],
                         []
                     ).append(comment)
-
-        # =====================================================
-        # RENDER COMMUNITY PAGE
-        # =====================================================
 
         return render_template(
             "community_detail.html",
@@ -3272,10 +3248,6 @@ def create_community_post(community_id):
 
         with conn.cursor() as cursor:
 
-            # =================================================
-            # CHECK COMMUNITY
-            # =================================================
-
             cursor.execute(
                 """
                 SELECT
@@ -3300,10 +3272,6 @@ def create_community_post(community_id):
                 return redirect(
                     url_for("communities")
                 )
-
-            # =================================================
-            # CHECK MEMBERSHIP
-            # =================================================
 
             cursor.execute(
                 """
@@ -3334,10 +3302,6 @@ def create_community_post(community_id):
                         community_id=community_id
                     )
                 )
-
-            # =================================================
-            # CREATE DISCUSSION
-            # =================================================
 
             cursor.execute(
                 """
@@ -3680,10 +3644,6 @@ def create_community_comment(post_id):
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # =================================================
-            # FIND DISCUSSION
-            # =================================================
-
             cursor.execute(
                 """
                 SELECT
@@ -3710,10 +3670,6 @@ def create_community_comment(post_id):
                 )
 
             community_id = post["community_id"]
-
-            # =================================================
-            # GET COMMENT
-            # =================================================
 
             content = request.form.get(
                 "content",
@@ -3748,10 +3704,6 @@ def create_community_comment(post_id):
                     )
                 )
 
-            # =================================================
-            # CHECK MEMBERSHIP
-            # =================================================
-
             cursor.execute(
                 """
                 SELECT id
@@ -3781,10 +3733,6 @@ def create_community_comment(post_id):
                         community_id=community_id
                     )
                 )
-
-            # =================================================
-            # CREATE TOP-LEVEL COMMENT
-            # =================================================
 
             cursor.execute(
                 """
@@ -3879,10 +3827,6 @@ def create_community_comment_reply(comment_id):
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # =================================================
-            # FIND PARENT COMMENT
-            # =================================================
-
             cursor.execute(
                 """
                 SELECT
@@ -3917,10 +3861,6 @@ def create_community_comment_reply(comment_id):
 
             community_id = parent_comment["community_id"]
 
-            # =================================================
-            # ONLY TOP-LEVEL COMMENTS CAN RECEIVE REPLIES
-            # =================================================
-
             if parent_comment["parent_comment_id"] is not None:
 
                 flash(
@@ -3934,10 +3874,6 @@ def create_community_comment_reply(comment_id):
                         community_id=community_id
                     )
                 )
-
-            # =================================================
-            # GET REPLY
-            # =================================================
 
             content = request.form.get(
                 "content",
@@ -3972,10 +3908,6 @@ def create_community_comment_reply(comment_id):
                     )
                 )
 
-            # =================================================
-            # CHECK MEMBERSHIP
-            # =================================================
-
             cursor.execute(
                 """
                 SELECT id
@@ -4005,10 +3937,6 @@ def create_community_comment_reply(comment_id):
                         community_id=community_id
                     )
                 )
-
-            # =================================================
-            # CREATE REPLY
-            # =================================================
 
             cursor.execute(
                 """
@@ -4103,10 +4031,6 @@ def delete_community_comment(comment_id):
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # =================================================
-            # FIND COMMENT AND COMMUNITY
-            # =================================================
-
             cursor.execute(
                 """
                 SELECT
@@ -4142,10 +4066,6 @@ def delete_community_comment(comment_id):
 
             community_id = comment["community_id"]
 
-            # =================================================
-            # CHECK PERMISSION
-            # =================================================
-
             if (
                 comment["user_id"] != user_id
                 and comment["owner_id"] != user_id
@@ -4162,13 +4082,6 @@ def delete_community_comment(comment_id):
                         community_id=community_id
                     )
                 )
-
-            # =================================================
-            # DELETE COMMENT
-            # =================================================
-            # If this is a parent comment, PostgreSQL will also
-            # delete its replies because parent_comment_id uses
-            # ON DELETE CASCADE.
 
             cursor.execute(
                 """
@@ -4381,7 +4294,6 @@ def leave_community(community_id):
 
                 return redirect(url_for("communities"))
 
-            # Owner cannot leave their own community.
             if community["owner_id"] == user_id:
 
                 flash(
