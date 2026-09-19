@@ -216,7 +216,46 @@ def init_db():
                     ON DELETE CASCADE
                 )
             """)
+cursor.execute("""
+    CREATE INDEX IF NOT EXISTS
+    idx_community_comments_parent
+    ON community_comments(parent_comment_id)
+""")
 
+# =================================================
+# COMMUNITY POST LIKES
+# =================================================
+
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS community_post_likes (
+        id SERIAL PRIMARY KEY,
+        community_post_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+
+        UNIQUE(community_post_id, user_id),
+
+        FOREIGN KEY (community_post_id)
+        REFERENCES community_posts(id)
+        ON DELETE CASCADE,
+
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+    )
+""")
+
+cursor.execute("""
+    CREATE INDEX IF NOT EXISTS
+    idx_community_post_likes_post
+    ON community_post_likes(community_post_id)
+""")
+
+cursor.execute("""
+    CREATE INDEX IF NOT EXISTS
+    idx_community_post_likes_user
+    ON community_post_likes(user_id)
+""")
             # =================================================
             # COMMUNITY COMMENTS / REPLIES
             # =================================================
