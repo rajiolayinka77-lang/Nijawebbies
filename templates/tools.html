@@ -1,383 +1,430 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NijaWebbies Digital Tools</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
+    <title>NijaWebbies Digital Tools</title>
 
-    * {
-        box-sizing: border-box;
-    }
+    <style>
 
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f7f6;
-        color: #17201b;
-    }
-
-    nav {
-        background: white;
-        padding: 18px 5%;
-        border-bottom: 1px solid #ddd;
-    }
-
-    nav a {
-        margin-right: 18px;
-        text-decoration: none;
-        color: #087f5b;
-        font-weight: bold;
-    }
-
-    .hero {
-        background: #087f5b;
-        color: white;
-        text-align: center;
-        padding: 60px 20px;
-    }
-
-    .hero h1 {
-        margin: 0 0 15px;
-        font-size: 40px;
-    }
-
-    .hero p {
-        max-width: 700px;
-        margin: auto;
-        line-height: 1.6;
-    }
-
-    .container {
-        width: 92%;
-        max-width: 1100px;
-        margin: auto;
-    }
-
-    .section {
-        padding: 45px 0;
-    }
-
-    .section h2 {
-        text-align: center;
-        margin-bottom: 10px;
-    }
-
-    .intro {
-        text-align: center;
-        color: #68736d;
-        margin-bottom: 30px;
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-
-    .card {
-        background: white;
-        border: 1px solid #e0e7e3;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 5px 18px rgba(0,0,0,0.05);
-    }
-
-    .icon {
-        font-size: 42px;
-        margin-bottom: 15px;
-    }
-
-    .card h3 {
-        margin: 0 0 10px;
-    }
-
-    .card p {
-        color: #68736d;
-        line-height: 1.6;
-    }
-
-    .button {
-        display: block;
-        width: 100%;
-        padding: 13px;
-        border: none;
-        border-radius: 9px;
-        background: #087f5b;
-        color: white;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    .coming {
-        background: #edf2ef;
-        color: #536159;
-    }
-
-    footer {
-        background: #14221b;
-        color: white;
-        text-align: center;
-        padding: 35px 20px;
-        margin-top: 30px;
-    }
-
-    @media (max-width: 750px) {
-
-        .grid {
-            grid-template-columns: 1fr;
+        * {
+            box-sizing: border-box;
         }
 
-        .hero h1 {
-            font-size: 30px;
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7f6;
+            color: #17201b;
+        }
+
+        nav {
+            background: white;
+            padding: 18px 5%;
+            border-bottom: 1px solid #ddd;
         }
 
         nav a {
-            display: inline-block;
-            margin-bottom: 8px;
+            margin-right: 18px;
+            text-decoration: none;
+            color: #087f5b;
+            font-weight: bold;
         }
 
-    }
+        .hero {
+            background: #087f5b;
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+        }
 
-</style>
+        .hero h1 {
+            margin: 0 0 15px;
+            font-size: 40px;
+        }
 
-</head><body><nav><a href="/">
-    🇳🇬 NijaWebbies
-</a>
+        .hero p {
+            max-width: 700px;
+            margin: auto;
+            line-height: 1.6;
+        }
 
-<a href="/">
-    Home
-</a>
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: auto;
+        }
 
-<a href="/search">
-    Search
-</a>
+        .section {
+            padding: 45px 0;
+        }
 
-<a href="/businesses">
-    Businesses
-</a>
+        .section h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
 
-<a href="/communities">
-    Communities
-</a>
+        .intro {
+            text-align: center;
+            color: #68736d;
+            margin-bottom: 30px;
+        }
 
-<a href="/tools">
-    Digital Tools
-</a>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
 
-<a href="/workspace">
-    Workspace
-</a>
+        .card {
+            background: white;
+            border: 1px solid #e0e7e3;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
 
-<a href="/notifications">
-    🔔 Notifications
-</a>
+        .icon {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
 
-</nav><section class="hero"><div class="container">
+        .card h3 {
+            margin: 0 0 10px;
+        }
 
-    <h1>
-        🛠️ NijaWebbies Digital Tools
-    </h1>
+        .card p {
+            color: #68736d;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: #087f5b;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .coming {
+            background: #edf2ef;
+            color: #536159;
+        }
+
+        footer {
+            background: #14221b;
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 750px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin-bottom: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav>
+
+    <a href="/">
+        🇳🇬 NijaWebbies
+    </a>
+
+    <a href="/">
+        Home
+    </a>
+
+    <a href="/search">
+        Search
+    </a>
+
+    <a href="/businesses">
+        Businesses
+    </a>
+
+    <a href="/communities">
+        Communities
+    </a>
+
+    <a href="/tools">
+        Digital Tools
+    </a>
+
+    <a href="/workspace">
+        Workspace
+    </a>
+
+    <a href="/notifications">
+        🔔 Notifications
+    </a>
+
+</nav>
+
+
+<section class="hero">
+
+    <div class="container">
+
+        <h1>
+            🛠️ NijaWebbies Digital Tools
+        </h1>
+
+        <p>
+            Create, calculate, convert and explore
+            useful digital tools built for creators,
+            entrepreneurs, businesses and everyday users.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="container">
+
+        <h2>
+            🤖 AI Creation Studio
+        </h2>
+
+        <p class="intro">
+            Create images, videos and music from your ideas.
+            AI generation will be connected to these tools
+            as we build the platform.
+        </p>
+
+
+        <div class="grid">
+
+
+            <!-- AI IMAGE GENERATOR -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🖼️
+                </div>
+
+                <h3>
+                    AI Image Generator
+                </h3>
+
+                <p>
+                    Turn a written description into
+                    creative images for businesses,
+                    social media, stories and projects.
+                </p>
+
+                <a
+                    href="{{ url_for('image_generator') }}"
+                    class="button"
+                >
+                    Generate Image
+                </a>
+
+            </div>
+
+
+            <!-- AI VIDEO GENERATOR -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🎬
+                </div>
+
+                <h3>
+                    AI Video Generator
+                </h3>
+
+                <p>
+                    Create short videos from ideas and
+                    written descriptions for marketing,
+                    education and entertainment.
+                </p>
+
+                <a
+                    href="{{ url_for('video_generator') }}"
+                    class="button"
+                >
+                    Generate Video
+                </a>
+
+            </div>
+
+
+            <!-- AI MUSIC GENERATOR -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🎵
+                </div>
+
+                <h3>
+                    AI Music Generator
+                </h3>
+
+                <p>
+                    Create music concepts from a description
+                    of your mood, theme or musical idea.
+                </p>
+
+                <a
+                    href="{{ url_for('music_generator') }}"
+                    class="button"
+                >
+                    Generate Music
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="container">
+
+        <h2>
+            🧰 Everyday Tools
+        </h2>
+
+        <p class="intro">
+            More practical tools will be added to
+            NijaWebbies.
+        </p>
+
+
+        <div class="grid">
+
+
+            <!-- TEXT COUNTER -->
+
+            <div class="card">
+
+                <div class="icon">
+                    📝
+                </div>
+
+                <h3>
+                    Text Counter
+                </h3>
+
+                <p>
+                    Count words, characters, sentences and
+                    paragraphs instantly.
+                </p>
+
+                <a
+                    href="{{ url_for('text_counter') }}"
+                    class="button"
+                >
+                    Open Text Counter
+                </a>
+
+            </div>
+
+
+            <!-- CALCULATOR -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🧮
+                </div>
+
+                <h3>
+                    Calculator
+                </h3>
+
+                <p>
+                    Perform everyday mathematical calculations
+                    quickly and easily.
+                </p>
+
+                <a
+                    href="{{ url_for('calculator') }}"
+                    class="button"
+                >
+                    Open Calculator
+                </a>
+
+            </div>
+
+
+            <!-- PERCENTAGE CALCULATOR -->
+
+            <div class="card">
+
+                <div class="icon">
+                    💰
+                </div>
+
+                <h3>
+                    Percentage Calculator
+                </h3>
+
+                <p>
+                    Calculate percentages quickly.
+                </p>
+
+                <div class="button coming">
+                    Coming Soon
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<footer>
 
     <p>
-        Create, calculate, convert and explore
-        useful digital tools built for creators,
-        entrepreneurs, businesses and everyday users.
+        © 2026 NijaWebbies — Built for Nigeria, Africa and the world.
     </p>
 
-</div>
+</footer>
 
-</section><section class="section"><div class="container">
-
-    <h2>
-        🤖 AI Creation Studio
-    </h2>
-
-    <p class="intro">
-        Create images, videos and music from your ideas.
-        AI generation will be connected to these tools
-        as we build the platform.
-    </p>
-
-
-    <div class="grid">
-
-
-        <div class="card">
-
-            <div class="icon">
-                🖼️
-            </div>
-
-            <h3>
-                AI Image Generator
-            </h3>
-
-            <p>
-                Turn a written description into
-                creative images for businesses,
-                social media, stories and projects.
-            </p>
-
-            <a
-                href="{{ url_for('image_generator') }}"
-                class="button"
-                style="text-decoration: none;"
-            >
-                Generate Image
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">
-                🎬
-            </div>
-
-            <h3>
-                AI Video Generator
-            </h3>
-
-            <p>
-                Create short videos from ideas and
-                written descriptions for marketing,
-                education and entertainment.
-            </p>
-
-            <div class="button">
-                Generate Video
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">
-                🎵
-            </div>
-
-            <h3>
-                AI Music Generator
-            </h3>
-
-            <p>
-                Create music concepts from a description
-                of your mood, theme or musical idea.
-            </p>
-
-            <div class="button">
-                Generate Music
-            </div>
-
-        </div>
-
-
-    </div>
-
-</div>
-
-</section><section class="section"><div class="container">
-
-    <h2>
-        🧰 Everyday Tools
-    </h2>
-
-    <p class="intro">
-        More practical tools will be added to
-        NijaWebbies.
-    </p>
-
-
-    <div class="grid">
-
-
-        <!-- TEXT COUNTER -->
-
-        <div class="card">
-
-            <div class="icon">
-                📝
-            </div>
-
-            <h3>
-                Text Counter
-            </h3>
-
-            <p>
-                Count words, characters, sentences and
-                paragraphs instantly.
-            </p>
-
-            <a
-                href="{{ url_for('text_counter') }}"
-                class="button"
-                style="text-decoration: none;"
-            >
-                Open Text Counter
-            </a>
-
-        </div>
-
-
-        <!-- CALCULATOR -->
-
-        <div class="card">
-
-            <div class="icon">
-                🧮
-            </div>
-
-            <h3>
-                Calculator
-            </h3>
-
-            <p>
-                Perform everyday mathematical calculations
-                quickly and easily.
-            </p>
-
-            <a
-                href="{{ url_for('calculator') }}"
-                class="button"
-                style="text-decoration: none;"
-            >
-                Open Calculator
-            </a>
-
-        </div>
-
-
-        <!-- PERCENTAGE CALCULATOR -->
-
-        <div class="card">
-
-            <div class="icon">
-                💰
-            </div>
-
-            <h3>
-                Percentage Calculator
-            </h3>
-
-            <p>
-                Calculate percentages quickly.
-            </p>
-
-            <div class="button coming">
-                Coming Soon
-            </div>
-
-        </div>
-
-
-    </div>
-
-</div>
-
-</section><footer><p>
-    © 2026 NijaWebbies — Built for Nigeria, Africa and the world.
-</p>
-
-</footer></body></html>
+</body>
+</html>
