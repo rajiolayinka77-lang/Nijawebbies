@@ -5256,7 +5256,7 @@ def image_generator():
             "danger"
         )
 
-                     return render_template(
+                             return render_template(
             "image_generator.html",
             prompt=prompt,
             size=size
