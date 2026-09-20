@@ -1,620 +1,840 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>My Workspace — NijaWebbies</title>
 
-<style>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    * {
-        box-sizing: border-box;
-    }
+    <title>My Workspace — NijaWebbies</title>
 
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f7fa;
-        color: #17202a;
-    }
+    <style>
 
-    header {
-        background: #0b7a3b;
-        color: white;
-        padding: 16px 20px;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    .nav {
-        max-width: 1100px;
-        margin: auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-    }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #17202a;
+        }
 
-    .logo {
-        font-size: 21px;
-        font-weight: bold;
-    }
-
-    .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-    }
-
-    .nav a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-    }
-
-    .nav a:hover {
-        text-decoration: underline;
-    }
-
-    .container {
-        max-width: 1100px;
-        margin: 30px auto;
-        padding: 0 20px;
-    }
-
-    .welcome {
-        background: white;
-        padding: 30px;
-        border-radius: 18px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-    }
-
-    .welcome h1 {
-        margin-top: 0;
-        font-size: 30px;
-    }
-
-    .welcome p {
-        color: #667085;
-        line-height: 1.6;
-    }
-
-    .primary-btn {
-        display: inline-block;
-        background: #0b7a3b;
-        color: white;
-        padding: 13px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .primary-btn:hover {
-        background: #096631;
-    }
-
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-
-    .stat {
-        background: white;
-        padding: 22px;
-        border-radius: 14px;
-        text-align: center;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.04);
-    }
-
-    .stat-number {
-        font-size: 30px;
-        font-weight: bold;
-        color: #0b7a3b;
-    }
-
-    .stat-label {
-        color: #667085;
-        margin-top: 5px;
-    }
-
-    .section-title {
-        margin-top: 35px;
-        margin-bottom: 18px;
-    }
-
-    .cards {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-    }
-
-    .card {
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-        transition: transform 0.2s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-3px);
-    }
-
-    .icon {
-        font-size: 32px;
-    }
-
-    .card h3 {
-        margin-bottom: 8px;
-    }
-
-    .card p {
-        color: #667085;
-        line-height: 1.5;
-        min-height: 72px;
-    }
-
-    .card a {
-        color: #0b7a3b;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .card a:hover {
-        text-decoration: underline;
-    }
-
-    .posts {
-        margin-top: 25px;
-    }
-
-    .post {
-        background: white;
-        padding: 20px;
-        margin-bottom: 12px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-
-    .post h3 {
-        margin-top: 0;
-    }
-
-    .post small {
-        color: #667085;
-    }
-
-    .post a {
-        color: #0b7a3b;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .empty {
-        background: white;
-        padding: 25px;
-        border-radius: 14px;
-        color: #667085;
-    }
-
-    footer {
-        margin-top: 50px;
-        padding: 30px 20px;
-        background: #17202a;
-        color: white;
-        text-align: center;
-    }
-
-    footer a {
-        color: white;
-        text-decoration: none;
-        margin: 0 8px;
-    }
-
-    footer a:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 750px) {
+        header {
+            background: #0b7a3b;
+            color: white;
+            padding: 16px 20px;
+        }
 
         .nav {
-            flex-direction: column;
-            align-items: flex-start;
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
         }
 
         .nav-links {
-            gap: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
         }
 
-        .stats {
-            grid-template-columns: 1fr;
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
         }
 
-        .cards {
-            grid-template-columns: 1fr;
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* ==============================
+           NOTIFICATION NAVIGATION
+        ============================== */
+
+        .notification-nav {
+            position: relative;
+            background: rgba(255,255,255,0.12);
+            padding: 8px 10px;
+            border-radius: 7px;
+            color: white !important;
+        }
+
+        .notification-nav:hover {
+            background: rgba(255,255,255,0.22);
+            text-decoration: none !important;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            margin-left: 4px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1;
+            vertical-align: middle;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
         }
 
         .welcome h1 {
-            font-size: 25px;
+            margin-top: 0;
+            font-size: 30px;
+        }
+
+        .welcome p {
+            color: #667085;
+            line-height: 1.6;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            background: #0b7a3b;
+            color: white;
+            padding: 13px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .primary-btn:hover {
+            background: #096631;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #0b7a3b;
+        }
+
+        .stat-label {
+            color: #667085;
+            margin-top: 5px;
+        }
+
+        .section-title {
+            margin-top: 35px;
+            margin-bottom: 18px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .icon {
+            font-size: 32px;
+        }
+
+        .card h3 {
+            margin-bottom: 8px;
         }
 
         .card p {
-            min-height: auto;
+            color: #667085;
+            line-height: 1.5;
+            min-height: 72px;
         }
 
-    }
+        .card a {
+            color: #0b7a3b;
+            font-weight: bold;
+            text-decoration: none;
+        }
 
-</style>
+        .card a:hover {
+            text-decoration: underline;
+        }
 
-</head><body><header><div class="nav">
+        .posts {
+            margin-top: 25px;
+        }
 
-    <div class="logo">
-        🇳🇬 NijaWebbies
-    </div>
+        .post {
+            background: white;
+            padding: 20px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
 
-    <div class="nav-links">
+        .post h3 {
+            margin-top: 0;
+        }
 
-        <a href="/">Home</a>
+        .post small {
+            color: #667085;
+        }
 
-        <a href="/blog">Blog</a>
+        .post a {
+            color: #0b7a3b;
+            font-weight: bold;
+            text-decoration: none;
+        }
 
-        <a href="/search">Search</a>
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            color: #667085;
+        }
 
-        <a href="/tools">Tools</a>
+        footer {
+            margin-top: 50px;
+            padding: 30px 20px;
+            background: #17202a;
+            color: white;
+            text-align: center;
+        }
 
-        <a href="/logout">Logout</a>
+        footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 8px;
+        }
 
-    </div>
+        footer a:hover {
+            text-decoration: underline;
+        }
 
-</div>
+        @media (max-width: 750px) {
 
-</header><main class="container"><!-- WELCOME -->
+            .nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-<section class="welcome">
+            .nav-links {
+                gap: 10px;
+            }
 
-    <h1>
-        👋 Welcome, {{ user_name }}!
-    </h1>
+            .stats {
+                grid-template-columns: 1fr;
+            }
 
-    <p>
-        This is your NijaWebbies Workspace.
-        From here you can publish content, build your creator profile,
-        grow your business, create communities and explore useful tools.
-    </p>
+            .cards {
+                grid-template-columns: 1fr;
+            }
 
-    <a class="primary-btn" href="/create-post">
-        ✍️ Create Your First Post
-    </a>
+            .welcome h1 {
+                font-size: 25px;
+            }
 
-</section>
+            .card p {
+                min-height: auto;
+            }
 
+        }
 
-<!-- STATISTICS -->
+    </style>
 
-<section class="stats">
+</head>
 
-    <div class="stat">
+<body>
 
-        <div class="stat-number">
-            {{ posts|length }}
-        </div>
+<header>
 
-        <div class="stat-label">
-            Published Posts
-        </div>
+    <div class="nav">
 
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-number">
-            {{ creator_projects|length }}
-        </div>
-
-        <div class="stat-label">
-            Creator Projects
-        </div>
-
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-number">
-            {{ communities|length }}
-        </div>
-
-        <div class="stat-label">
-            Communities
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- MAIN FEATURES -->
-
-<h2 class="section-title">
-    🚀 Build Your Online Presence
-</h2>
-
-
-<div class="cards">
-
-
-    <!-- BLOG -->
-
-    <div class="card">
-
-        <div class="icon">✍️</div>
-
-        <h3>Blog & Publishing</h3>
-
-        <p>
-            Write articles, stories, opinions, news and useful
-            information and publish them on NijaWebbies.
-        </p>
-
-        <a href="/create-post">
-            Create Post →
+        <a
+            href="{{ url_for('home') }}"
+            class="logo"
+        >
+            🇳🇬 NijaWebbies
         </a>
 
+        <div class="nav-links">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="/blog">
+                Blog
+            </a>
+
+            <a href="{{ url_for('search') }}">
+                Search
+            </a>
+
+            <a href="{{ url_for('tools') }}">
+                Tools
+            </a>
+
+            <!-- GLOBAL NOTIFICATIONS -->
+
+            <a
+                href="{{ url_for('notifications') }}"
+                class="notification-nav"
+            >
+
+                🔔 Notifications
+
+                <span
+                    class="notification-badge"
+                    id="globalNotificationBadge"
+                    style="display:none;"
+                ></span>
+
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
+        </div>
+
     </div>
 
+</header>
 
-    <!-- CREATOR STUDIO -->
 
-    <div class="card">
+<main class="container">
 
-        <div class="icon">🎨</div>
+    <!-- WELCOME -->
 
-        <h3>Creator Studio</h3>
+    <section class="welcome">
+
+        <h1>
+            👋 Welcome, {{ user_name }}!
+        </h1>
 
         <p>
-            Create and manage your creative projects,
-            content ideas, videos, artwork and other digital work.
+            This is your NijaWebbies Workspace.
+            From here you can publish content, build your creator profile,
+            grow your business, create communities and explore useful tools.
         </p>
 
-        <a href="/creator-studio">
-            Open Creator Studio →
+        <a
+            class="primary-btn"
+            href="/create-post"
+        >
+            ✍️ Create Your First Post
         </a>
-
-    </div>
-
-
-    <!-- BUSINESS -->
-
-    <div class="card">
-
-        <div class="icon">🏪</div>
-
-        <h3>Business Space</h3>
-
-        <p>
-            Create your business profile and give customers
-            a simple way to discover your business online.
-        </p>
-
-        <a href="/business-space">
-            Open Business Space →
-        </a>
-
-    </div>
-
-
-    <!-- COMMUNITIES -->
-
-    <div class="card">
-
-        <div class="icon">👥</div>
-
-        <h3>Communities</h3>
-
-        <p>
-            Create and join communities around interests,
-            professions, locations, schools and ideas.
-        </p>
-
-        <a href="/communities">
-            Open Communities →
-        </a>
-
-    </div>
-
-
-    <!-- SEARCH -->
-
-    <div class="card">
-
-        <div class="icon">🔎</div>
-
-        <h3>Web Search</h3>
-
-        <p>
-            Search through content published across
-            the NijaWebbies ecosystem.
-        </p>
-
-        <a href="/search">
-            Search NijaWebbies →
-        </a>
-
-    </div>
-
-
-    <!-- TOOLS -->
-
-    <div class="card">
-
-        <div class="icon">🛠️</div>
-
-        <h3>Free Online Tools</h3>
-
-        <p>
-            Explore useful digital tools designed to help
-            creators, bloggers, businesses and everyday users.
-        </p>
-
-        <a href="/tools">
-            Explore Tools →
-        </a>
-
-    </div>
-
-
-</div>
-
-
-<!-- CREATOR PROJECTS -->
-
-<h2 class="section-title">
-    🎨 My Creator Projects
-</h2>
-
-
-{% if creator_projects %}
-
-    <section class="posts">
-
-        {% for project in creator_projects %}
-
-            <div class="post">
-
-                <h3>
-                    {{ project["title"] }}
-                </h3>
-
-                <small>
-                    {{ project["project_type"] }}
-                    ·
-                    Created {{ project["created_at"] }}
-                </small>
-
-                {% if project["description"] %}
-
-                    <p>
-                        {{ project["description"][:180] }}
-
-                        {% if project["description"]|length > 180 %}
-                            ...
-                        {% endif %}
-                    </p>
-
-                {% endif %}
-
-            </div>
-
-        {% endfor %}
 
     </section>
 
-{% else %}
 
-    <div class="empty">
+    <!-- STATISTICS -->
 
-        <h3>
-            🎨 You haven't created a project yet.
-        </h3>
+    <section class="stats">
 
-        <p>
-            Start your first creative project in Creator Studio.
-        </p>
+        <div class="stat">
 
-        <a class="primary-btn" href="/creator-studio">
-            Open Creator Studio
-        </a>
+            <div class="stat-number">
+                {{ posts|length }}
+            </div>
+
+            <div class="stat-label">
+                Published Posts
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-number">
+                {{ creator_projects|length }}
+            </div>
+
+            <div class="stat-label">
+                Creator Projects
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-number">
+                {{ communities|length }}
+            </div>
+
+            <div class="stat-label">
+                Communities
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MAIN FEATURES -->
+
+    <h2 class="section-title">
+        🚀 Build Your Online Presence
+    </h2>
+
+
+    <div class="cards">
+
+
+        <!-- BLOG -->
+
+        <div class="card">
+
+            <div class="icon">
+                ✍️
+            </div>
+
+            <h3>
+                Blog & Publishing
+            </h3>
+
+            <p>
+                Write articles, stories, opinions, news and useful
+                information and publish them on NijaWebbies.
+            </p>
+
+            <a href="/create-post">
+                Create Post →
+            </a>
+
+        </div>
+
+
+        <!-- CREATOR STUDIO -->
+
+        <div class="card">
+
+            <div class="icon">
+                🎨
+            </div>
+
+            <h3>
+                Creator Studio
+            </h3>
+
+            <p>
+                Create and manage your creative projects,
+                content ideas, videos, artwork and other digital work.
+            </p>
+
+            <a href="/creator-studio">
+                Open Creator Studio →
+            </a>
+
+        </div>
+
+
+        <!-- BUSINESS -->
+
+        <div class="card">
+
+            <div class="icon">
+                🏪
+            </div>
+
+            <h3>
+                Business Space
+            </h3>
+
+            <p>
+                Create your business profile and give customers
+                a simple way to discover your business online.
+            </p>
+
+            <a href="/business-space">
+                Open Business Space →
+            </a>
+
+        </div>
+
+
+        <!-- COMMUNITIES -->
+
+        <div class="card">
+
+            <div class="icon">
+                👥
+            </div>
+
+            <h3>
+                Communities
+            </h3>
+
+            <p>
+                Create and join communities around interests,
+                professions, locations, schools and ideas.
+            </p>
+
+            <a href="/communities">
+                Open Communities →
+            </a>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="card">
+
+            <div class="icon">
+                🔎
+            </div>
+
+            <h3>
+                Web Search
+            </h3>
+
+            <p>
+                Search through content published across
+                the NijaWebbies ecosystem.
+            </p>
+
+            <a href="/search">
+                Search NijaWebbies →
+            </a>
+
+        </div>
+
+
+        <!-- TOOLS -->
+
+        <div class="card">
+
+            <div class="icon">
+                🛠️
+            </div>
+
+            <h3>
+                Free Online Tools
+            </h3>
+
+            <p>
+                Explore useful digital tools designed to help
+                creators, bloggers, businesses and everyday users.
+            </p>
+
+            <a href="/tools">
+                Explore Tools →
+            </a>
+
+        </div>
+
 
     </div>
 
-{% endif %}
+
+    <!-- CREATOR PROJECTS -->
+
+    <h2 class="section-title">
+        🎨 My Creator Projects
+    </h2>
 
 
-<!-- MY POSTS -->
+    {% if creator_projects %}
 
-<h2 class="section-title">
-    📝 My Published Posts
-</h2>
+        <section class="posts">
 
+            {% for project in creator_projects %}
 
-<section class="posts">
+                <div class="post">
 
-    {% if posts %}
+                    <h3>
+                        {{ project["title"] }}
+                    </h3>
 
-        {% for post in posts %}
+                    <small>
+                        {{ project["project_type"] }}
+                        ·
+                        Created {{ project["created_at"] }}
+                    </small>
 
-            <div class="post">
+                    {% if project["description"] %}
 
-                <h3>
-                    {{ post["title"] }}
-                </h3>
+                        <p>
+                            {{ project["description"][:180] }}
 
-                <small>
-                    Published {{ post["created_at"] }}
-                </small>
+                            {% if project["description"]|length > 180 %}
+                                ...
+                            {% endif %}
+                        </p>
 
-                <p>
-
-                    {{ post["content"][:180] }}
-
-                    {% if post["content"]|length > 180 %}
-                        ...
                     {% endif %}
 
-                </p>
+                </div>
 
-                <a href="/post/{{ post['id'] }}">
-                    Read Post →
-                </a>
+            {% endfor %}
 
-            </div>
-
-        {% endfor %}
+        </section>
 
     {% else %}
 
         <div class="empty">
 
             <h3>
-                📝 You haven't published anything yet.
+                🎨 You haven't created a project yet.
             </h3>
 
             <p>
-                Your first article could be the beginning
-                of your NijaWebbies journey.
+                Start your first creative project in Creator Studio.
             </p>
 
-            <a class="primary-btn" href="/create-post">
-                ✍️ Write Your First Post
+            <a
+                class="primary-btn"
+                href="/creator-studio"
+            >
+                Open Creator Studio
             </a>
 
         </div>
 
     {% endif %}
 
-</section>
 
-</main><footer><strong>🇳🇬 NijaWebbies</strong>
+    <!-- MY POSTS -->
 
-<p>
-    A free digital ecosystem for Nigeria, Africa and the world.
-</p>
+    <h2 class="section-title">
+        📝 My Published Posts
+    </h2>
 
-<p>
 
-    <a href="/">Home</a>
+    <section class="posts">
 
-    <a href="/blog">Blog</a>
+        {% if posts %}
 
-    <a href="/search">Search</a>
+            {% for post in posts %}
 
-    <a href="/tools">Tools</a>
+                <div class="post">
 
-    <a href="/logout">Logout</a>
+                    <h3>
+                        {{ post["title"] }}
+                    </h3>
 
-</p>
+                    <small>
+                        Published {{ post["created_at"] }}
+                    </small>
 
-<p>
-    © 2026 NijaWebbies. All rights reserved.
-</p>
+                    <p>
 
-</footer></body></html>
+                        {{ post["content"][:180] }}
+
+                        {% if post["content"]|length > 180 %}
+                            ...
+                        {% endif %}
+
+                    </p>
+
+                    <a href="/post/{{ post['id'] }}">
+                        Read Post →
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+
+                <h3>
+                    📝 You haven't published anything yet.
+                </h3>
+
+                <p>
+                    Your first article could be the beginning
+                    of your NijaWebbies journey.
+                </p>
+
+                <a
+                    class="primary-btn"
+                    href="/create-post"
+                >
+                    ✍️ Write Your First Post
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <strong>
+        🇳🇬 NijaWebbies
+    </strong>
+
+    <p>
+        A free digital ecosystem for Nigeria, Africa and the world.
+    </p>
+
+    <p>
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="/blog">
+            Blog
+        </a>
+
+        <a href="{{ url_for('search') }}">
+            Search
+        </a>
+
+        <a href="{{ url_for('tools') }}">
+            Tools
+        </a>
+
+        <a href="{{ url_for('notifications') }}">
+            🔔 Notifications
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </p>
+
+    <p>
+        © 2026 NijaWebbies. All rights reserved.
+    </p>
+
+</footer>
+
+
+<!-- ==========================================
+     GLOBAL NOTIFICATION COUNT
+========================================== -->
+
+<script>
+
+async function updateGlobalNotificationCount() {
+
+    try {
+
+        const response = await fetch(
+            "{{ url_for('notification_count') }}",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        const badge = document.getElementById(
+            "globalNotificationBadge"
+        );
+
+        if (!badge) {
+            return;
+        }
+
+        const count = Number(
+            data.count || 0
+        );
+
+        if (count > 0) {
+
+            badge.textContent = count;
+
+            badge.style.display = "inline-flex";
+
+        } else {
+
+            badge.textContent = "";
+
+            badge.style.display = "none";
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Notification count update skipped."
+        );
+
+    }
+
+}
+
+
+updateGlobalNotificationCount();
+
+
+setInterval(
+    updateGlobalNotificationCount,
+    30000
+);
+
+</script>
+
+
+</body>
+
+</html>
