@@ -5244,7 +5244,7 @@ def image_generator():
             size=size
         )
 
-        except Exception as error:
+            except Exception as error:
         app.logger.exception(
             "AI IMAGE GENERATION FAILED: %s",
             error
