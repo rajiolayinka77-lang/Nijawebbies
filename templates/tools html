@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Digital Tools - NijaWebbies</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f5;
+            color: #17201b;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e3e8e5;
+            padding: 14px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #087f5b;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 600;
+            color: #35423a;
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: #edf7f2;
+            color: #087f5b;
+        }
+
+        .notification-link {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .notification-badge {
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            background: linear-gradient(
+                135deg,
+                #087f5b,
+                #0b9b70
+            );
+            color: #ffffff;
+            padding: 65px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            margin: 0 0 15px;
+            font-size: 42px;
+        }
+
+        .hero p {
+            max-width: 760px;
+            margin: 0 auto;
+            font-size: 18px;
+            line-height: 1.7;
+            opacity: 0.96;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.16);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 45px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 30px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #68736d;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           AI TOOLS
+        ========================= */
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                3,
+                minmax(0, 1fr)
+            );
+            gap: 22px;
+        }
+
+        .tool-card {
+            background: #ffffff;
+            border: 1px solid #e1e8e4;
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 8px 25px rgba(
+                0,
+                0,
+                0,
+                0.05
+            );
+            transition: transform 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(
+                0,
+                0,
+                0,
+                0.08
+            );
+        }
+
+        .tool-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 29px;
+            background: #eaf7f1;
+            margin-bottom: 18px;
+        }
+
+        .tool-card h3 {
+            margin: 0 0 10px;
+            font-size: 21px;
+        }
+
+        .tool-card p {
+            color: #68736d;
+            line-height: 1.6;
+            min-height: 70px;
+            margin-bottom: 20px;
+        }
+
+        .tool-button {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            background: #087f5b;
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .tool-button:hover {
+            background: #066b4d;
+        }
+
+        .coming-button {
+            background: #e8ecea;
+            color: #59635d;
+            cursor: default;
+        }
+
+        .coming-button:hover {
+            background: #e8ecea;
+        }
+
+        /* =========================
+           AI CREATOR PANEL
+        ========================= */
+
+        .creator-panel {
+            margin-top: 35px;
+            background: #ffffff;
+            border: 1px solid #e1e8e4;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(
+                0,
+                0,
+                0,
+                0.04
+            );
+        }
+
+        .creator-panel h3 {
+            margin-top: 0;
+            font-size: 23px;
+        }
+
+        .creator-panel p {
+            color: #68736d;
+            line-height: 1.6;
+        }
+
+        .prompt-box {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 1px solid #ccd6d1;
+            border-radius: 10px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .prompt-box:focus {
+            border-color: #087f5b;
+            box-shadow: 0 0 0 3px rgba(
+                8,
+                127,
+                91,
+                0.1
+            );
+        }
+
+        .creator-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .creator-actions button {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .generate-button {
+            background: #087f5b;
+            color: #ffffff;
+        }
+
+        .generate-button:hover {
+            background: #066b4d;
+        }
+
+        .clear-button {
+            background: #edf1ef;
+            color: #34413a;
+        }
+
+        .result-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f4f8f6;
+            border: 1px solid #dce7e1;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* =========================
+           EVERYDAY TOOLS
+        ========================= */
+
+        .small-tools {
+            display: grid;
+            grid-template-columns: repeat(
+                4,
+                minmax(0, 1fr)
+            );
+            gap: 16px;
+        }
+
+        .small-tool {
+            background: #ffffff;
+            border: 1px solid #e1e8e4;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .small-tool-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .small-tool h4 {
+            margin: 0 0 8px;
+        }
+
+        .small-tool p {
+            margin: 0;
+            color: #68736d;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           INFO
+        ========================= */
+
+        .info-section {
+            padding: 10px 0 55px;
+        }
+
+        .info-box {
+            background: #eaf7f1;
+            border: 1px solid #cfe9dd;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: #075f45;
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+            color: #405249;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #14221b;
+            color: #dce7e1;
+            padding: 35px 20px;
+            margin-top: 20px;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            width: 92%;
+            margin: auto;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .footer-links a {
+            color: #dce7e1;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        .footer-inner p {
+            margin: 0;
+            font-size: 13px;
+            color: #aab8b0;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 950px) {
+
+            .tools-grid {
+                grid-template-columns: repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+            }
+
+            .small-tools {
+                grid-template-columns: repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .hero {
+                padding: 45px 18px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .small-tools {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+<nav class="navbar">
+
+    <a href="{{ url_for('home') }}"
+       class="logo">
+        🇳🇬 NijaWebbies
+    </a>
+
+    <div class="nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('search') }}">
+            Search
+        </a>
+
+        <a href="{{ url_for('businesses') }}">
+            Businesses
+        </a>
+
+        <a href="{{ url_for('communities') }}">
+            Communities
+        </a>
+
+        <a href="{{ url_for('tools') }}">
+            Tools
+        </a>
+
+        {% if session.get("user_id") %}
+
+            <a href="{{ url_for('workspace') }}">
+                Workspace
+            </a>
+
+            <a href="{{ url_for('notifications') }}"
+               class="notification-link">
+
+                🔔 Notifications
+
+                <span
+                    id="globalNotificationBadge"
+                    class="notification-badge"
+                    style="display: none;">
+                </span>
+
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+            <a href="{{ url_for('register') }}">
+                Register
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="container">
+
+        <div class="hero-badge">
+            ⚡ NijaWebbies Digital Tools
+        </div>
+
+        <h1>
+            Create More. Do More. Online.
+        </h1>
+
+        <p>
+            Powerful digital tools for creators,
+            entrepreneurs, businesses, students and
+            everyday users — built into NijaWebbies.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     AI CREATION TOOLS
+===================================================== -->
+
+<section class="section">
+
+    <div class="container">
+
+        <h2 class="section-title">
+            🤖 AI Creation Studio
+        </h2>
+
+        <p class="section-subtitle">
+            Turn your ideas into images, videos and music.
+            More AI creation features will be connected
+            to the NijaWebbies platform.
+        </p>
+
+
+        <div class="tools-grid">
+
+
+            <!-- IMAGE GENERATOR -->
+
+            <div class="tool-card">
+
+                <div class="tool-icon">
+                    🖼️
+                </div>
+
+                <h3>
+                    AI Image Generator
+                </h3>
+
+                <p>
+                    Describe an image you want and create
+                    visual content for your business,
+                    social media, stories and creative
+                    projects.
+                </p>
+
+                <button
+                    class="tool-button"
+                    onclick="openGenerator('image')">
+
+                    Create Image
+
+                </button>
+
+            </div>
+
+
+            <!-- VIDEO GENERATOR -->
+
+            <div class="tool-card">
+
+                <div class="tool-icon">
+                    🎬
+                </div>
+
+                <h3>
+                    AI Video Generator
+                </h3>
+
+                <p>
+                    Turn an idea or written description
+                    into short video content for stories,
+                    marketing, education and entertainment.
+                </p>
+
+                <button
+                    class="tool-button"
+                    onclick="openGenerator('video')">
+
+                    Create Video
+
+                </button>
+
+            </div>
+
+
+            <!-- MUSIC GENERATOR -->
+
+            <div class="tool-card">
+
+                <div class="tool-icon">
+                    🎵
+                </div>
+
+                <h3>
+                    AI Music Generator
+                </h3>
+
+                <p>
+                    Describe a mood, theme or musical idea
+                    and prepare original music concepts for
+                    your creative projects.
+                </p>
+
+                <button
+                    class="tool-button"
+                    onclick="openGenerator('music')">
+
+                    Create Music
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- GENERATOR WORKSPACE -->
+
+        <div
+            id="creatorPanel"
+            class="creator-panel">
+
+            <h3 id="creatorTitle">
+                ✨ AI Creator
+            </h3>
+
+            <p id="creatorDescription">
+                Choose an AI creation tool above to
+                get started.
+            </p>
+
+            <textarea
+                id="creatorPrompt"
+                class="prompt-box"
+                placeholder="Describe what you want to create..."></textarea>
+
+            <div class="creator-actions">
+
+                <button
+                    class="generate-button"
+                    onclick="startGeneration()">
+
+                    ✨ Generate
+
+                </button>
+
+                <button
+                    class="clear-button"
+                    onclick="clearGenerator()">
+
+                    Clear
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="resultBox"
+                class="result-box">
+
+                <strong>
+                    🚧 AI Generator Connection
+                </strong>
+
+                <span id="resultMessage">
+                    The generator interface is ready.
+                    The AI generation service will be
+                    connected next.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     EVERYDAY DIGITAL TOOLS
+===================================================== -->
+
+<section class="section">
+
+    <div class="container">
+
+        <h2 class="section-title">
+            🧰 Everyday Digital Tools
+        </h2>
+
+        <p class="section-subtitle">
+            More simple and useful online tools for
+            everyday Nigerian and African internet users.
+        </p>
+
+
+        <div class="small-tools">
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    📝
+                </div>
+
+                <h4>
+                    Text Counter
+                </h4>
+
+                <p>
+                    Count words and characters in your text.
+                </p>
+
+            </div>
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    🧮
+                </div>
+
+                <h4>
+                    Calculator
+                </h4>
+
+                <p>
+                    Perform everyday mathematical calculations.
+                </p>
+
+            </div>
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    💰
+                </div>
+
+                <h4>
+                    Percentage Calculator
+                </h4>
+
+                <p>
+                    Calculate percentages quickly and easily.
+                </p>
+
+            </div>
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    🔤
+                </div>
+
+                <h4>
+                    Text Case Converter
+                </h4>
+
+                <p>
+                    Convert text between different cases.
+                </p>
+
+            </div>
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    🔐
+                </div>
+
+                <h4>
+                    Password Generator
+                </h4>
+
+                <p>
+                    Create strong random passwords.
+                </p>
+
+            </div>
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    📅
+                </div>
+
+                <h4>
+                    Age Calculator
+                </h4>
+
+                <p>
+                    Calculate age from a date of birth.
+                </p>
+
+            </div>
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    📏
+                </div>
+
+                <h4>
+                    Unit Converter
+                </h4>
+
+                <p>
+                    Convert common measurements and units.
+                </p>
+
+            </div>
+
+
+            <div class="small-tool">
+
+                <div class="small-tool-icon">
+                    🔗
+                </div>
+
+                <h4>
+                    Link Tools
+                </h4>
+
+                <p>
+                    Useful tools for working with web links.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     INFORMATION
+===================================================== -->
+
+<section class="info-section">
+
+    <div class="container">
+
+        <div class="info-box">
+
+            <h3>
+                🇳🇬 Built for Creators and Businesses
+            </h3>
+
+            <p>
+                NijaWebbies is being developed as a digital
+                ecosystem for Nigeria, Africa and users
+                around the world. Our Digital Tools section
+                will continue growing with useful creation
+                and productivity features.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div class="footer-inner">
+
+        <div class="footer-links">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('search') }}">
+                Search
+            </a>
+
+            <a href="{{ url_for('businesses') }}">
+                Businesses
+            </a>
+
+            <a href="{{ url_for('communities') }}">
+                Communities
+            </a>
+
+            <a href="{{ url_for('tools') }}">
+                Digital Tools
+            </a>
+
+            {% if session.get("user_id") %}
+
+                <a href="{{ url_for('workspace') }}">
+                    Workspace
+                </a>
+
+                <a href="{{ url_for('notifications') }}">
+                    🔔 Notifications
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        <p>
+            © 2026 NijaWebbies.
+            Built for Nigeria, Africa and the world.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+let currentGenerator = null;
+
+
+function openGenerator(type) {
+
+    currentGenerator = type;
+
+    const title =
+        document.getElementById("creatorTitle");
+
+    const description =
+        document.getElementById("creatorDescription");
+
+    const prompt =
+        document.getElementById("creatorPrompt");
+
+    const panel =
+        document.getElementById("creatorPanel");
+
+    const resultBox =
+        document.getElementById("resultBox");
+
+
+    resultBox.classList.remove("show");
+
+
+    if (type === "image") {
+
+        title.textContent =
+            "🖼️ AI Image Generator";
+
+        description.textContent =
+            "Describe the image you want to create.";
+
+        prompt.placeholder =
+            "Example: A beautiful Lagos street at sunset, cinematic photography...";
+
+    }
+
+
+    else if (type === "video") {
+
+        title.textContent =
+            "🎬 AI Video Generator";
+
+        description.textContent =
+            "Describe the video you want to create.";
+
+        prompt.placeholder =
+            "Example: A young Nigerian entrepreneur opening a modern shop in Lagos...";
+
+    }
+
+
+    else if (type === "music") {
+
+        title.textContent =
+            "🎵 AI Music Generator";
+
+        description.textContent =
+            "Describe the music you want to create.";
+
+        prompt.placeholder =
+            "Example: An energetic Afrobeat instrumental for a business advertisement...";
+
+    }
+
+
+    panel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+function startGeneration() {
+
+    const prompt =
+        document.getElementById("creatorPrompt");
+
+    const resultBox =
+        document.getElementById("resultBox");
+
+    const resultMessage =
+        document.getElementById("resultMessage");
+
+
+    const text =
+        prompt.value.trim();
+
+
+    if (!currentGenerator) {
+
+        alert(
+            "Please choose an AI creation tool first."
+        );
+
+        return;
+
+    }
+
+
+    if (!text) {
+
+        alert(
+            "Please describe what you want to create."
+        );
+
+        prompt.focus();
+
+        return;
+
+    }
+
+
+    let toolName = "AI Creator";
+
+
+    if (currentGenerator === "image") {
+        toolName = "AI Image Generator";
+    }
+
+    if (currentGenerator === "video") {
+        toolName = "AI Video Generator";
+    }
+
+    if (currentGenerator === "music") {
+        toolName = "AI Music Generator";
+    }
+
+
+    resultMessage.textContent =
+        toolName +
+        " is ready for connection to the AI generation service. " +
+        "Your prompt has been prepared successfully.";
+
+
+    resultBox.classList.add("show");
+
+
+    resultBox.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+
+}
+
+
+function clearGenerator() {
+
+    document.getElementById(
+        "creatorPrompt"
+    ).value = "";
+
+    document.getElementById(
+        "resultBox"
+    ).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   GLOBAL NOTIFICATION COUNT
+===================================================== */
+
+{% if session.get("user_id") %}
+
+async function updateGlobalNotificationCount() {
+
+    try {
+
+        const response = await fetch(
+            "{{ url_for('notification_count') }}",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            }
+        );
+
+
+        if (!response.ok) {
+            return;
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const badge =
+            document.getElementById(
+                "globalNotificationBadge"
+            );
+
+
+        if (!badge) {
+            return;
+        }
+
+
+        const count =
+            Number(data.count || 0);
+
+
+        if (count > 0) {
+
+            badge.textContent =
+                count;
+
+            badge.style.display =
+                "inline-flex";
+
+        }
+
+        else {
+
+            badge.textContent =
+                "";
+
+            badge.style.display =
+                "none";
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Notification count update skipped."
+        );
+
+    }
+
+}
+
+
+updateGlobalNotificationCount();
+
+
+setInterval(
+    updateGlobalNotificationCount,
+    30000
+);
+
+{% endif %}
+
+</script>
+
+
+</body>
+
+</html>
