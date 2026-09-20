@@ -37,6 +37,8 @@
         }
 
         .brand {
+            color: white;
+            text-decoration: none;
             font-size: 24px;
             font-weight: bold;
         }
@@ -45,6 +47,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            align-items: center;
         }
 
         nav a {
@@ -56,6 +59,27 @@
 
         nav a:hover {
             background: rgba(255,255,255,0.12);
+        }
+
+        .notification-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-badge {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 20px;
+            background: #dc2626;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
         }
 
         .hero {
@@ -251,7 +275,19 @@
             text-decoration: none;
         }
 
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-notification {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
         @media (max-width: 850px) {
+
             .business-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -259,9 +295,11 @@
             .filter-grid {
                 grid-template-columns: 1fr;
             }
+
         }
 
         @media (max-width: 560px) {
+
             .header-inner {
                 flex-direction: column;
                 align-items: flex-start;
@@ -288,6 +326,7 @@
                 text-align: center;
                 width: 100%;
             }
+
         }
     </style>
 </head>
@@ -295,32 +334,80 @@
 <body>
 
 <header>
+
     <div class="header-inner">
 
-        <div class="brand">
+        <a
+            href="{{ url_for('home') }}"
+            class="brand"
+        >
             🇳🇬 NijaWebbies
-        </div>
+        </a>
 
         <nav>
-            <a href="{{ url_for('workspace') }}">Workspace</a>
-            <a href="{{ url_for('blog') }}">Blog</a>
-            <a href="{{ url_for('communities') }}">Communities</a>
-            <a href="{{ url_for('businesses') }}">Businesses</a>
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('search') }}">
+                Search
+            </a>
+
+            <a href="{{ url_for('businesses') }}">
+                Businesses
+            </a>
+
+            <a href="{{ url_for('communities') }}">
+                Communities
+            </a>
+
+            <a href="{{ url_for('tools') }}">
+                Tools
+            </a>
 
             {% if session.get("user_id") %}
-                <a href="{{ url_for('logout') }}">Logout</a>
+
+                <a href="{{ url_for('workspace') }}">
+                    Workspace
+                </a>
+
+                <a
+                    href="{{ url_for('notifications') }}"
+                    class="notification-nav"
+                >
+                    🔔 Notifications
+
+                    <span
+                        id="globalNotificationBadge"
+                        class="notification-badge"
+                    ></span>
+                </a>
+
+                <a href="{{ url_for('logout') }}">
+                    Logout
+                </a>
+
             {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
+
+                <a href="{{ url_for('login') }}">
+                    Login
+                </a>
+
             {% endif %}
+
         </nav>
 
     </div>
+
 </header>
 
 
 <section class="hero">
 
-    <h1>🏪 Discover Businesses</h1>
+    <h1>
+        🏪 Discover Businesses
+    </h1>
 
     <p>
         Find businesses, entrepreneurs, creators and services
@@ -403,7 +490,10 @@
 
     {% if businesses %}
 
-        <div class="business-grid" id="businessGrid">
+        <div
+            class="business-grid"
+            id="businessGrid"
+        >
 
             {% for business in businesses %}
 
@@ -561,11 +651,136 @@
         A digital ecosystem for Nigeria, Africa and the world.
     </p>
 
+    <p>
+        <a
+            href="{{ url_for('notifications') }}"
+            class="footer-notification"
+        >
+            🔔 Notifications
+
+            <span
+                id="footerNotificationBadge"
+                class="notification-badge"
+            ></span>
+        </a>
+    </p>
+
     <a href="{{ url_for('workspace') }}">
         ← Back to Workspace
     </a>
 
 </footer>
+
+
+{% if session.get("user_id") %}
+
+<script>
+
+async function updateGlobalNotificationCount() {
+
+    try {
+
+        const response = await fetch(
+            "{{ url_for('notification_count') }}",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        const count =
+            Number(data.count || 0);
+
+
+        const headerBadge =
+            document.getElementById(
+                "globalNotificationBadge"
+            );
+
+
+        const footerBadge =
+            document.getElementById(
+                "footerNotificationBadge"
+            );
+
+
+        if (count > 0) {
+
+            if (headerBadge) {
+
+                headerBadge.textContent =
+                    count;
+
+                headerBadge.style.display =
+                    "inline-flex";
+
+            }
+
+
+            if (footerBadge) {
+
+                footerBadge.textContent =
+                    count;
+
+                footerBadge.style.display =
+                    "inline-flex";
+
+            }
+
+        } else {
+
+            if (headerBadge) {
+
+                headerBadge.textContent =
+                    "";
+
+                headerBadge.style.display =
+                    "none";
+
+            }
+
+
+            if (footerBadge) {
+
+                footerBadge.textContent =
+                    "";
+
+                footerBadge.style.display =
+                    "none";
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Notification count update skipped."
+        );
+
+    }
+
+}
+
+
+updateGlobalNotificationCount();
+
+
+setInterval(
+    updateGlobalNotificationCount,
+    30000
+);
+
+</script>
+
+{% endif %}
 
 
 <script>
