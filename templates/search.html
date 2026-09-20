@@ -47,12 +47,38 @@
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
+            align-items: center;
         }
 
         nav a {
             color: white;
             text-decoration: none;
             font-size: 14px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .notification-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-badge {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 20px;
+            background: #dc2626;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
         }
 
         main {
@@ -171,6 +197,10 @@
             text-decoration: none;
         }
 
+        .card h3 a:hover {
+            text-decoration: underline;
+        }
+
         .card p {
             color: #666;
             line-height: 1.55;
@@ -194,6 +224,10 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 14px;
+        }
+
+        .view:hover {
+            text-decoration: underline;
         }
 
         .empty {
@@ -220,7 +254,17 @@
             font-size: 14px;
         }
 
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 850px) {
+
             .search-form {
                 grid-template-columns: 1fr 1fr;
             }
@@ -228,12 +272,18 @@
             .grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
         }
 
         @media (max-width: 600px) {
+
             .header-inner {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            nav {
+                gap: 10px;
             }
 
             .search-form {
@@ -247,6 +297,7 @@
             main {
                 padding: 30px 15px 50px;
             }
+
         }
     </style>
 </head>
@@ -254,28 +305,72 @@
 <body>
 
 <header>
+
     <div class="header-inner">
 
-        <a href="{{ url_for('home') }}" class="brand">
+        <a
+            href="{{ url_for('home') }}"
+            class="brand"
+        >
             🇳🇬 NijaWebbies
         </a>
 
         <nav>
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('search') }}">Explore</a>
-            <a href="{{ url_for('businesses') }}">Businesses</a>
-            <a href="{{ url_for('communities') }}">Communities</a>
-            <a href="{{ url_for('tools') }}">Tools</a>
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('search') }}">
+                Explore
+            </a>
+
+            <a href="{{ url_for('businesses') }}">
+                Businesses
+            </a>
+
+            <a href="{{ url_for('communities') }}">
+                Communities
+            </a>
+
+            <a href="{{ url_for('tools') }}">
+                Tools
+            </a>
 
             {% if session.get("user_id") %}
-                <a href="{{ url_for('workspace') }}">Workspace</a>
-                <a href="{{ url_for('logout') }}">Logout</a>
+
+                <a href="{{ url_for('workspace') }}">
+                    Workspace
+                </a>
+
+                <a
+                    href="{{ url_for('notifications') }}"
+                    class="notification-nav"
+                >
+                    🔔 Notifications
+
+                    <span
+                        id="globalNotificationBadge"
+                        class="notification-badge"
+                    ></span>
+                </a>
+
+                <a href="{{ url_for('logout') }}">
+                    Logout
+                </a>
+
             {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
+
+                <a href="{{ url_for('login') }}">
+                    Login
+                </a>
+
             {% endif %}
+
         </nav>
 
     </div>
+
 </header>
 
 
@@ -283,7 +378,9 @@
 
     <section class="hero">
 
-        <h1>🔎 Explore NijaWebbies</h1>
+        <h1>
+            🔎 Explore NijaWebbies
+        </h1>
 
         <p>
             Discover businesses, articles and communities
@@ -360,9 +457,12 @@
 
         <section class="summary">
 
-            <h2>Search Results</h2>
+            <h2>
+                Search Results
+            </h2>
 
             <p>
+
                 <span class="count">
                     {{ total_results }}
                 </span>
@@ -381,6 +481,7 @@
                 {% if location %}
                     near <strong>{{ location }}</strong>
                 {% endif %}
+
             </p>
 
         </section>
@@ -434,11 +535,13 @@
                             {% if business.description %}
 
                                 <p>
+
                                     {{ business.description[:180] }}
 
                                     {% if business.description|length > 180 %}
                                         ...
                                     {% endif %}
+
                                 </p>
 
                             {% endif %}
@@ -504,11 +607,13 @@
                             {% if post.content %}
 
                                 <p>
+
                                     {{ post.content[:180] }}
 
                                     {% if post.content|length > 180 %}
                                         ...
                                     {% endif %}
+
                                 </p>
 
                             {% endif %}
@@ -565,11 +670,13 @@
                             {% if community.description %}
 
                                 <p>
+
                                     {{ community.description[:180] }}
 
                                     {% if community.description|length > 180 %}
                                         ...
                                     {% endif %}
+
                                 </p>
 
                             {% endif %}
@@ -643,10 +750,90 @@
     </p>
 
     <p>
+        <a href="{{ url_for('notifications') }}">
+            🔔 Notifications
+        </a>
+    </p>
+
+    <p>
         © 2026 NijaWebbies. All rights reserved.
     </p>
 
 </footer>
+
+
+{% if session.get("user_id") %}
+
+<script>
+
+async function updateGlobalNotificationCount() {
+
+    try {
+
+        const response = await fetch(
+            "{{ url_for('notification_count') }}",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        const badge = document.getElementById(
+            "globalNotificationBadge"
+        );
+
+        if (!badge) {
+            return;
+        }
+
+        const count = Number(
+            data.count || 0
+        );
+
+        if (count > 0) {
+
+            badge.textContent = count;
+
+            badge.style.display = "inline-flex";
+
+        } else {
+
+            badge.textContent = "";
+
+            badge.style.display = "none";
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Notification count update skipped."
+        );
+
+    }
+
+}
+
+
+updateGlobalNotificationCount();
+
+
+setInterval(
+    updateGlobalNotificationCount,
+    30000
+);
+
+</script>
+
+{% endif %}
+
 
 </body>
 </html>
