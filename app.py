@@ -5259,19 +5259,63 @@ def music_studio():
 # =========================================================
 # TEXT COUNTER
 # =========================================================
+# =========================================================
+# VIDEO STUDIO
+# =========================================================
+
+@app.route("/tools/video")
+@login_required
+def video_studio():
+    return render_template(
+        "video_studio.html",
+        user_name=session.get("user_name")
+    )
+
+
+# =========================================================
+# MUSIC STUDIO
+# =========================================================
+
+@app.route("/tools/music")
+@login_required
+def music_studio():
+    return render_template(
+        "music_studio.html",
+        user_name=session.get("user_name")
+    )
+
+
+# =========================================================
+# TEXT COUNTER
+# =========================================================
+
 @app.route("/tools/text-counter")
 def text_counter():
-    return render_template("text_counter.html")
+    return render_template(
+        "text_counter.html"
+    )
 
+
+# =========================================================
+# CALCULATOR
+# =========================================================
 
 @app.route("/tools/calculator")
 def calculator():
-    return render_template("calculator.html")
+    return render_template(
+        "calculator.html"
+    )
 
+
+# =========================================================
+# DIGITAL TOOLS
+# =========================================================
 
 @app.route("/tools")
 def tools():
-    return render_template("tools.html")
+    return render_template(
+        "tools.html"
+    )
 # =========================================================
 # 404 ERROR
 # =========================================================
