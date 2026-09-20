@@ -91,7 +91,7 @@
             border-radius: 14px;
             padding: 22px;
             margin-bottom: 18px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
         }
 
         .page-header h1 {
@@ -151,7 +151,7 @@
             background: white;
             border-radius: 13px;
             padding: 17px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
             border-left: 4px solid transparent;
         }
 
@@ -241,7 +241,7 @@
             border-radius: 14px;
             padding: 50px 25px;
             text-align: center;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
         }
 
         .empty-icon {
@@ -256,6 +256,7 @@
         .empty-state p {
             color: #6b7280;
             margin: 0;
+            line-height: 1.6;
         }
 
         .flash-container {
@@ -346,7 +347,7 @@
             Search
         </a>
 
-        <a href="{{ url_for('business_directory') }}">
+        <a href="{{ url_for('businesses') }}">
             Businesses
         </a>
 
@@ -368,9 +369,11 @@
             🔔 Notifications
 
             {% if unread_count > 0 %}
+
                 <span class="notification-badge">
                     {{ unread_count }}
                 </span>
+
             {% endif %}
 
         </a>
@@ -432,7 +435,6 @@
 
             </div>
 
-
             <div>
 
                 {% if unread_count > 0 %}
@@ -459,8 +461,7 @@
             <div style="margin-top:15px;">
 
                 <form method="POST"
-                      action="{{ url_for('mark_all_notifications_read') }}"
-                      class="mark-all-form">
+                      action="{{ url_for('mark_all_notifications_read') }}">
 
                     <button type="submit"
                             class="mark-all-btn">
@@ -479,7 +480,7 @@
 
 
     <!-- =====================================================
-         NOTIFICATIONS
+         NOTIFICATION LIST
          ===================================================== -->
 
     {% if notifications %}
@@ -494,11 +495,10 @@
                     {% endif %}
                 ">
 
-
                     <div class="notification-content">
 
 
-                        <!-- ICON -->
+                        <!-- NOTIFICATION ICON -->
 
                         <div class="notification-icon">
 
@@ -527,7 +527,7 @@
                         </div>
 
 
-                        <!-- BODY -->
+                        <!-- NOTIFICATION BODY -->
 
                         <div class="notification-body">
 
@@ -572,12 +572,14 @@
 
                             <div class="notification-time">
 
-                                {{ notification.created_at.strftime("%d %b %Y, %I:%M %p") }}
+                                {{ notification.created_at.strftime(
+                                    "%d %b %Y, %I:%M %p"
+                                ) }}
 
                             </div>
 
 
-                            <!-- ACTIONS -->
+                            <!-- ACTION BUTTONS -->
 
                             <div class="notification-actions">
 
@@ -676,17 +678,19 @@
 </div>
 
 
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
 <footer>
 
-    © {{ now().year if now is defined else "" }}
-    NijaWebbies.
-    Built for Nigeria & Africa.
+    NijaWebbies · Built for Nigeria & Africa.
 
 </footer>
 
 
 <!-- =========================================================
-     OPTIONAL LIVE UNREAD COUNT
+     LIVE UNREAD COUNT
      ========================================================= -->
 
 <script>
@@ -710,11 +714,13 @@
                     ".notification-badge"
                 );
 
+
             if (data.count > 0) {
 
                 if (badge) {
 
-                    badge.textContent = data.count;
+                    badge.textContent =
+                        data.count;
 
                 } else {
 
@@ -726,7 +732,9 @@
                     if (link) {
 
                         const newBadge =
-                            document.createElement("span");
+                            document.createElement(
+                                "span"
+                            );
 
                         newBadge.className =
                             "notification-badge";
@@ -734,7 +742,9 @@
                         newBadge.textContent =
                             data.count;
 
-                        link.appendChild(newBadge);
+                        link.appendChild(
+                            newBadge
+                        );
 
                     }
 
