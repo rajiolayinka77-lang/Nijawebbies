@@ -5256,11 +5256,11 @@ def image_generator():
             "danger"
         )
 
-         return render_template(
-    "image_generator.html",
-    prompt=prompt,
-    size=size
-)
+             return render_template(
+        "image_generator.html",
+        prompt=prompt,
+        size=size
+    )
 
 
 @app.route("/tools")
