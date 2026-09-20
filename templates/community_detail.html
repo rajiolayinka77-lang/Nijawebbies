@@ -70,6 +70,31 @@
         }
 
         /* =====================================================
+           NOTIFICATION NAVIGATION
+        ===================================================== */
+
+        .notification-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-badge {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        /* =====================================================
            PAGE
         ===================================================== */
 
@@ -704,43 +729,56 @@
 
         <nav class="nav">
 
-            <a href="/">
+            <a href="{{ url_for('home') }}">
                 Home
             </a>
 
-            <a href="/search">
+            <a href="{{ url_for('search') }}">
                 Search
             </a>
 
-            <a href="/businesses">
+            <a href="{{ url_for('businesses') }}">
                 Businesses
             </a>
 
-            <a href="/communities">
+            <a href="{{ url_for('communities') }}">
                 Communities
             </a>
 
-            <a href="/tools">
+            <a href="{{ url_for('tools') }}">
                 Tools
             </a>
 
             {% if is_logged_in %}
 
-                <a href="/workspace">
+                <a href="{{ url_for('workspace') }}">
                     Workspace
                 </a>
 
-                <a href="/logout">
+                <a
+                    href="{{ url_for('notifications') }}"
+                    class="notification-nav"
+                >
+                    🔔 Notifications
+
+                    <span
+                        id="globalNotificationBadge"
+                        class="notification-badge"
+                    ></span>
+
+                </a>
+
+                <a href="{{ url_for('logout') }}">
                     Logout
                 </a>
 
             {% else %}
 
-                <a href="/login">
+                <a href="{{ url_for('login') }}">
                     Login
                 </a>
 
-                <a href="/register">
+                <a href="{{ url_for('register') }}">
                     Join Free
                 </a>
 
@@ -877,7 +915,7 @@
             {% else %}
 
                 <a
-                    href="/login"
+                    href="{{ url_for('login') }}"
                     class="btn btn-primary"
                 >
                     Login to Join
@@ -997,7 +1035,7 @@
 
                         Please
 
-                        <a href="/login">
+                        <a href="{{ url_for('login') }}">
                             log in
                         </a>
 
@@ -1030,7 +1068,10 @@
 
                         {% set post_like_count = like_counts.get(post.id, 0) %}
 
-                        <article class="discussion">
+                        <article
+                            class="discussion"
+                            id="post-{{ post.id }}"
+                        >
 
 
                             <!-- =================================
@@ -1209,7 +1250,10 @@
 
                                     {% for comment in post_comments %}
 
-                                        <div class="comment">
+                                        <div
+                                            class="comment"
+                                            id="comment-{{ comment.id }}"
+                                        >
 
 
                                             <div class="comment-header">
@@ -1352,7 +1396,10 @@
 
                                                     {% for reply in comment_replies %}
 
-                                                        <div class="reply">
+                                                        <div
+                                                            class="reply"
+                                                            id="comment-{{ reply.id }}"
+                                                        >
 
 
                                                             <div class="comment-header">
@@ -1661,6 +1708,79 @@
 ========================================================= -->
 
 <script>
+
+
+    /* =====================================================
+       GLOBAL NOTIFICATION COUNT
+    ===================================================== */
+
+    {% if is_logged_in %}
+
+    async function updateGlobalNotificationCount() {
+
+        try {
+
+            const response = await fetch(
+                "{{ url_for('notification_count') }}",
+                {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store"
+                }
+            );
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+
+            const badge =
+                document.getElementById(
+                    "globalNotificationBadge"
+                );
+
+            if (!badge) {
+                return;
+            }
+
+            const count =
+                Number(data.count || 0);
+
+            if (count > 0) {
+
+                badge.textContent = count;
+
+                badge.style.display = "inline-flex";
+
+            } else {
+
+                badge.textContent = "";
+
+                badge.style.display = "none";
+
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Notification count update skipped."
+            );
+
+        }
+
+    }
+
+
+    updateGlobalNotificationCount();
+
+
+    setInterval(
+        updateGlobalNotificationCount,
+        30000
+    );
+
+    {% endif %}
 
 
     /* =====================================================
