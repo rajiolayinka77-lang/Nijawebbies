@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Communities - NijaWebbies</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -32,6 +39,7 @@
             font-size: 20px;
             font-weight: bold;
             margin-right: 10px;
+            text-decoration: none;
         }
 
         nav a {
@@ -42,6 +50,40 @@
 
         nav a:hover {
             color: white;
+        }
+
+        /* =========================
+           NOTIFICATION NAVIGATION
+           ========================= */
+
+        .notification-nav {
+            position: relative;
+            background: rgba(255,255,255,0.10);
+            padding: 7px 9px;
+            border-radius: 7px;
+            color: white !important;
+        }
+
+        .notification-nav:hover {
+            background: rgba(255,255,255,0.20);
+            text-decoration: none;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            margin-left: 4px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1;
+            vertical-align: middle;
         }
 
         .container {
@@ -366,6 +408,7 @@
             .search-actions .btn {
                 flex: 1;
             }
+
         }
 
         @media (max-width: 500px) {
@@ -408,37 +451,50 @@
             .community-actions form .btn {
                 width: 100%;
             }
+
         }
+
     </style>
+
 </head>
 
 <body>
 
+
 <nav>
 
-    <div class="brand">
+    <a
+        href="{{ url_for('home') }}"
+        class="brand"
+    >
         🇳🇬 NijaWebbies
-    </div>
+    </a>
+
 
     <a href="{{ url_for('home') }}">
         Home
     </a>
 
+
     <a href="{{ url_for('search') }}">
         Search
     </a>
+
 
     <a href="{{ url_for('businesses') }}">
         Businesses
     </a>
 
+
     <a href="{{ url_for('communities') }}">
         Communities
     </a>
 
+
     <a href="{{ url_for('tools') }}">
         Tools
     </a>
+
 
     {% if is_logged_in %}
 
@@ -446,15 +502,36 @@
             Workspace
         </a>
 
+
+        <!-- GLOBAL NOTIFICATIONS -->
+
+        <a
+            href="{{ url_for('notifications') }}"
+            class="notification-nav"
+        >
+
+            🔔 Notifications
+
+            <span
+                class="notification-badge"
+                id="globalNotificationBadge"
+                style="display:none;"
+            ></span>
+
+        </a>
+
+
         <a href="{{ url_for('logout') }}">
             Logout
         </a>
+
 
     {% else %}
 
         <a href="{{ url_for('login') }}">
             Login
         </a>
+
 
         <a href="{{ url_for('register') }}">
             Register
@@ -466,6 +543,7 @@
 
 
 <div class="container">
+
 
     <!-- =========================
          HERO
@@ -908,6 +986,7 @@
                                 🔎 Search
                             </button>
 
+
                             <button
                                 type="button"
                                 class="btn btn-clear"
@@ -1035,9 +1114,7 @@
                                         {% if community.id in joined_community_ids %}
 
 
-                                            <!-- =========================
-                                                 MEMBER
-                                                 ========================= -->
+                                            <!-- MEMBER -->
 
                                             <span class="btn btn-disabled">
                                                 ✓ Joined
@@ -1075,9 +1152,7 @@
                                         {% else %}
 
 
-                                            <!-- =========================
-                                                 JOIN FREE
-                                                 ========================= -->
+                                            <!-- JOIN FREE -->
 
                                             <form
                                                 method="POST"
@@ -1100,9 +1175,7 @@
                                     {% else %}
 
 
-                                        <!-- =========================
-                                             NOT LOGGED IN
-                                             ========================= -->
+                                        <!-- NOT LOGGED IN -->
 
                                         <a
                                             href="{{ url_for('login', next=url_for('community_detail', community_id=community.id)) }}"
@@ -1183,249 +1256,375 @@
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    const searchInput =
-        document.getElementById("community-search");
+        const searchInput =
+            document.getElementById(
+                "community-search"
+            );
 
-    const categorySelect =
-        document.getElementById("community-category");
+        const categorySelect =
+            document.getElementById(
+                "community-category"
+            );
 
-    const searchButton =
-        document.getElementById("search-community-button");
+        const searchButton =
+            document.getElementById(
+                "search-community-button"
+            );
 
-    const clearButton =
-        document.getElementById("clear-community-filters");
+        const clearButton =
+            document.getElementById(
+                "clear-community-filters"
+            );
 
-    const resultCount =
-        document.getElementById("community-result-count");
+        const resultCount =
+            document.getElementById(
+                "community-result-count"
+            );
 
-    const resultMessage =
-        document.getElementById("search-results-message");
+        const resultMessage =
+            document.getElementById(
+                "search-results-message"
+            );
 
-    const noResults =
-        document.getElementById("no-search-results");
+        const noResults =
+            document.getElementById(
+                "no-search-results"
+            );
 
-    const communityCards =
-        document.querySelectorAll(".discover-community");
-
-
-    function filterCommunities() {
-
-        if (!searchInput || !categorySelect) {
-            return;
-        }
-
-
-        const searchTerm =
-            searchInput.value.trim().toLowerCase();
-
-        const selectedCategory =
-            categorySelect.value.trim().toLowerCase();
-
-
-        let visibleCount = 0;
-
-
-        communityCards.forEach(function (card) {
-
-            const name =
-                card.dataset.name || "";
-
-            const description =
-                card.dataset.description || "";
-
-            const category =
-                card.dataset.category || "";
-
-            const owner =
-                card.dataset.owner || "";
+        const communityCards =
+            document.querySelectorAll(
+                ".discover-community"
+            );
 
 
-            const matchesSearch =
-                !searchTerm ||
-                name.includes(searchTerm) ||
-                description.includes(searchTerm) ||
-                category.includes(searchTerm) ||
-                owner.includes(searchTerm);
-
-
-            const matchesCategory =
-                !selectedCategory ||
-                category === selectedCategory;
-
+        function filterCommunities() {
 
             if (
-                matchesSearch &&
-                matchesCategory
+                !searchInput ||
+                !categorySelect
             ) {
-
-                card.style.display = "block";
-
-                visibleCount++;
-
-            } else {
-
-                card.style.display = "none";
-
+                return;
             }
 
-        });
+
+            const searchTerm =
+                searchInput.value
+                    .trim()
+                    .toLowerCase();
 
 
-        if (resultCount) {
-
-            resultCount.textContent =
-                visibleCount +
-                (
-                    visibleCount === 1
-                        ? " community"
-                        : " communities"
-                );
-
-        }
+            const selectedCategory =
+                categorySelect.value
+                    .trim()
+                    .toLowerCase();
 
 
-        if (resultMessage) {
+            let visibleCount = 0;
 
-            if (
-                searchTerm ||
-                selectedCategory
-            ) {
 
-                resultMessage.textContent =
-                    "Showing " +
+            communityCards.forEach(
+                function (card) {
+
+                    const name =
+                        card.dataset.name || "";
+
+                    const description =
+                        card.dataset.description || "";
+
+                    const category =
+                        card.dataset.category || "";
+
+                    const owner =
+                        card.dataset.owner || "";
+
+
+                    const matchesSearch =
+                        !searchTerm ||
+                        name.includes(searchTerm) ||
+                        description.includes(searchTerm) ||
+                        category.includes(searchTerm) ||
+                        owner.includes(searchTerm);
+
+
+                    const matchesCategory =
+                        !selectedCategory ||
+                        category === selectedCategory;
+
+
+                    if (
+                        matchesSearch &&
+                        matchesCategory
+                    ) {
+
+                        card.style.display =
+                            "block";
+
+                        visibleCount++;
+
+                    } else {
+
+                        card.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+
+            if (resultCount) {
+
+                resultCount.textContent =
                     visibleCount +
                     (
                         visibleCount === 1
-                            ? " matching community."
-                            : " matching communities."
+                            ? " community"
+                            : " communities"
                     );
 
-            } else {
+            }
 
-                resultMessage.textContent = "";
+
+            if (resultMessage) {
+
+                if (
+                    searchTerm ||
+                    selectedCategory
+                ) {
+
+                    resultMessage.textContent =
+                        "Showing " +
+                        visibleCount +
+                        (
+                            visibleCount === 1
+                                ? " matching community."
+                                : " matching communities."
+                        );
+
+                } else {
+
+                    resultMessage.textContent =
+                        "";
+
+                }
+
+            }
+
+
+            if (noResults) {
+
+                if (
+                    visibleCount === 0 &&
+                    communityCards.length > 0
+                ) {
+
+                    noResults.style.display =
+                        "block";
+
+                } else {
+
+                    noResults.style.display =
+                        "none";
+
+                }
 
             }
 
         }
 
 
-        if (noResults) {
+        /* =========================
+           SEARCH BUTTON
+           ========================= */
 
-            if (
-                visibleCount === 0 &&
-                communityCards.length > 0
-            ) {
+        if (searchButton) {
 
-                noResults.style.display = "block";
-
-            } else {
-
-                noResults.style.display = "none";
-
-            }
-
-        }
-
-    }
-
-
-    /* =========================
-       SEARCH BUTTON
-       ========================= */
-
-    if (searchButton) {
-
-        searchButton.addEventListener(
-            "click",
-            function () {
-
-                filterCommunities();
-
-            }
-        );
-
-    }
-
-
-    /* =========================
-       PRESS ENTER TO SEARCH
-       ========================= */
-
-    if (searchInput) {
-
-        searchInput.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
+            searchButton.addEventListener(
+                "click",
+                function () {
 
                     filterCommunities();
 
                 }
+            );
 
-            }
-        );
-
-    }
+        }
 
 
-    /* =========================
-       CATEGORY FILTER
-       ========================= */
+        /* =========================
+           PRESS ENTER TO SEARCH
+           ========================= */
 
-    if (categorySelect) {
+        if (searchInput) {
 
-        categorySelect.addEventListener(
-            "change",
-            function () {
+            searchInput.addEventListener(
+                "keydown",
+                function (event) {
 
-                filterCommunities();
+                    if (
+                        event.key === "Enter"
+                    ) {
 
-            }
-        );
+                        event.preventDefault();
 
-    }
+                        filterCommunities();
 
+                    }
 
-    /* =========================
-       CLEAR BUTTON
-       ========================= */
-
-    if (clearButton) {
-
-        clearButton.addEventListener(
-            "click",
-            function () {
-
-                if (searchInput) {
-                    searchInput.value = "";
                 }
+            );
 
-                if (categorySelect) {
-                    categorySelect.value = "";
+        }
+
+
+        /* =========================
+           CATEGORY FILTER
+           ========================= */
+
+        if (categorySelect) {
+
+            categorySelect.addEventListener(
+                "change",
+                function () {
+
+                    filterCommunities();
+
                 }
+            );
 
-                filterCommunities();
+        }
 
+
+        /* =========================
+           CLEAR BUTTON
+           ========================= */
+
+        if (clearButton) {
+
+            clearButton.addEventListener(
+                "click",
+                function () {
+
+                    if (searchInput) {
+                        searchInput.value = "";
+                    }
+
+                    if (categorySelect) {
+                        categorySelect.value = "";
+                    }
+
+                    filterCommunities();
+
+                }
+            );
+
+        }
+
+
+        /* =========================
+           INITIAL DISPLAY
+           ========================= */
+
+        filterCommunities();
+
+    }
+);
+
+
+/* ==========================================
+   GLOBAL NOTIFICATION COUNT
+   ========================================== */
+
+async function updateGlobalNotificationCount() {
+
+    try {
+
+        const response = await fetch(
+            "{{ url_for('notification_count') }}",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
             }
+        );
+
+
+        if (!response.ok) {
+            return;
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const badge =
+            document.getElementById(
+                "globalNotificationBadge"
+            );
+
+
+        if (!badge) {
+            return;
+        }
+
+
+        const count =
+            Number(data.count || 0);
+
+
+        if (count > 0) {
+
+            badge.textContent =
+                count;
+
+            badge.style.display =
+                "inline-flex";
+
+        } else {
+
+            badge.textContent =
+                "";
+
+            badge.style.display =
+                "none";
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Notification count update skipped."
         );
 
     }
 
+}
 
-    /* =========================
-       INITIAL DISPLAY
-       ========================= */
 
-    filterCommunities();
+/* ==========================================
+   INITIAL NOTIFICATION COUNT
+   ========================================== */
 
-});
+{% if is_logged_in %}
+
+updateGlobalNotificationCount();
+
+
+setInterval(
+    updateGlobalNotificationCount,
+    30000
+);
+
+{% endif %}
 
 </script>
 
+
 </body>
+
 </html>
