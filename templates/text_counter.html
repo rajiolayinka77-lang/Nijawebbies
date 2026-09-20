@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Text Counter — NijaWebbies</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        nav {
+            background: #111827;
+            padding: 14px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .brand {
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .container {
+            width: min(100% - 30px, 1000px);
+            margin: 35px auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 30px;
+        }
+
+        .description {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            resize: vertical;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            line-height: 1.6;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .stat span {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .clear-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: #b91c1c;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            margin: 40px 0 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                gap: 10px;
+            }
+
+            nav a {
+                font-size: 13px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            textarea {
+                min-height: 240px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="/" class="brand">🇳🇬 NijaWebbies</a>
+    <a href="/">Home</a>
+    <a href="/search">Search</a>
+    <a href="/businesses">Businesses</a>
+    <a href="/communities">Communities</a>
+    <a href="/tools">Digital Tools</a>
+    <a href="/workspace">Workspace</a>
+    <a href="/notifications">🔔 Notifications</a>
+</nav>
+
+<div class="container">
+
+    <a href="/tools" class="back">← Back to Digital Tools</a>
+
+    <div class="card">
+
+        <h1>📝 Text Counter</h1>
+
+        <p class="description">
+            Count words, characters, sentences and paragraphs instantly.
+            Useful for writers, students, creators, businesses and everyday users.
+        </p>
+
+        <textarea
+            id="textInput"
+            placeholder="Start typing or paste your text here..."
+        ></textarea>
+
+        <div class="stats">
+
+            <div class="stat">
+                <strong id="wordCount">0</strong>
+                <span>Words</span>
+            </div>
+
+            <div class="stat">
+                <strong id="characterCount">0</strong>
+                <span>Characters</span>
+            </div>
+
+            <div class="stat">
+                <strong id="characterNoSpaces">0</strong>
+                <span>Characters without spaces</span>
+            </div>
+
+            <div class="stat">
+                <strong id="sentenceCount">0</strong>
+                <span>Sentences</span>
+            </div>
+
+            <div class="stat">
+                <strong id="paragraphCount">0</strong>
+                <span>Paragraphs</span>
+            </div>
+
+            <div class="stat">
+                <strong id="readingTime">0 min</strong>
+                <span>Estimated reading time</span>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button
+                type="button"
+                class="clear-btn"
+                onclick="clearText()"
+            >
+                Clear Text
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    © 2026 NijaWebbies — Built for Nigeria, Africa and the world.
+</footer>
+
+<script>
+    const textInput = document.getElementById("textInput");
+
+    function updateStats() {
+
+        const text = textInput.value;
+
+        const trimmedText = text.trim();
+
+        const words = trimmedText
+            ? trimmedText.split(/\s+/).length
+            : 0;
+
+        const characters = text.length;
+
+        const charactersWithoutSpaces =
+            text.replace(/\s/g, "").length;
+
+        const sentences = trimmedText
+            ? trimmedText
+                .split(/[.!?]+/)
+                .filter(sentence => sentence.trim().length > 0)
+                .length
+            : 0;
+
+        const paragraphs = trimmedText
+            ? trimmedText
+                .split(/\n\s*\n/)
+                .filter(paragraph => paragraph.trim().length > 0)
+                .length
+            : 0;
+
+        const readingMinutes = words > 0
+            ? Math.max(1, Math.ceil(words / 200))
+            : 0;
+
+        document.getElementById("wordCount").textContent =
+            words;
+
+        document.getElementById("characterCount").textContent =
+            characters;
+
+        document.getElementById("characterNoSpaces").textContent =
+            charactersWithoutSpaces;
+
+        document.getElementById("sentenceCount").textContent =
+            sentences;
+
+        document.getElementById("paragraphCount").textContent =
+            paragraphs;
+
+        document.getElementById("readingTime").textContent =
+            readingMinutes + " min";
+    }
+
+    function clearText() {
+        textInput.value = "";
+        updateStats();
+        textInput.focus();
+    }
+
+    textInput.addEventListener("input", updateStats);
+
+    updateStats();
+</script>
+
+</body>
+</html>
