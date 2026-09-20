@@ -64,6 +64,7 @@
             display: flex;
             align-items: center;
             gap: 18px;
+            flex-wrap: wrap;
         }
 
         nav a {
@@ -77,6 +78,39 @@
             color: #087a3d !important;
             padding: 9px 16px;
             border-radius: 7px;
+        }
+
+        /* =========================
+           NOTIFICATIONS
+        ========================= */
+
+        .notification-nav {
+            position: relative;
+            background: rgba(255,255,255,0.12);
+            padding: 8px 10px;
+            border-radius: 7px;
+            color: white !important;
+        }
+
+        .notification-nav:hover {
+            background: rgba(255,255,255,0.22);
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            margin-left: 4px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1;
+            vertical-align: middle;
         }
 
         /* =========================
@@ -457,9 +491,13 @@
             }
 
             nav {
-                gap: 12px;
+                gap: 10px;
                 flex-wrap: wrap;
                 justify-content: center;
+            }
+
+            nav a {
+                font-size: 13px;
             }
 
             .hero {
@@ -521,31 +559,64 @@
 
 <header>
 
-    <a href="/" class="logo">
+    <a href="{{ url_for('home') }}" class="logo">
         🇳🇬 NijaWebbies
     </a>
 
     <nav>
 
-        <a href="/">
+        <a href="{{ url_for('home') }}">
             Home
         </a>
 
-        <a href="/search">
+        <a href="{{ url_for('search') }}">
             Explore
         </a>
 
-        <a href="/tools">
+        <a href="{{ url_for('tools') }}">
             Tools
         </a>
 
-        <a href="/login">
-            Login
-        </a>
 
-        <a href="/register" class="nav-button">
-            Join Free
-        </a>
+        {% if session.get("user_id") %}
+
+            <!-- LOGGED-IN NAVIGATION -->
+
+            <a href="{{ url_for('workspace') }}">
+                Workspace
+            </a>
+
+            <a href="{{ url_for('notifications') }}"
+               class="notification-nav">
+
+                🔔 Notifications
+
+                <span
+                    class="notification-badge"
+                    id="globalNotificationBadge"
+                    style="display:none;"
+                ></span>
+
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
+        {% else %}
+
+            <!-- LOGGED-OUT NAVIGATION -->
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+            <a href="{{ url_for('register') }}"
+               class="nav-button">
+                Join Free
+            </a>
+
+        {% endif %}
 
     </nav>
 
@@ -575,11 +646,24 @@
 
     <div class="hero-buttons">
 
-        <a href="/register" class="primary-button">
-            🚀 Start Free
-        </a>
+        {% if session.get("user_id") %}
 
-        <a href="#features" class="secondary-button">
+            <a href="{{ url_for('workspace') }}"
+               class="primary-button">
+                🚀 Go to My Workspace
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('register') }}"
+               class="primary-button">
+                🚀 Start Free
+            </a>
+
+        {% endif %}
+
+        <a href="#features"
+           class="secondary-button">
             Explore NijaWebbies
         </a>
 
@@ -588,7 +672,7 @@
 
     <form
         class="search-box"
-        action="/search"
+        action="{{ url_for('search') }}"
         method="GET"
     >
 
@@ -652,7 +736,7 @@
                 website from day one.
             </p>
 
-            <a href="/register">
+            <a href="{{ url_for('register') }}">
                 Start Blogging →
             </a>
 
@@ -677,7 +761,7 @@
                 creators on NijaWebbies.
             </p>
 
-            <a href="/register">
+            <a href="{{ url_for('register') }}">
                 Join as Creator →
             </a>
 
@@ -702,7 +786,7 @@
                 offer.
             </p>
 
-            <a href="/register">
+            <a href="{{ url_for('register') }}">
                 List Business →
             </a>
 
@@ -726,9 +810,7 @@
                 professions, businesses, schools and ideas.
             </p>
 
-            <!-- FIXED: GO DIRECTLY TO COMMUNITIES -->
-
-            <a href="/communities">
+            <a href="{{ url_for('communities') }}">
                 Create & Explore →
             </a>
 
@@ -753,7 +835,7 @@
                 services everywhere.
             </p>
 
-            <a href="/tools">
+            <a href="{{ url_for('tools') }}">
                 Explore Tools →
             </a>
 
@@ -778,7 +860,7 @@
                 NijaWebbies ecosystem.
             </p>
 
-            <a href="/search">
+            <a href="{{ url_for('search') }}">
                 Search Now →
             </a>
 
@@ -815,12 +897,25 @@
             </strong>
         </p>
 
-        <a
-            href="/register"
-            class="free-button"
-        >
-            Create Free Account
-        </a>
+        {% if session.get("user_id") %}
+
+            <a
+                href="{{ url_for('workspace') }}"
+                class="free-button"
+            >
+                Open My Workspace
+            </a>
+
+        {% else %}
+
+            <a
+                href="{{ url_for('register') }}"
+                class="free-button"
+            >
+                Create Free Account
+            </a>
+
+        {% endif %}
 
     </div>
 
@@ -923,12 +1018,25 @@
         building your presence online.
     </p>
 
-    <a
-        href="/register"
-        class="cta-button"
-    >
-        🇳🇬 Join NijaWebbies Free
-    </a>
+    {% if session.get("user_id") %}
+
+        <a
+            href="{{ url_for('workspace') }}"
+            class="cta-button"
+        >
+            🚀 Go to My Workspace
+        </a>
+
+    {% else %}
+
+        <a
+            href="{{ url_for('register') }}"
+            class="cta-button"
+        >
+            🇳🇬 Join NijaWebbies Free
+        </a>
+
+    {% endif %}
 
 </section>
 
@@ -964,19 +1072,19 @@
 
             <div class="footer-links">
 
-                <a href="/">
+                <a href="{{ url_for('home') }}">
                     Home
                 </a>
 
-                <a href="/search">
+                <a href="{{ url_for('search') }}">
                     Search
                 </a>
 
-                <a href="/tools">
+                <a href="{{ url_for('tools') }}">
                     Free Tools
                 </a>
 
-                <a href="/communities">
+                <a href="{{ url_for('communities') }}">
                     Communities
                 </a>
 
@@ -993,13 +1101,31 @@
 
             <div class="footer-links">
 
-                <a href="/register">
-                    Join Free
-                </a>
+                {% if session.get("user_id") %}
 
-                <a href="/login">
-                    Login
-                </a>
+                    <a href="{{ url_for('workspace') }}">
+                        Workspace
+                    </a>
+
+                    <a href="{{ url_for('notifications') }}">
+                        🔔 Notifications
+                    </a>
+
+                    <a href="{{ url_for('logout') }}">
+                        Logout
+                    </a>
+
+                {% else %}
+
+                    <a href="{{ url_for('register') }}">
+                        Join Free
+                    </a>
+
+                    <a href="{{ url_for('login') }}">
+                        Login
+                    </a>
+
+                {% endif %}
 
             </div>
 
@@ -1018,6 +1144,83 @@
 </footer>
 
 
+<!-- =========================
+     GLOBAL NOTIFICATION COUNT
+========================= -->
+
+{% if session.get("user_id") %}
+
+<script>
+
+async function updateGlobalNotificationCount() {
+
+    try {
+
+        const response = await fetch(
+            "{{ url_for('notification_count') }}",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        const badge = document.getElementById(
+            "globalNotificationBadge"
+        );
+
+        if (!badge) {
+            return;
+        }
+
+        const count = Number(data.count || 0);
+
+        if (count > 0) {
+
+            badge.textContent = count;
+
+            badge.style.display = "inline-flex";
+
+        } else {
+
+            badge.textContent = "";
+
+            badge.style.display = "none";
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Notification count update skipped."
+        );
+
+    }
+
+}
+
+
+/* Check immediately when the page loads */
+updateGlobalNotificationCount();
+
+
+/* Check again every 30 seconds */
+setInterval(
+    updateGlobalNotificationCount,
+    30000
+);
+
+</script>
+
+{% endif %}
+
+
 </body>
 
-                </html>
+</html>
