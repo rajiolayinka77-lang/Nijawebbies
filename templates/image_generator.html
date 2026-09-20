@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Image Generator - NijaWebbies</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7f6;
+            color: #17201b;
+        }
+
+        nav {
+            background: white;
+            padding: 16px 5%;
+            border-bottom: 1px solid #ddd;
+        }
+
+        nav a {
+            display: inline-block;
+            margin-right: 16px;
+            margin-bottom: 5px;
+            color: #087f5b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .hero {
+            background: #087f5b;
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        .hero h1 {
+            margin: 0 0 12px;
+            font-size: 38px;
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .section {
+            padding: 40px 0;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #087f5b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .panel {
+            background: white;
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e1e8e4;
+        }
+
+        .field {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccd7d1;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 160px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            background: #087f5b;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.92;
+        }
+
+        .alert {
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: #fff3cd;
+            color: #664d03;
+            border: 1px solid #ffecb5;
+        }
+
+        .result {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .result h2 {
+            margin-bottom: 20px;
+        }
+
+        .result img {
+            display: block;
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .download {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 13px 22px;
+            border-radius: 9px;
+            background: #17201b;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 30px 20px;
+            text-align: center;
+            background: #17201b;
+            color: white;
+        }
+
+        @media (max-width: 700px) {
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav>
+
+    <a href="/">
+        🇳🇬 NijaWebbies
+    </a>
+
+    <a href="/">
+        Home
+    </a>
+
+    <a href="/search">
+        Search
+    </a>
+
+    <a href="/businesses">
+        Businesses
+    </a>
+
+    <a href="/communities">
+        Communities
+    </a>
+
+    <a href="/tools">
+        Digital Tools
+    </a>
+
+    <a href="/workspace">
+        Workspace
+    </a>
+
+    <a href="/notifications">
+        🔔 Notifications
+    </a>
+
+</nav>
+
+
+<section class="hero">
+
+    <div class="container">
+
+        <h1>
+            🖼️ AI Image Generator
+        </h1>
+
+        <p>
+            Describe your idea and NijaWebbies will create
+            an AI-generated image for you.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="container">
+
+        <a class="back"
+           href="/tools">
+            ← Back to Digital Tools
+        </a>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <div class="panel">
+
+            <form
+                method="POST"
+                onsubmit="showGeneratingMessage()">
+
+                <div class="field">
+
+                    <label for="prompt">
+                        Describe the image you want
+                    </label>
+
+                    <textarea
+                        id="prompt"
+                        name="prompt"
+                        maxlength="4000"
+                        placeholder="Example: A beautiful Nigerian coastal village at sunset, colourful houses, palm trees, warm golden light, realistic photography"
+                        required>{{ prompt or "" }}</textarea>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="field">
+
+                        <label for="size">
+                            Image size
+                        </label>
+
+                        <select
+                            id="size"
+                            name="size">
+
+                            <option value="1024x1024"
+                                {% if size == "1024x1024" or not size %}
+                                selected
+                                {% endif %}>
+                                Square — 1024 × 1024
+                            </option>
+
+                            <option value="1536x1024"
+                                {% if size == "1536x1024" %}
+                                selected
+                                {% endif %}>
+                                Landscape — 1536 × 1024
+                            </option>
+
+                            <option value="1024x1536"
+                                {% if size == "1024x1536" %}
+                                selected
+                                {% endif %}>
+                                Portrait — 1024 × 1536
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="generateButton"
+                    type="submit">
+
+                    ✨ Generate Image
+
+                </button>
+
+            </form>
+
+
+            {% if generated_image %}
+
+                <div class="result">
+
+                    <h2>
+                        Your AI Image
+                    </h2>
+
+                    <img
+                        src="{{ generated_image }}"
+                        alt="AI generated image">
+
+                    <a
+                        class="download"
+                        href="{{ generated_image }}"
+                        download="nijawebbies-ai-image.png">
+
+                        ⬇️ Save Image
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    <p>
+        © 2026 NijaWebbies — Built for Nigeria, Africa and the world.
+    </p>
+
+</footer>
+
+
+<script>
+
+function showGeneratingMessage() {
+
+    const button =
+        document.getElementById("generateButton");
+
+    button.disabled = true;
+
+    button.textContent =
+        "⏳ Creating your image...";
+
+}
+
+</script>
+
+</body>
+
+</html>
