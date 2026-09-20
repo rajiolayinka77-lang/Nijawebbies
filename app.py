@@ -5152,6 +5152,7 @@ def notification_count():
 # FREE ONLINE TOOLS
 # =========================================================
 
+
 # =========================================================
 # AI IMAGE GENERATOR
 # =========================================================
@@ -5256,9 +5257,9 @@ def image_generator():
             "danger"
         )
 
-                             return render_template(
-            "image_generator.html",
-            prompt=prompt,
+                       return render_template(
+    "image_generator.html",
+    prompt=prompt,      
 # =========================================================
 # AI IMAGE GENERATOR
 # =========================================================
