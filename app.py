@@ -5227,6 +5227,8 @@ def image_generator():
             prompt=prompt,
             size=size
         )
+
+
 @app.route("/tools/text-counter")
 def text_counter():
     return render_template("text_counter.html")
@@ -5235,11 +5237,6 @@ def text_counter():
 @app.route("/tools/calculator")
 def calculator():
     return render_template("calculator.html")
-
-
-@app.route("/tools")
-def tools():
-    return render_template("tools.html")
 
 
 @app.route("/tools")
