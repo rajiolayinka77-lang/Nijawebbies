@@ -1,0 +1,573 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Calculator — NijaWebbies</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7f6;
+        color: #17201b;
+    }
+
+    nav {
+        background: white;
+        padding: 18px 5%;
+        border-bottom: 1px solid #ddd;
+    }
+
+    nav a {
+        margin-right: 18px;
+        text-decoration: none;
+        color: #087f5b;
+        font-weight: bold;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 600px;
+        margin: 40px auto;
+    }
+
+    .back {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #087f5b;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e0e7e3;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        text-align: center;
+        color: #68736d;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+
+    .display {
+        width: 100%;
+        min-height: 75px;
+        background: #14221b;
+        color: white;
+        border-radius: 12px;
+        padding: 18px;
+        font-size: 30px;
+        text-align: right;
+        overflow-x: auto;
+        margin-bottom: 18px;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    button {
+        border: none;
+        border-radius: 10px;
+        padding: 18px 10px;
+        font-size: 20px;
+        cursor: pointer;
+        background: #edf2ef;
+        color: #17201b;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    .operator {
+        background: #087f5b;
+        color: white;
+    }
+
+    .clear {
+        background: #dc2626;
+        color: white;
+    }
+
+    .equals {
+        background: #2563eb;
+        color: white;
+    }
+
+    .zero {
+        grid-column: span 2;
+    }
+
+    footer {
+        background: #14221b;
+        color: white;
+        text-align: center;
+        padding: 35px 20px;
+        margin-top: 40px;
+    }
+
+    @media (max-width: 500px) {
+
+        nav a {
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .container {
+            margin-top: 25px;
+        }
+
+        .card {
+            padding: 18px;
+        }
+
+        .display {
+            font-size: 25px;
+        }
+
+        button {
+            padding: 16px 8px;
+            font-size: 18px;
+        }
+
+    }
+
+</style>
+
+</head><body><nav><a href="/">
+    🇳🇬 NijaWebbies
+</a>
+
+<a href="/">
+    Home
+</a>
+
+<a href="/search">
+    Search
+</a>
+
+<a href="/businesses">
+    Businesses
+</a>
+
+<a href="/communities">
+    Communities
+</a>
+
+<a href="/tools">
+    Digital Tools
+</a>
+
+<a href="/workspace">
+    Workspace
+</a>
+
+<a href="/notifications">
+    🔔 Notifications
+</a>
+
+</nav><div class="container"><a href="/tools" class="back">
+    ← Back to Digital Tools
+</a>
+
+
+<div class="card">
+
+    <h1>
+        🧮 Calculator
+    </h1>
+
+    <p class="description">
+        Perform everyday mathematical calculations quickly
+        and easily.
+    </p>
+
+
+    <div
+        id="display"
+        class="display"
+    >
+        0
+    </div>
+
+
+    <div class="buttons">
+
+        <button
+            type="button"
+            class="clear"
+            onclick="clearCalculator()"
+        >
+            C
+        </button>
+
+        <button
+            type="button"
+            onclick="deleteLast()"
+        >
+            ⌫
+        </button>
+
+        <button
+            type="button"
+            class="operator"
+            onclick="chooseOperator('%')"
+        >
+            %
+        </button>
+
+        <button
+            type="button"
+            class="operator"
+            onclick="chooseOperator('/')"
+        >
+            ÷
+        </button>
+
+
+        <button
+            type="button"
+            onclick="appendNumber('7')"
+        >
+            7
+        </button>
+
+        <button
+            type="button"
+            onclick="appendNumber('8')"
+        >
+            8
+        </button>
+
+        <button
+            type="button"
+            onclick="appendNumber('9')"
+        >
+            9
+        </button>
+
+        <button
+            type="button"
+            class="operator"
+            onclick="chooseOperator('*')"
+        >
+            ×
+        </button>
+
+
+        <button
+            type="button"
+            onclick="appendNumber('4')"
+        >
+            4
+        </button>
+
+        <button
+            type="button"
+            onclick="appendNumber('5')"
+        >
+            5
+        </button>
+
+        <button
+            type="button"
+            onclick="appendNumber('6')"
+        >
+            6
+        </button>
+
+        <button
+            type="button"
+            class="operator"
+            onclick="chooseOperator('-')"
+        >
+            −
+        </button>
+
+
+        <button
+            type="button"
+            onclick="appendNumber('1')"
+        >
+            1
+        </button>
+
+        <button
+            type="button"
+            onclick="appendNumber('2')"
+        >
+            2
+        </button>
+
+        <button
+            type="button"
+            onclick="appendNumber('3')"
+        >
+            3
+        </button>
+
+        <button
+            type="button"
+            class="operator"
+            onclick="chooseOperator('+')"
+        >
+            +
+        </button>
+
+
+        <button
+            type="button"
+            class="zero"
+            onclick="appendNumber('0')"
+        >
+            0
+        </button>
+
+        <button
+            type="button"
+            onclick="appendDecimal()"
+        >
+            .
+        </button>
+
+        <button
+            type="button"
+            class="equals"
+            onclick="calculateResult()"
+        >
+            =
+        </button>
+
+    </div>
+
+</div>
+
+</div><footer><p>
+    © 2026 NijaWebbies — Built for Nigeria, Africa and the world.
+</p>
+
+</footer><script>
+
+    let currentValue = "0";
+    let previousValue = null;
+    let currentOperator = null;
+    let shouldResetDisplay = false;
+
+
+    const display =
+        document.getElementById("display");
+
+
+    function updateDisplay() {
+
+        display.textContent = currentValue;
+
+    }
+
+
+    function appendNumber(number) {
+
+        if (
+            currentValue === "0" ||
+            shouldResetDisplay
+        ) {
+
+            currentValue = number;
+            shouldResetDisplay = false;
+
+        } else {
+
+            currentValue += number;
+
+        }
+
+        updateDisplay();
+
+    }
+
+
+    function appendDecimal() {
+
+        if (shouldResetDisplay) {
+
+            currentValue = "0.";
+            shouldResetDisplay = false;
+
+            updateDisplay();
+
+            return;
+        }
+
+
+        if (!currentValue.includes(".")) {
+
+            currentValue += ".";
+
+        }
+
+        updateDisplay();
+
+    }
+
+
+    function chooseOperator(operator) {
+
+        if (
+            currentOperator !== null &&
+            !shouldResetDisplay
+        ) {
+
+            calculateResult();
+
+        }
+
+        previousValue = parseFloat(currentValue);
+
+        currentOperator = operator;
+
+        shouldResetDisplay = true;
+
+    }
+
+
+    function calculateResult() {
+
+        if (
+            currentOperator === null ||
+            previousValue === null
+        ) {
+
+            return;
+
+        }
+
+
+        const current =
+            parseFloat(currentValue);
+
+
+        let result;
+
+
+        if (currentOperator === "+") {
+
+            result = previousValue + current;
+
+        }
+
+        else if (currentOperator === "-") {
+
+            result = previousValue - current;
+
+        }
+
+        else if (currentOperator === "*") {
+
+            result = previousValue * current;
+
+        }
+
+        else if (currentOperator === "/") {
+
+            if (current === 0) {
+
+                currentValue = "Cannot divide by zero";
+
+                previousValue = null;
+                currentOperator = null;
+                shouldResetDisplay = true;
+
+                updateDisplay();
+
+                return;
+            }
+
+            result = previousValue / current;
+
+        }
+
+        else if (currentOperator === "%") {
+
+            result = previousValue % current;
+
+        }
+
+
+        if (
+            typeof result === "number" &&
+            !Number.isFinite(result)
+        ) {
+
+            currentValue = "Error";
+
+        } else {
+
+            currentValue = String(
+                Math.round(result * 100000000) / 100000000
+            );
+
+        }
+
+
+        previousValue = null;
+        currentOperator = null;
+        shouldResetDisplay = true;
+
+        updateDisplay();
+
+    }
+
+
+    function clearCalculator() {
+
+        currentValue = "0";
+        previousValue = null;
+        currentOperator = null;
+        shouldResetDisplay = false;
+
+        updateDisplay();
+
+    }
+
+
+    function deleteLast() {
+
+        if (
+            shouldResetDisplay ||
+            currentValue.length <= 1
+        ) {
+
+            currentValue = "0";
+
+        } else {
+
+            currentValue =
+                currentValue.slice(0, -1);
+
+        }
+
+        updateDisplay();
+
+    }
+
+
+    updateDisplay();
+
+</script></body></html>
