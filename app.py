@@ -1,3 +1,4 @@
+from openai import OpenAI
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import os
 import psycopg2
@@ -5151,11 +5152,121 @@ def notification_count():
 # FREE ONLINE TOOLS
 # =========================================================
 
+# =========================================================
+# AI IMAGE GENERATOR
+# =========================================================
+
+@app.route("/image-generator", methods=["GET", "POST"])
+@login_required
+def image_generator():
+
+    if request.method == "GET":
+        return render_template("image_generator.html")
+
+    prompt = request.form.get("prompt", "").strip()
+    size = request.form.get("size", "1024x1024").strip()
+
+    if not prompt:
+        flash(
+            "Please describe the image you want to create.",
+            "warning"
+        )
+        return render_template(
+            "image_generator.html"
+        )
+
+    if len(prompt) > 4000:
+        flash(
+            "Please keep your image description under 4,000 characters.",
+            "warning"
+        )
+        return render_template(
+            "image_generator.html",
+            prompt=prompt,
+            size=size
+        )
+
+    allowed_sizes = {
+        "1024x1024",
+        "1536x1024",
+        "1024x1536"
+    }
+
+    if size not in allowed_sizes:
+        size = "1024x1024"
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+
+    if not api_key:
+        flash(
+            "AI image generation is not configured yet.",
+            "danger"
+        )
+        return render_template(
+            "image_generator.html",
+            prompt=prompt,
+            size=size
+        )
+
+    try:
+
+        client = OpenAI(
+            api_key=api_key
+        )
+
+        result = client.images.generate(
+            model="gpt-image-2",
+            prompt=prompt,
+            size=size
+        )
+
+        if not result.data:
+            raise RuntimeError(
+                "No image was returned."
+            )
+
+        image_base64 = result.data[0].b64_json
+
+        if not image_base64:
+            raise RuntimeError(
+                "No image data was returned."
+            )
+
+        generated_image = (
+            "data:image/png;base64,"
+            + image_base64
+        )
+
+        return render_template(
+            "image_generator.html",
+            generated_image=generated_image,
+            prompt=prompt,
+            size=size
+        )
+
+    except Exception as error:
+
+        app.logger.exception(
+            "AI IMAGE GENERATION FAILED: %s",
+            error
+        )
+
+        flash(
+            "Image generation failed. Please check your OpenAI API credits and try again.",
+            "danger"
+        )
+
+         return render_template(
+    "image_generator.html",
+    prompt=prompt,
+    size=size
+)
+
+
 @app.route("/tools")
 def tools():
 
     return render_template("tools.html")
-
 
 # =========================================================
 # 404 ERROR
