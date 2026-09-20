@@ -5244,14 +5244,14 @@ def image_generator():
             size=size
         )
 
-    except Exception as error:
+        except Exception as error:
         app.logger.exception(
             "AI IMAGE GENERATION FAILED: %s",
             error
         )
 
         flash(
-            "Image generation failed. Please check your OpenAI API credits and try again.",
+            f"Image generation failed: {str(error)}",
             "danger"
         )
 
