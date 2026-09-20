@@ -19,51 +19,43 @@
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background: #f4f7f5;
+            background: #f5f7f6;
             color: #17201b;
         }
 
         a {
             text-decoration: none;
-            color: inherit;
         }
 
-        /* =========================
-           NAVIGATION
-        ========================= */
+        /* NAVIGATION */
 
         .navbar {
             background: #ffffff;
-            border-bottom: 1px solid #e3e8e5;
-            padding: 14px 5%;
+            border-bottom: 1px solid #e2e8e4;
+            padding: 15px 5%;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
         }
 
         .logo {
+            color: #087f5b;
             font-size: 22px;
             font-weight: 800;
-            color: #087f5b;
-            white-space: nowrap;
         }
 
         .nav-links {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            gap: 8px;
             flex-wrap: wrap;
-            gap: 12px;
         }
 
         .nav-links a {
+            color: #34423a;
             font-size: 14px;
             font-weight: 600;
-            color: #35423a;
             padding: 8px 10px;
             border-radius: 8px;
         }
@@ -74,38 +66,36 @@
         }
 
         .notification-link {
-            display: inline-flex !important;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .notification-badge {
+            display: none;
             min-width: 20px;
             height: 20px;
             padding: 0 6px;
-            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px;
             background: #dc2626;
             color: #ffffff;
             font-size: 11px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: bold;
         }
 
-        /* =========================
-           HERO
-        ========================= */
+        /* HERO */
 
         .hero {
             background: linear-gradient(
                 135deg,
                 #087f5b,
-                #0b9b70
+                #0a9d70
             );
-            color: #ffffff;
-            padding: 65px 20px;
+            color: white;
             text-align: center;
+            padding: 65px 20px;
         }
 
         .hero h1 {
@@ -114,31 +104,28 @@
         }
 
         .hero p {
-            max-width: 760px;
-            margin: 0 auto;
-            font-size: 18px;
+            max-width: 750px;
+            margin: auto;
             line-height: 1.7;
-            opacity: 0.96;
+            font-size: 18px;
         }
 
-        .hero-badge {
+        .hero-label {
             display: inline-block;
             margin-bottom: 18px;
-            padding: 8px 14px;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.16);
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.15);
             font-size: 13px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
-        /* =========================
-           MAIN
-        ========================= */
+        /* CONTENT */
 
         .container {
             width: 92%;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1150px;
+            margin: auto;
         }
 
         .section {
@@ -147,28 +134,23 @@
 
         .section-title {
             text-align: center;
-            margin-bottom: 10px;
             font-size: 30px;
+            margin: 0 0 10px;
         }
 
-        .section-subtitle {
-            text-align: center;
-            color: #68736d;
+        .section-description {
             max-width: 700px;
             margin: 0 auto 30px;
+            text-align: center;
+            color: #68736d;
             line-height: 1.6;
         }
 
-        /* =========================
-           AI TOOLS
-        ========================= */
+        /* AI CARDS */
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(
-                3,
-                minmax(0, 1fr)
-            );
+            grid-template-columns: repeat(3, 1fr);
             gap: 22px;
         }
 
@@ -176,37 +158,13 @@
             background: #ffffff;
             border: 1px solid #e1e8e4;
             border-radius: 18px;
-            padding: 26px;
-            box-shadow: 0 8px 25px rgba(
-                0,
-                0,
-                0,
-                0.05
-            );
-            transition: transform 0.2s ease,
-                        box-shadow 0.2s ease;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 30px rgba(
-                0,
-                0,
-                0,
-                0.08
-            );
+            padding: 25px;
+            box-shadow: 0 7px 22px rgba(0,0,0,0.05);
         }
 
         .tool-icon {
-            width: 58px;
-            height: 58px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 29px;
-            background: #eaf7f1;
-            margin-bottom: 18px;
+            font-size: 42px;
+            margin-bottom: 15px;
         }
 
         .tool-card h3 {
@@ -217,215 +175,143 @@
         .tool-card p {
             color: #68736d;
             line-height: 1.6;
-            min-height: 70px;
-            margin-bottom: 20px;
+            min-height: 80px;
         }
 
         .tool-button {
-            display: inline-block;
             width: 100%;
-            text-align: center;
-            padding: 12px 16px;
             border: none;
             border-radius: 10px;
+            padding: 13px;
             background: #087f5b;
-            color: #ffffff;
-            font-weight: 700;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 14px;
         }
 
         .tool-button:hover {
             background: #066b4d;
         }
 
-        .coming-button {
-            background: #e8ecea;
-            color: #59635d;
-            cursor: default;
-        }
+        /* CREATOR AREA */
 
-        .coming-button:hover {
-            background: #e8ecea;
-        }
-
-        /* =========================
-           AI CREATOR PANEL
-        ========================= */
-
-        .creator-panel {
-            margin-top: 35px;
+        .creator-box {
+            display: none;
+            margin-top: 30px;
             background: #ffffff;
-            border: 1px solid #e1e8e4;
+            border: 1px solid #dfe8e3;
             border-radius: 18px;
-            padding: 30px;
-            box-shadow: 0 8px 25px rgba(
-                0,
-                0,
-                0,
-                0.04
-            );
+            padding: 28px;
+            box-shadow: 0 7px 22px rgba(0,0,0,0.05);
         }
 
-        .creator-panel h3 {
+        .creator-box.active {
+            display: block;
+        }
+
+        .creator-box h3 {
             margin-top: 0;
-            font-size: 23px;
+            font-size: 24px;
         }
 
-        .creator-panel p {
+        .creator-box p {
             color: #68736d;
             line-height: 1.6;
         }
 
-        .prompt-box {
+        textarea {
             width: 100%;
-            min-height: 120px;
+            min-height: 130px;
             padding: 15px;
-            border: 1px solid #ccd6d1;
+            border: 1px solid #cbd6d0;
             border-radius: 10px;
-            resize: vertical;
-            font-family: inherit;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 15px;
+            resize: vertical;
+        }
+
+        textarea:focus {
             outline: none;
-        }
-
-        .prompt-box:focus {
             border-color: #087f5b;
-            box-shadow: 0 0 0 3px rgba(
-                8,
-                127,
-                91,
-                0.1
-            );
         }
 
-        .creator-actions {
+        .actions {
             display: flex;
             gap: 10px;
             margin-top: 15px;
             flex-wrap: wrap;
         }
 
-        .creator-actions button {
+        .actions button {
             border: none;
-            border-radius: 10px;
-            padding: 12px 18px;
-            font-weight: 700;
+            border-radius: 9px;
+            padding: 12px 20px;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        .generate-button {
+        .generate {
             background: #087f5b;
-            color: #ffffff;
+            color: white;
         }
 
-        .generate-button:hover {
-            background: #066b4d;
+        .clear {
+            background: #e9eeeb;
+            color: #34423a;
         }
 
-        .clear-button {
-            background: #edf1ef;
-            color: #34413a;
-        }
-
-        .result-box {
+        .message {
             display: none;
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 12px;
-            background: #f4f8f6;
-            border: 1px solid #dce7e1;
+            margin-top: 20px;
+            padding: 16px;
+            background: #edf7f2;
+            border: 1px solid #cfe8dc;
+            border-radius: 10px;
+            color: #315144;
+            line-height: 1.6;
         }
 
-        .result-box.show {
-            display: block;
-        }
+        /* EVERYDAY TOOLS */
 
-        .result-box strong {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        /* =========================
-           EVERYDAY TOOLS
-        ========================= */
-
-        .small-tools {
+        .simple-grid {
             display: grid;
-            grid-template-columns: repeat(
-                4,
-                minmax(0, 1fr)
-            );
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
         }
 
-        .small-tool {
-            background: #ffffff;
+        .simple-card {
+            background: white;
             border: 1px solid #e1e8e4;
             border-radius: 14px;
             padding: 20px;
             text-align: center;
         }
 
-        .small-tool-icon {
+        .simple-icon {
             font-size: 30px;
             margin-bottom: 10px;
         }
 
-        .small-tool h4 {
+        .simple-card h4 {
             margin: 0 0 8px;
         }
 
-        .small-tool p {
+        .simple-card p {
             margin: 0;
             color: #68736d;
             font-size: 13px;
             line-height: 1.5;
         }
 
-        /* =========================
-           INFO
-        ========================= */
-
-        .info-section {
-            padding: 10px 0 55px;
-        }
-
-        .info-box {
-            background: #eaf7f1;
-            border: 1px solid #cfe9dd;
-            border-radius: 16px;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .info-box h3 {
-            margin-top: 0;
-            color: #075f45;
-        }
-
-        .info-box p {
-            margin-bottom: 0;
-            color: #405249;
-            line-height: 1.6;
-        }
-
-        /* =========================
-           FOOTER
-        ========================= */
+        /* FOOTER */
 
         footer {
             background: #14221b;
             color: #dce7e1;
+            text-align: center;
             padding: 35px 20px;
             margin-top: 20px;
-        }
-
-        .footer-inner {
-            max-width: 1200px;
-            width: 92%;
-            margin: auto;
-            text-align: center;
         }
 
         .footer-links {
@@ -441,52 +327,35 @@
             font-size: 14px;
         }
 
-        .footer-links a:hover {
-            color: #ffffff;
-        }
-
-        .footer-inner p {
+        footer p {
             margin: 0;
-            font-size: 13px;
             color: #aab8b0;
+            font-size: 13px;
         }
 
-        /* =========================
-           RESPONSIVE
-        ========================= */
+        /* MOBILE */
 
-        @media (max-width: 950px) {
+        @media (max-width: 900px) {
 
             .tools-grid {
-                grid-template-columns: repeat(
-                    2,
-                    minmax(0, 1fr)
-                );
+                grid-template-columns: 1fr 1fr;
             }
 
-            .small-tools {
-                grid-template-columns: repeat(
-                    2,
-                    minmax(0, 1fr)
-                );
+            .simple-grid {
+                grid-template-columns: 1fr 1fr;
             }
 
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 650px) {
 
             .navbar {
-                align-items: flex-start;
                 flex-direction: column;
+                align-items: flex-start;
             }
 
             .nav-links {
                 width: 100%;
-                justify-content: flex-start;
-            }
-
-            .hero {
-                padding: 45px 18px;
             }
 
             .hero h1 {
@@ -501,12 +370,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .small-tools {
+            .simple-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .section-title {
-                font-size: 26px;
             }
 
         }
@@ -519,16 +384,17 @@
 <body>
 
 
-<!-- =====================================================
-     NAVIGATION
-===================================================== -->
+<!-- NAVIGATION -->
 
 <nav class="navbar">
 
-    <a href="{{ url_for('home') }}"
-       class="logo">
+    <a
+        href="{{ url_for('home') }}"
+        class="logo"
+    >
         🇳🇬 NijaWebbies
     </a>
+
 
     <div class="nav-links">
 
@@ -552,22 +418,23 @@
             Tools
         </a>
 
+
         {% if session.get("user_id") %}
 
             <a href="{{ url_for('workspace') }}">
                 Workspace
             </a>
 
-            <a href="{{ url_for('notifications') }}"
-               class="notification-link">
-
+            <a
+                href="{{ url_for('notifications') }}"
+                class="notification-link"
+            >
                 🔔 Notifications
 
                 <span
                     id="globalNotificationBadge"
                     class="notification-badge"
-                    style="display: none;">
-                </span>
+                ></span>
 
             </a>
 
@@ -592,26 +459,24 @@
 </nav>
 
 
-<!-- =====================================================
-     HERO
-===================================================== -->
+<!-- HERO -->
 
 <section class="hero">
 
     <div class="container">
 
-        <div class="hero-badge">
+        <div class="hero-label">
             ⚡ NijaWebbies Digital Tools
         </div>
 
         <h1>
-            Create More. Do More. Online.
+            Create More With NijaWebbies
         </h1>
 
         <p>
-            Powerful digital tools for creators,
+            Explore powerful digital tools for creators,
             entrepreneurs, businesses, students and
-            everyday users — built into NijaWebbies.
+            everyday internet users.
         </p>
 
     </div>
@@ -619,29 +484,27 @@
 </section>
 
 
-<!-- =====================================================
-     AI CREATION TOOLS
-===================================================== -->
+<!-- AI TOOLS -->
 
 <section class="section">
 
     <div class="container">
 
         <h2 class="section-title">
-            🤖 AI Creation Studio
+            🤖 AI Creation Tools
         </h2>
 
-        <p class="section-subtitle">
+        <p class="section-description">
             Turn your ideas into images, videos and music.
-            More AI creation features will be connected
-            to the NijaWebbies platform.
+            These tools will be connected to AI generation
+            services as we continue building NijaWebbies.
         </p>
 
 
         <div class="tools-grid">
 
 
-            <!-- IMAGE GENERATOR -->
+            <!-- IMAGE -->
 
             <div class="tool-card">
 
@@ -654,24 +517,22 @@
                 </h3>
 
                 <p>
-                    Describe an image you want and create
-                    visual content for your business,
-                    social media, stories and creative
-                    projects.
+                    Create images from written descriptions
+                    for businesses, social media, stories,
+                    advertising and creative projects.
                 </p>
 
                 <button
                     class="tool-button"
-                    onclick="openGenerator('image')">
-
+                    onclick="openCreator('image')"
+                >
                     Create Image
-
                 </button>
 
             </div>
 
 
-            <!-- VIDEO GENERATOR -->
+            <!-- VIDEO -->
 
             <div class="tool-card">
 
@@ -684,23 +545,22 @@
                 </h3>
 
                 <p>
-                    Turn an idea or written description
-                    into short video content for stories,
-                    marketing, education and entertainment.
+                    Turn your ideas and descriptions into
+                    short video concepts for marketing,
+                    education and entertainment.
                 </p>
 
                 <button
                     class="tool-button"
-                    onclick="openGenerator('video')">
-
+                    onclick="openCreator('video')"
+                >
                     Create Video
-
                 </button>
 
             </div>
 
 
-            <!-- MUSIC GENERATOR -->
+            <!-- MUSIC -->
 
             <div class="tool-card">
 
@@ -713,17 +573,16 @@
                 </h3>
 
                 <p>
-                    Describe a mood, theme or musical idea
-                    and prepare original music concepts for
-                    your creative projects.
+                    Describe the mood, theme or musical
+                    idea you want to create for your
+                    projects.
                 </p>
 
                 <button
                     class="tool-button"
-                    onclick="openGenerator('music')">
-
+                    onclick="openCreator('music')"
+                >
                     Create Music
-
                 </button>
 
             </div>
@@ -732,61 +591,50 @@
         </div>
 
 
-        <!-- GENERATOR WORKSPACE -->
+        <!-- CREATOR -->
 
         <div
-            id="creatorPanel"
-            class="creator-panel">
+            id="creatorBox"
+            class="creator-box"
+        >
 
             <h3 id="creatorTitle">
-                ✨ AI Creator
+                AI Creator
             </h3>
 
             <p id="creatorDescription">
-                Choose an AI creation tool above to
-                get started.
+                Describe what you want to create.
             </p>
 
             <textarea
                 id="creatorPrompt"
-                class="prompt-box"
-                placeholder="Describe what you want to create..."></textarea>
+                placeholder="Describe your idea..."
+            ></textarea>
 
-            <div class="creator-actions">
+
+            <div class="actions">
 
                 <button
-                    class="generate-button"
-                    onclick="startGeneration()">
-
+                    class="generate"
+                    onclick="prepareGeneration()"
+                >
                     ✨ Generate
-
                 </button>
 
                 <button
-                    class="clear-button"
-                    onclick="clearGenerator()">
-
+                    class="clear"
+                    onclick="clearCreator()"
+                >
                     Clear
-
                 </button>
 
             </div>
 
 
             <div
-                id="resultBox"
-                class="result-box">
-
-                <strong>
-                    🚧 AI Generator Connection
-                </strong>
-
-                <span id="resultMessage">
-                    The generator interface is ready.
-                    The AI generation service will be
-                    connected next.
-                </span>
-
+                id="creatorMessage"
+                class="message"
+            >
             </div>
 
         </div>
@@ -796,9 +644,7 @@
 </section>
 
 
-<!-- =====================================================
-     EVERYDAY DIGITAL TOOLS
-===================================================== -->
+<!-- EVERYDAY TOOLS -->
 
 <section class="section">
 
@@ -808,18 +654,18 @@
             🧰 Everyday Digital Tools
         </h2>
 
-        <p class="section-subtitle">
-            More simple and useful online tools for
-            everyday Nigerian and African internet users.
+        <p class="section-description">
+            More practical tools will be added to
+            NijaWebbies over time.
         </p>
 
 
-        <div class="small-tools">
+        <div class="simple-grid">
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     📝
                 </div>
 
@@ -828,15 +674,15 @@
                 </h4>
 
                 <p>
-                    Count words and characters in your text.
+                    Count words and characters.
                 </p>
 
             </div>
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     🧮
                 </div>
 
@@ -845,49 +691,49 @@
                 </h4>
 
                 <p>
-                    Perform everyday mathematical calculations.
+                    Perform everyday calculations.
                 </p>
 
             </div>
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     💰
                 </div>
 
                 <h4>
-                    Percentage Calculator
+                    Percentage
                 </h4>
 
                 <p>
-                    Calculate percentages quickly and easily.
+                    Calculate percentages quickly.
                 </p>
 
             </div>
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     🔤
                 </div>
 
                 <h4>
-                    Text Case Converter
+                    Text Case
                 </h4>
 
                 <p>
-                    Convert text between different cases.
+                    Convert text between cases.
                 </p>
 
             </div>
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     🔐
                 </div>
 
@@ -896,15 +742,15 @@
                 </h4>
 
                 <p>
-                    Create strong random passwords.
+                    Generate strong passwords.
                 </p>
 
             </div>
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     📅
                 </div>
 
@@ -913,15 +759,15 @@
                 </h4>
 
                 <p>
-                    Calculate age from a date of birth.
+                    Calculate age from a birth date.
                 </p>
 
             </div>
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     📏
                 </div>
 
@@ -930,15 +776,15 @@
                 </h4>
 
                 <p>
-                    Convert common measurements and units.
+                    Convert common measurements.
                 </p>
 
             </div>
 
 
-            <div class="small-tool">
+            <div class="simple-card">
 
-                <div class="small-tool-icon">
+                <div class="simple-icon">
                     🔗
                 </div>
 
@@ -947,7 +793,7 @@
                 </h4>
 
                 <p>
-                    Useful tools for working with web links.
+                    Useful tools for working with links.
                 </p>
 
             </div>
@@ -960,101 +806,66 @@
 </section>
 
 
-<!-- =====================================================
-     INFORMATION
-===================================================== -->
-
-<section class="info-section">
-
-    <div class="container">
-
-        <div class="info-box">
-
-            <h3>
-                🇳🇬 Built for Creators and Businesses
-            </h3>
-
-            <p>
-                NijaWebbies is being developed as a digital
-                ecosystem for Nigeria, Africa and users
-                around the world. Our Digital Tools section
-                will continue growing with useful creation
-                and productivity features.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- FOOTER -->
 
 <footer>
 
-    <div class="footer-inner">
+    <div class="footer-links">
 
-        <div class="footer-links">
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
 
-            <a href="{{ url_for('home') }}">
-                Home
+        <a href="{{ url_for('search') }}">
+            Search
+        </a>
+
+        <a href="{{ url_for('businesses') }}">
+            Businesses
+        </a>
+
+        <a href="{{ url_for('communities') }}">
+            Communities
+        </a>
+
+        <a href="{{ url_for('tools') }}">
+            Digital Tools
+        </a>
+
+        {% if session.get("user_id") %}
+
+            <a href="{{ url_for('workspace') }}">
+                Workspace
             </a>
 
-            <a href="{{ url_for('search') }}">
-                Search
+            <a href="{{ url_for('notifications') }}">
+                🔔 Notifications
             </a>
 
-            <a href="{{ url_for('businesses') }}">
-                Businesses
-            </a>
-
-            <a href="{{ url_for('communities') }}">
-                Communities
-            </a>
-
-            <a href="{{ url_for('tools') }}">
-                Digital Tools
-            </a>
-
-            {% if session.get("user_id") %}
-
-                <a href="{{ url_for('workspace') }}">
-                    Workspace
-                </a>
-
-                <a href="{{ url_for('notifications') }}">
-                    🔔 Notifications
-                </a>
-
-            {% endif %}
-
-        </div>
-
-        <p>
-            © 2026 NijaWebbies.
-            Built for Nigeria, Africa and the world.
-        </p>
+        {% endif %}
 
     </div>
+
+    <p>
+        © 2026 NijaWebbies.
+        Built for Nigeria, Africa and the world.
+    </p>
 
 </footer>
 
 
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
-
 <script>
 
-let currentGenerator = null;
+let selectedCreator = "";
 
 
-function openGenerator(type) {
+function openCreator(type) {
 
-    currentGenerator = type;
+    selectedCreator = type;
+
+
+    const box =
+        document.getElementById("creatorBox");
 
     const title =
         document.getElementById("creatorTitle");
@@ -1064,15 +875,6 @@ function openGenerator(type) {
 
     const prompt =
         document.getElementById("creatorPrompt");
-
-    const panel =
-        document.getElementById("creatorPanel");
-
-    const resultBox =
-        document.getElementById("resultBox");
-
-
-    resultBox.classList.remove("show");
 
 
     if (type === "image") {
@@ -1084,12 +886,12 @@ function openGenerator(type) {
             "Describe the image you want to create.";
 
         prompt.placeholder =
-            "Example: A beautiful Lagos street at sunset, cinematic photography...";
+            "Example: A beautiful Lagos skyline at sunset, cinematic photography...";
 
     }
 
 
-    else if (type === "video") {
+    if (type === "video") {
 
         title.textContent =
             "🎬 AI Video Generator";
@@ -1098,12 +900,12 @@ function openGenerator(type) {
             "Describe the video you want to create.";
 
         prompt.placeholder =
-            "Example: A young Nigerian entrepreneur opening a modern shop in Lagos...";
+            "Example: A Nigerian entrepreneur opening a modern business in Lagos...";
 
     }
 
 
-    else if (type === "music") {
+    if (type === "music") {
 
         title.textContent =
             "🎵 AI Music Generator";
@@ -1112,12 +914,15 @@ function openGenerator(type) {
             "Describe the music you want to create.";
 
         prompt.placeholder =
-            "Example: An energetic Afrobeat instrumental for a business advertisement...";
+            "Example: Energetic Afrobeat instrumental for a business advertisement...";
 
     }
 
 
-    panel.scrollIntoView({
+    box.classList.add("active");
+
+
+    box.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
@@ -1125,26 +930,19 @@ function openGenerator(type) {
 }
 
 
-function startGeneration() {
+function prepareGeneration() {
 
     const prompt =
         document.getElementById("creatorPrompt");
 
-    const resultBox =
-        document.getElementById("resultBox");
-
-    const resultMessage =
-        document.getElementById("resultMessage");
+    const message =
+        document.getElementById("creatorMessage");
 
 
-    const text =
-        prompt.value.trim();
-
-
-    if (!currentGenerator) {
+    if (!selectedCreator) {
 
         alert(
-            "Please choose an AI creation tool first."
+            "Please select an AI tool first."
         );
 
         return;
@@ -1152,7 +950,7 @@ function startGeneration() {
     }
 
 
-    if (!text) {
+    if (!prompt.value.trim()) {
 
         alert(
             "Please describe what you want to create."
@@ -1165,55 +963,50 @@ function startGeneration() {
     }
 
 
-    let toolName = "AI Creator";
+    let name =
+        "AI Creator";
 
 
-    if (currentGenerator === "image") {
-        toolName = "AI Image Generator";
+    if (selectedCreator === "image") {
+        name = "AI Image Generator";
     }
 
-    if (currentGenerator === "video") {
-        toolName = "AI Video Generator";
+    if (selectedCreator === "video") {
+        name = "AI Video Generator";
     }
 
-    if (currentGenerator === "music") {
-        toolName = "AI Music Generator";
+    if (selectedCreator === "music") {
+        name = "AI Music Generator";
     }
 
 
-    resultMessage.textContent =
-        toolName +
-        " is ready for connection to the AI generation service. " +
-        "Your prompt has been prepared successfully.";
+    message.textContent =
+        name +
+        " interface is ready. " +
+        "The actual AI generation service will be connected next.";
 
 
-    resultBox.classList.add("show");
-
-
-    resultBox.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
-    });
+    message.style.display =
+        "block";
 
 }
 
 
-function clearGenerator() {
+function clearCreator() {
 
     document.getElementById(
         "creatorPrompt"
     ).value = "";
 
+
     document.getElementById(
-        "resultBox"
-    ).classList.remove("show");
+        "creatorMessage"
+    ).style.display = "none";
 
 }
 
 
-/* =====================================================
-   GLOBAL NOTIFICATION COUNT
-===================================================== */
+/* GLOBAL NOTIFICATION COUNT */
 
 {% if session.get("user_id") %}
 
@@ -1221,14 +1014,15 @@ async function updateGlobalNotificationCount() {
 
     try {
 
-        const response = await fetch(
-            "{{ url_for('notification_count') }}",
-            {
-                method: "GET",
-                credentials: "same-origin",
-                cache: "no-store"
-            }
-        );
+        const response =
+            await fetch(
+                "{{ url_for('notification_count') }}",
+                {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store"
+                }
+            );
 
 
         if (!response.ok) {
