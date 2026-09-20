@@ -5228,7 +5228,37 @@ def image_generator():
             size=size
         )
 
+# =========================================================
+# VIDEO STUDIO
+# =========================================================
 
+@app.route("/tools/video")
+@login_required
+def video_studio():
+
+    return render_template(
+        "video_studio.html",
+        user_name=session.get("user_name")
+    )
+
+
+# =========================================================
+# MUSIC STUDIO
+# =========================================================
+
+@app.route("/tools/music")
+@login_required
+def music_studio():
+
+    return render_template(
+        "music_studio.html",
+        user_name=session.get("user_name")
+    )
+
+
+# =========================================================
+# TEXT COUNTER
+# =========================================================
 @app.route("/tools/text-counter")
 def text_counter():
     return render_template("text_counter.html")
