@@ -5154,6 +5154,7 @@ def notification_count():
 
 
 # =========================================================
+# =========================================================
 # AI IMAGE GENERATOR
 # =========================================================
 
@@ -5173,37 +5174,6 @@ def image_generator():
             "warning"
         )
         return render_template(
-            "image_generator.html"
-        )
-
-    if len(prompt) > 4000:
-        flash(
-            "Please keep your image description under 4,000 characters.",
-            "warning"
-        )
-        return render_template(
-            "image_generator.html",
-            prompt=prompt,
-            size=size
-        )
-
-    allowed_sizes = {
-        "1024x1024",
-        "1536x1024",
-        "1024x1536"
-    }
-
-    if size not in allowed_sizes:
-        size = "1024x1024"
-
-    api_key = os.environ.get("OPENAI_API_KEY")
-
-    if not api_key:
-        flash(
-            "AI image generation is not configured yet.",
-            "danger"
-        )
-        return render_template(
             "image_generator.html",
             prompt=prompt,
             size=size
@@ -5211,7 +5181,7 @@ def image_generator():
 
     try:
         client = OpenAI(
-            api_key=api_key
+            api_key=os.environ.get("OPENAI_API_KEY")
         )
 
         result = client.images.generate(
@@ -5222,29 +5192,26 @@ def image_generator():
 
         if not result.data:
             raise RuntimeError(
-                "No image was returned."
+                "The image service returned no image."
             )
 
-        image_base64 = result.data[0].b64_json
+        image_data = result.data[0]
 
-        if not image_base64:
+        image_url = getattr(image_data, "url", None)
+
+        if not image_url:
             raise RuntimeError(
-                "No image data was returned."
+                "The image service did not return an image URL."
             )
-
-        generated_image = (
-            "data:image/png;base64,"
-            + image_base64
-        )
 
         return render_template(
             "image_generator.html",
-            generated_image=generated_image,
             prompt=prompt,
-            size=size
+            size=size,
+            image_url=image_url
         )
 
-            except Exception as error:
+    except Exception as error:
         app.logger.exception(
             "AI IMAGE GENERATION FAILED: %s",
             error
