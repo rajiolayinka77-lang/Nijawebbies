@@ -5266,6 +5266,7 @@ def music_studio():
 @app.route("/tools/video")
 @login_required
 def video_studio():
+
     return render_template(
         "video_studio.html",
         user_name=session.get("user_name")
@@ -5279,6 +5280,7 @@ def video_studio():
 @app.route("/tools/music")
 @login_required
 def music_studio():
+
     return render_template(
         "music_studio.html",
         user_name=session.get("user_name")
@@ -5291,6 +5293,7 @@ def music_studio():
 
 @app.route("/tools/text-counter")
 def text_counter():
+
     return render_template(
         "text_counter.html"
     )
@@ -5302,6 +5305,7 @@ def text_counter():
 
 @app.route("/tools/calculator")
 def calculator():
+
     return render_template(
         "calculator.html"
     )
@@ -5313,6 +5317,7 @@ def calculator():
 
 @app.route("/tools")
 def tools():
+
     return render_template(
         "tools.html"
     )
