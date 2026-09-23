@@ -5260,26 +5260,6 @@ def music_studio():
 # TEXT COUNTER
 # =========================================================
 
-
-
-# =========================================================
-# MUSIC STUDIO
-# =========================================================
-
-@app.route("/tools/music")
-@login_required
-def music_studio():
-
-    return render_template(
-        "music_studio.html",
-        user_name=session.get("user_name")
-    )
-
-
-# =========================================================
-# TEXT COUNTER
-# =========================================================
-
 @app.route("/tools/text-counter")
 def text_counter():
 
@@ -5310,6 +5290,67 @@ def tools():
     return render_template(
         "tools.html"
     )
+
+
+# =========================================================
+# 404 ERROR
+# =========================================================
+
+@app.errorhandler(404)
+def page_not_found(error):
+
+    return """
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>
+        Page Not Found - NijaWebbies
+    </title>
+
+</head>
+
+<body style="
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:50px 20px;
+    background:#f5f7fb;
+    color:#111827;
+">
+
+    <h1 style="
+        font-size:60px;
+        margin-bottom:10px;
+    ">
+        404
+    </h1>
+
+    <h2>
+        Page not found
+    </h2>
+
+    <p style="color:#6b7280;">
+        The page you are looking for does not exist.
+    </p>
+
+    <br>
+
+    <a href="/" style="
+        color:#2563eb;
+        text-decoration:none;
+        font-weight:bold;
+    ">
+        ← Back to NijaWebbies
+    </a>
+
+</body>
+
+</html>
+""", 404
 # =========================================================
 # 404 ERROR
 # =========================================================
