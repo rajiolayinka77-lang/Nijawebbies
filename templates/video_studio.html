@@ -1,83 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Studio - NijaWebbies</title><style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        color: #111827;
+    }
 
-    <title>Video Studio - NijaWebbies</title>
+    nav {
+        background: #111827;
+        padding: 15px 20px;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #111827;
-        }
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin-right: 16px;
+        font-size: 14px;
+    }
 
-        nav {
-            background: #111827;
-            padding: 15px 20px;
-        }
+    .container {
+        max-width: 1000px;
+        margin: 35px auto;
+        padding: 20px;
+    }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-right: 18px;
-            font-size: 14px;
-        }
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-        }
+    h1 {
+        margin-top: 0;
+    }
 
-        .card {
-            background: white;
-            border-radius: 14px;
-            padding: 30px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-        }
+    h2 {
+        margin-top: 0;
+        font-size: 21px;
+    }
 
-        h1 {
-            margin-top: 0;
-            color: #111827;
-        }
+    label {
+        display: block;
+        font-weight: bold;
+        margin: 15px 0 7px;
+    }
 
-        .icon {
-            font-size: 50px;
-        }
+    input,
+    textarea,
+    select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+    }
 
-        .notice {
-            margin-top: 25px;
-            padding: 18px;
-            background: #eef2ff;
-            border-radius: 10px;
-            color: #3730a3;
-        }
+    textarea {
+        min-height: 130px;
+        resize: vertical;
+    }
 
-        .back {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 12px 18px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-        }
+    .scene {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 12px;
+        background: #f9fafb;
+    }
 
-        footer {
-            text-align: center;
-            margin: 40px 0 20px;
-            color: #6b7280;
-            font-size: 14px;
-        }
-    </style>
-</head>
+    button,
+    .back {
+        display: inline-block;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+    }
 
-<body>
+    button {
+        background: #2563eb;
+        color: white;
+        margin-top: 18px;
+        margin-right: 8px;
+    }
 
-<nav>
+    button.secondary {
+        background: #374151;
+    }
+
+    button.danger {
+        background: #dc2626;
+    }
+
+    .back {
+        background: #111827;
+        color: white;
+        margin-top: 10px;
+    }
+
+    .message {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 8px;
+        background: #ecfdf5;
+        color: #166534;
+        display: none;
+    }
+
+    footer {
+        text-align: center;
+        margin: 35px 0 20px;
+        color: #6b7280;
+        font-size: 14px;
+    }
+</style>
+
+</head><body><nav>
     <a href="/">🇳🇬 NijaWebbies</a>
     <a href="/">Home</a>
     <a href="/search">Search</a>
@@ -86,44 +134,185 @@
     <a href="/tools">Digital Tools</a>
     <a href="/workspace">Workspace</a>
     <a href="/notifications">🔔 Notifications</a>
-</nav>
+</nav><div class="container"><div class="card">
+    <h1>🎬 Video Studio</h1>
 
-<div class="container">
+    <p>
+        Plan and organize your video projects with NijaWebbies.
+    </p>
 
-    <div class="card">
+    <label for="projectTitle">Project Title</label>
+    <input id="projectTitle" type="text"
+           placeholder="Example: My New Business Advertisement">
 
-        <div class="icon">🎬</div>
+    <label for="videoType">Video Type</label>
+    <select id="videoType">
+        <option>Advertisement</option>
+        <option>Educational Video</option>
+        <option>Comedy / Entertainment</option>
+        <option>Business Video</option>
+        <option>Social Media Video</option>
+        <option>Documentary</option>
+        <option>Short Film</option>
+        <option>Other</option>
+    </select>
 
-        <h1>Video Studio</h1>
+    <label for="videoIdea">Video Idea</label>
+    <textarea id="videoIdea"
+              placeholder="Describe what you want your video to be about..."></textarea>
 
-        <p>
-            Welcome to the NijaWebbies Video Studio.
-        </p>
-
-        <p>
-            This space is designed for creating and developing
-            video ideas for marketing, education, entertainment,
-            businesses and creative projects.
-        </p>
-
-        <div class="notice">
-            <strong>Video creation tools are coming soon.</strong>
-            <br><br>
-            The Video Studio page is now active and ready for
-            future video-generation features.
-        </div>
-
-        <a class="back" href="/tools">
-            ← Back to Digital Tools
-        </a>
-
-    </div>
-
+    <label for="script">Script / Voice-over</label>
+    <textarea id="script"
+              placeholder="Write your script, narration or dialogue here..."></textarea>
 </div>
 
-<footer>
-    © 2026 NijaWebbies — Built for Nigeria, Africa and the world.
-</footer>
+<div class="card">
+    <h2>🎞️ Scene Planner</h2>
 
-</body>
+    <div id="scenes"></div>
+
+    <button type="button" onclick="addScene()">+ Add Scene</button>
+</div>
+
+<div class="card">
+    <h2>💾 Project</h2>
+
+    <button type="button" onclick="saveProject()">Save Draft</button>
+    <button type="button" class="secondary" onclick="downloadProject()">
+        Download Draft
+    </button>
+    <button type="button" class="danger" onclick="clearProject()">
+        Clear
+    </button>
+
+    <div id="message" class="message"></div>
+
+    <br>
+
+    <a class="back" href="/tools">
+        ← Back to Digital Tools
+    </a>
+</div>
+
+</div><footer>
+    © 2026 NijaWebbies — Built for Nigeria, Africa and the world.
+</footer><script>
+    let sceneNumber = 0;
+
+    function addScene() {
+        sceneNumber++;
+
+        const scene = document.createElement("div");
+        scene.className = "scene";
+        scene.id = "scene-" + sceneNumber;
+
+        scene.innerHTML = `
+            <strong>Scene ${sceneNumber}</strong>
+
+            <label>Scene Description</label>
+            <textarea class="scene-description"
+                placeholder="What happens in this scene?"></textarea>        <label>Dialogue / Voice-over</label>
+        <textarea class="scene-dialogue"
+            placeholder="Dialogue or narration for this scene..."></textarea>
+
+        <button type="button" class="danger"
+            onclick="this.parentElement.remove()">
+            Remove Scene
+        </button>
+    `;
+
+    document.getElementById("scenes").appendChild(scene);
+}
+
+function getProjectData() {
+    const scenes = [];
+
+    document.querySelectorAll(".scene").forEach((scene, index) => {
+        scenes.push({
+            number: index + 1,
+            description: scene.querySelector(".scene-description").value,
+            dialogue: scene.querySelector(".scene-dialogue").value
+        });
+    });
+
+    return {
+        title: document.getElementById("projectTitle").value,
+        type: document.getElementById("videoType").value,
+        idea: document.getElementById("videoIdea").value,
+        script: document.getElementById("script").value,
+        scenes: scenes
+    };
+}
+
+function saveProject() {
+    const data = getProjectData();
+
+    localStorage.setItem(
+        "nijawebbies_video_project",
+        JSON.stringify(data)
+    );
+
+    showMessage("Video project draft saved on this device.");
+}
+
+function downloadProject() {
+    const data = getProjectData();
+
+    let text = "NIJAWEBBIES VIDEO PROJECT\n\n";
+    text += "Project Title: " + data.title + "\n";
+    text += "Video Type: " + data.type + "\n\n";
+    text += "VIDEO IDEA\n";
+    text += data.idea + "\n\n";
+    text += "SCRIPT / VOICE-OVER\n";
+    text += data.script + "\n\n";
+    text += "SCENES\n";
+
+    data.scenes.forEach(scene => {
+        text += "\nScene " + scene.number + "\n";
+        text += "Description: " + scene.description + "\n";
+        text += "Dialogue: " + scene.dialogue + "\n";
+    });
+
+    const blob = new Blob([text], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "nijawebbies-video-project.txt";
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+function clearProject() {
+    if (!confirm("Clear this video project?")) {
+        return;
+    }
+
+    document.getElementById("projectTitle").value = "";
+    document.getElementById("videoIdea").value = "";
+    document.getElementById("script").value = "";
+    document.getElementById("scenes").innerHTML = "";
+    sceneNumber = 0;
+
+    localStorage.removeItem("nijawebbies_video_project");
+
+    showMessage("Video project cleared.");
+}
+
+function showMessage(message) {
+    const box = document.getElementById("message");
+    box.textContent = message;
+    box.style.display = "block";
+
+    setTimeout(() => {
+        box.style.display = "none";
+    }, 3000);
+}
+
+window.onload = function() {
+    addScene();
+};
+
+</script></body>
 </html>
